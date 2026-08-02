@@ -132,47 +132,61 @@ function Index() {
               VER TODAS <ChevronRight size={18} />
             </a>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {[
               {
                 title: "Obras no novo aeroporto regional avançam e entrega é antecipada.",
                 cat: "INFRAESTRUTURA",
-                img: "https://images.unsplash.com/photo-1436491865332-7a61a109c0f3?q=80&w=2070&auto=format&fit=crop"
+                img: "https://images.unsplash.com/photo-1436491865332-7a61a109c0f3?q=80&w=2070&auto=format&fit=crop",
+                location: "Parauapebas",
+                time: "Há 5 horas"
               },
               {
                 title: "Festival Gastronômico de Marabá espera recorde de público este ano.",
                 cat: "CULTURA",
-                img: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop"
+                img: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop",
+                location: "Marabá",
+                time: "Há 3 horas"
               },
               {
                 title: "Startups regionais ganham destaque em evento nacional de tecnologia.",
                 cat: "TECNOLOGIA",
-                img: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070&auto=format&fit=crop"
+                img: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070&auto=format&fit=crop",
+                location: "Canaã",
+                time: "Há 8 horas"
               }
             ].map((post, idx) => (
-              <div key={idx} className="group cursor-pointer">
-                <div className="aspect-video rounded-xl overflow-hidden mb-4 relative">
+              <motion.div 
+                key={idx} 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+                className="group cursor-pointer bg-card rounded-3xl overflow-hidden border border-border/50 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 flex flex-col"
+              >
+                <div className="aspect-[16/10] overflow-hidden relative">
                   <img 
                     src={post.img} 
                     alt={post.title} 
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
-                  <div className="absolute top-3 left-3">
-                    <span className="bg-primary text-primary-foreground px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest shadow-lg">
+                  <div className="absolute top-4 left-4">
+                    <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg">
                       {post.cat}
                     </span>
-
                   </div>
                 </div>
-                <h4 className="text-xl font-bold mb-3 leading-tight group-hover:text-primary transition-colors">
-                  {post.title}
-                </h4>
-                <div className="flex items-center gap-3 text-xs font-bold text-muted-foreground">
-                  <span>CURIONÓPOLIS</span>
-                  <span>•</span>
-                  <span>HÁ 5 HORAS</span>
+                <div className="p-6 flex flex-col flex-1">
+                  <h4 className="text-xl font-bold mb-4 leading-tight group-hover:text-primary transition-colors flex-1 line-clamp-3">
+                    {post.title}
+                  </h4>
+                  <div className="flex items-center gap-3 text-xs font-bold text-muted-foreground pt-4 border-t border-border/50">
+                    <span className="flex items-center gap-1 uppercase tracking-wider"><MapPin size={14} className="text-primary/70" /> {post.location}</span>
+                    <span className="opacity-30">•</span>
+                    <span className="uppercase tracking-wider">{post.time}</span>
+                  </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </section>
