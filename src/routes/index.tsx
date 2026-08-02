@@ -120,8 +120,8 @@ function Index() {
 
         {/* News Grid */}
         <section className="mb-16">
-          <div className="flex items-center justify-between mb-8 border-b-2 border-primary pb-2">
-            <h3 className="text-2xl font-black uppercase tracking-tighter italic">Últimas Notícias</h3>
+          <div className="flex items-center justify-between mb-10 pb-4 border-b border-border">
+            <h3 className="text-3xl font-black uppercase tracking-tighter italic text-brand-black">Últimas Notícias</h3>
             <a href="#" className="text-sm font-bold text-primary hover:underline flex items-center gap-1">
               VER TODAS <ChevronRight size={18} />
             </a>
