@@ -13,9 +13,9 @@ function Index() {
   return (
     <div className="min-h-screen bg-background font-sans">
       {/* Header Area */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl transition-all duration-300">
         <div className="container mx-auto px-6">
-          <div className="flex h-20 items-center justify-between gap-4">
+          <div className="flex h-24 items-center justify-between gap-8">
             <div className="flex items-center gap-6">
               <button className="lg:hidden text-foreground hover:text-primary transition-colors">
                 <Menu size={28} />
