@@ -102,9 +102,9 @@ function Index() {
             <p className="text-lg text-muted-foreground mb-4 line-clamp-3">
               O projeto prevê a geração de mais de 5 mil postos de trabalho diretos na região e um investimento bilionário que deve impulsionar o PIB do Pará nos próximos anos. Confira os detalhes do plano estratégico.
             </p>
-            <div className="flex items-center gap-4 text-sm font-bold text-brand-black/60">
-              <span className="flex items-center gap-1"><MapPin size={16} className="text-primary" /> Parauapebas, PA</span>
-              <span>•</span>
+            <div className="flex items-center gap-6 text-[10px] font-black text-brand-black/40 uppercase tracking-[0.2em] mb-4">
+              <span className="flex items-center gap-1.5"><MapPin size={16} className="text-primary" /> Parauapebas, PA</span>
+              <span className="w-1 h-1 rounded-full bg-primary/30" />
               <span>HÁ 2 HORAS</span>
             </div>
           </div>
