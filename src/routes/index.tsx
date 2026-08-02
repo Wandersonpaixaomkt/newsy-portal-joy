@@ -36,9 +36,10 @@ function Index() {
               <button className="text-foreground hover:text-primary transition-colors">
                 <Search size={24} />
               </button>
-              <button className="hidden md:flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-full font-bold text-sm transition-transform hover:scale-105 active:scale-95">
+              <button className="hidden md:flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-full font-black text-sm transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/20">
                 ASSINE JÁ
               </button>
+
             </div>
           </div>
         </div>
@@ -81,9 +82,10 @@ function Index() {
                 </span>
               </div>
             </div>
-            <h2 className="text-3xl md:text-5xl font-black mb-4 leading-[1.1] text-brand-black group-hover:text-primary transition-colors">
+            <h2 className="text-3xl md:text-5xl font-black mb-4 leading-[1.05] text-brand-black group-hover:text-primary transition-colors tracking-tighter">
               Vale anuncia expansão histórica em Carajás com foco em sustentabilidade e novos empregos.
             </h2>
+
             <p className="text-lg text-muted-foreground mb-4 line-clamp-3">
               O projeto prevê a geração de mais de 5 mil postos de trabalho diretos na região e um investimento bilionário que deve impulsionar o PIB do Pará nos próximos anos. Confira os detalhes do plano estratégico.
             </p>
@@ -150,9 +152,10 @@ function Index() {
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                   <div className="absolute top-3 left-3">
-                    <span className="bg-primary text-primary-foreground px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider shadow-md">
+                    <span className="bg-primary text-primary-foreground px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest shadow-lg">
                       {post.cat}
                     </span>
+
                   </div>
                 </div>
                 <h4 className="text-xl font-bold mb-3 leading-tight group-hover:text-primary transition-colors">
@@ -210,10 +213,11 @@ function Index() {
               </ul>
             </div>
           </div>
-          <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-bold text-white/40 uppercase tracking-widest">
+          <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">
             <p>© 2026 Orange News Carajás. Todos os direitos reservados.</p>
-            <p>A notícia em movimento.</p>
+            <p className="text-primary/80">A região em pauta. A notícia em movimento.</p>
           </div>
+
         </div>
       </footer>
     </div>
