@@ -126,21 +126,21 @@ function Index() {
           </div>
 
           {/* Secondary Headlines Grid */}
-          <div className="lg:col-span-4 grid grid-cols-1 gap-8">
+          <div className="lg:col-span-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6 md:gap-8">
             {secondaryNews.slice(0, 2).map((post, idx) => (
-                <div key={idx} className="group cursor-pointer border-b border-border pb-6 last:border-0">
-                    <div className="aspect-[16/9] overflow-hidden rounded-xl mb-4 relative">
-                        <img src={post.img} alt={post.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                <div key={idx} className="group cursor-pointer border-b border-border/50 lg:border-border pb-6 last:border-0 sm:border-b-0 lg:border-b">
+                    <div className="aspect-[16/9] overflow-hidden rounded-xl mb-4 relative shadow-md">
+                        <img src={post.img} alt={post.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                         <div className="absolute top-3 left-3">
-                            <span className="bg-brand-black text-white px-2 py-1 rounded text-[8px] font-black uppercase tracking-widest">{post.cat}</span>
+                            <span className="bg-brand-black/80 backdrop-blur-sm text-white px-2 py-1 rounded text-[8px] font-black uppercase tracking-widest">{post.cat}</span>
                         </div>
                     </div>
-                    <div className="flex items-center gap-2 text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-2">
+                    <div className="flex items-center gap-2 text-[8px] font-black text-muted-foreground/60 uppercase tracking-widest mb-2">
                         <span>{post.location}</span>
-                        <span>•</span>
+                        <span className="text-primary">•</span>
                         <span>{post.time}</span>
                     </div>
-                    <h3 className="text-lg font-bold leading-tight group-hover:text-primary transition-colors">
+                    <h3 className="text-base md:text-lg font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2 md:line-clamp-none">
                         {post.title}
                     </h3>
                 </div>
@@ -157,20 +157,20 @@ function Index() {
                 {/* Another Category Block */}
                 <section>
                     <div className="flex items-center justify-between mb-8 pb-4 border-b-2 border-brand-black">
-                        <h3 className="text-2xl font-black uppercase tracking-tighter italic text-brand-black">Política & Mineração</h3>
+                        <h3 className="text-xl md:text-2xl font-black uppercase tracking-tighter italic text-brand-black">Política & Mineração</h3>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
                         {secondaryNews.map((post, idx) => (
-                            <div key={idx} className="flex gap-4 group cursor-pointer border-r border-border last:border-0 pr-4">
-                                <div className="w-32 h-24 shrink-0 rounded-lg overflow-hidden">
-                                    <img src={post.img} alt={post.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
+                            <div key={idx} className="flex gap-4 group cursor-pointer p-4 rounded-xl hover:bg-muted/50 transition-all border border-transparent hover:border-border/50">
+                                <div className="w-24 md:w-32 h-20 md:h-24 shrink-0 rounded-lg overflow-hidden shadow-sm">
+                                    <img src={post.img} alt={post.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                                 </div>
-                                <div>
-                                    <span className="text-[9px] font-black text-primary uppercase tracking-widest">{post.cat}</span>
-                                    <h4 className="text-sm font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2">
+                                <div className="flex flex-col justify-center">
+                                    <span className="text-[9px] font-black text-primary uppercase tracking-widest mb-1">{post.cat}</span>
+                                    <h4 className="text-xs md:text-sm font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2 uppercase">
                                         {post.title}
                                     </h4>
-                                    <span className="text-[8px] font-black text-muted-foreground uppercase mt-2 block">{post.time}</span>
+                                    <span className="text-[8px] font-black text-muted-foreground/60 uppercase mt-2 block">{post.time}</span>
                                 </div>
                             </div>
                         ))}
