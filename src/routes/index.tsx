@@ -97,7 +97,7 @@ function Index() {
           </div>
 
           <div className="lg:col-span-4 flex flex-col gap-8">
-            <div className="bg-muted/30 p-6 rounded-2xl border border-border">
+            <div className="bg-card p-8 rounded-3xl border border-border shadow-sm">
               <h3 className="flex items-center gap-2 text-xl font-black mb-6 uppercase tracking-tight">
                 <TrendingUp size={24} className="text-primary" /> Mais Lidas
               </h3>
