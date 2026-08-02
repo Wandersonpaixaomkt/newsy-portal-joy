@@ -1,4 +1,4 @@
-import { Search, Instagram, Facebook, Twitter, Youtube, Mail } from "lucide-react";
+import { Search, Mail } from "lucide-react";
 import { motion } from "framer-motion";
 
 export function Sidebar() {
@@ -20,10 +20,10 @@ export function Sidebar() {
             <span className="w-1.5 h-1.5 bg-primary rounded-full" /> Siga-nos
         </h4>
         <div className="grid grid-cols-4 gap-2">
-            <a href="#" className="aspect-square bg-gray-50 rounded-xl flex items-center justify-center hover:bg-primary hover:text-white transition-all"><Instagram size={20} /></a>
-            <a href="#" className="aspect-square bg-gray-50 rounded-xl flex items-center justify-center hover:bg-primary hover:text-white transition-all"><Facebook size={20} /></a>
-            <a href="#" className="aspect-square bg-gray-50 rounded-xl flex items-center justify-center hover:bg-primary hover:text-white transition-all"><Twitter size={20} /></a>
-            <a href="#" className="aspect-square bg-gray-50 rounded-xl flex items-center justify-center hover:bg-primary hover:text-white transition-all"><Youtube size={20} /></a>
+            <a href="#" className="aspect-square bg-gray-50 rounded-xl flex items-center justify-center hover:bg-primary hover:text-white transition-all text-[10px] font-black uppercase">IG</a>
+            <a href="#" className="aspect-square bg-gray-50 rounded-xl flex items-center justify-center hover:bg-primary hover:text-white transition-all text-[10px] font-black uppercase">FB</a>
+            <a href="#" className="aspect-square bg-gray-50 rounded-xl flex items-center justify-center hover:bg-primary hover:text-white transition-all text-[10px] font-black uppercase">TW</a>
+            <a href="#" className="aspect-square bg-gray-50 rounded-xl flex items-center justify-center hover:bg-primary hover:text-white transition-all text-[10px] font-black uppercase">YT</a>
         </div>
       </div>
 
