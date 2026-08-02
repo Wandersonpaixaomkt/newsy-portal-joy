@@ -110,21 +110,29 @@ function Index() {
           </div>
 
           <div className="lg:col-span-4 flex flex-col gap-8">
-            <div className="bg-card p-8 rounded-3xl border border-border shadow-sm">
-              <h3 className="flex items-center gap-2 text-xl font-black mb-6 uppercase tracking-tight">
-                <TrendingUp size={24} className="text-primary" /> Mais Lidas
+            <div className="bg-card p-10 rounded-[2.5rem] border border-border shadow-2xl shadow-brand-black/5 flex-1 flex flex-col">
+              <h3 className="flex items-center gap-3 text-2xl font-black mb-10 uppercase tracking-tighter italic">
+                <TrendingUp size={28} className="text-primary" /> Mais Lidas
               </h3>
-              <div className="flex flex-col gap-6">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="flex gap-4 group cursor-pointer">
-                    <span className="text-4xl font-black text-primary/30 group-hover:text-primary transition-colors">0{i}</span>
-                    <div>
-                      <h4 className="font-bold leading-tight mb-2 group-hover:text-primary transition-colors">
-                        Prefeitura de Canaã abre inscrições para concurso público com salários de até R$ 12 mil.
+              <div className="flex flex-col gap-10">
+                {[
+                  { title: "Prefeitura de Canaã abre inscrições para concurso com salários de R$ 12 mil.", cat: "EDUCAÇÃO" },
+                  { title: "Novo shopping em Parauapebas deve gerar 2 mil vagas de emprego imediato.", cat: "ECONOMIA" },
+                  { title: "Segurança pública: região registra queda de 30% em índices de criminalidade.", cat: "CIDADES" }
+                ].map((item, i) => (
+                  <motion.div 
+                    key={i} 
+                    whileHover={{ x: 10 }}
+                    className="flex gap-6 group cursor-pointer"
+                  >
+                    <span className="text-5xl font-black text-primary/10 group-hover:text-primary/30 transition-colors leading-none">0{i+1}</span>
+                    <div className="flex flex-col gap-2">
+                      <h4 className="font-bold text-lg leading-tight group-hover:text-primary transition-colors">
+                        {item.title}
                       </h4>
-                      <span className="text-xs font-bold text-muted-foreground uppercase">EDUCAÇÃO</span>
+                      <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{item.cat}</span>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </div>
