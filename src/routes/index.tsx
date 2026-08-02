@@ -36,7 +36,7 @@ function Index() {
               <button className="text-foreground hover:text-primary transition-colors">
                 <Search size={24} />
               </button>
-              <button className="hidden md:flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-full font-black text-sm transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/20">
+              <button className="hidden md:flex items-center gap-2 bg-primary text-primary-foreground px-6 py-2.5 rounded-full font-black text-xs transition-all hover:bg-primary/90 hover:scale-105 active:scale-95 shadow-lg shadow-primary/20 cursor-pointer">
                 ASSINE JÁ
               </button>
 
