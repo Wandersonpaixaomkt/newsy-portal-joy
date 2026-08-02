@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 export function Sidebar() {
   return (
-    <aside className="flex flex-col gap-10">
+    <aside className="flex flex-col gap-8 md:gap-10">
       <div className="bg-white p-6 rounded-2xl border border-border shadow-sm">
         <h4 className="font-black text-sm uppercase tracking-widest mb-4 flex items-center gap-2">
             <span className="w-1.5 h-1.5 bg-primary rounded-full" /> Newsletter
@@ -42,9 +42,9 @@ export function Sidebar() {
         </h4>
         <div className="flex flex-col gap-6">
             {[1, 2, 3, 4, 5].map(i => (
-                <div key={i} className="flex gap-4 group cursor-pointer">
-                    <span className="text-3xl font-black text-gray-100 group-hover:text-primary/20 transition-colors">0{i}</span>
-                    <p className="text-sm font-bold leading-tight group-hover:text-primary transition-colors">
+                <div key={i} className="flex gap-4 group cursor-pointer border-b border-border/50 pb-4 last:border-0 last:pb-0">
+                    <span className="text-3xl font-black text-primary/10 group-hover:text-primary/30 transition-colors leading-none">0{i}</span>
+                    <p className="text-sm font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2 uppercase italic">
                         Vale anuncia novos investimentos para o projeto S11D em Canaã.
                     </p>
                 </div>

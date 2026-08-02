@@ -13,10 +13,10 @@ export function NewsGrid({ title, items }: { title?: string, items: NewsItem[] }
   return (
     <section>
       {title && (
-        <div className="flex items-center justify-between mb-8 pb-4 border-b border-border">
-          <h3 className="text-2xl font-black uppercase tracking-tighter italic text-brand-black">{title}</h3>
-          <a href="#" className="text-xs font-black text-primary hover:underline flex items-center gap-1 uppercase tracking-widest">
-            Ver Tudo <ChevronRight size={16} />
+        <div className="flex items-center justify-between mb-6 md:mb-10 pb-4 border-b border-border">
+          <h3 className="text-xl md:text-3xl font-black uppercase tracking-tighter italic text-brand-black">{title}</h3>
+          <a href="#" className="text-[10px] font-black text-primary hover:text-brand-black transition-colors flex items-center gap-1 uppercase tracking-widest group">
+            Ver Tudo <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
           </a>
         </div>
       )}
