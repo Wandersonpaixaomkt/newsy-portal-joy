@@ -86,11 +86,11 @@ function Index() {
                 alt="Manchete Principal" 
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
-              <div className="absolute top-4 left-4 flex gap-2">
-                <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest shadow-lg">
+              <div className="absolute top-6 left-6 flex gap-3">
+                <span className="bg-primary text-primary-foreground px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/20">
                   URGENTE
                 </span>
-                <span className="bg-brand-black/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-white/20">
+                <span className="bg-brand-black/40 backdrop-blur-md text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border border-white/10">
                   ECONOMIA
                 </span>
               </div>
