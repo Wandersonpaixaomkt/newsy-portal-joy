@@ -122,7 +122,7 @@ function Index() {
               </div>
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* News Grid */}
         <section className="mb-16">
