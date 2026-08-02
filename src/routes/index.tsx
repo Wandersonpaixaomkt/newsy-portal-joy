@@ -13,7 +13,7 @@ function Index() {
     <div className="min-h-screen bg-background font-sans">
       {/* Header Area */}
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-6">
           <div className="flex h-20 items-center justify-between gap-4">
             <div className="flex items-center gap-6">
               <button className="lg:hidden text-foreground hover:text-primary transition-colors">
@@ -45,7 +45,7 @@ function Index() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-6 py-10">
         {/* Urgent Alert Banner */}
         <div className="mb-10 bg-brand-black text-white p-4 rounded-lg flex items-center justify-between gap-4 overflow-hidden border-l-4 border-primary">
           <div className="flex items-center gap-3 shrink-0">
@@ -174,7 +174,7 @@ function Index() {
 
       {/* Footer */}
       <footer className="bg-brand-black text-white pt-16 pb-8">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
             <div className="md:col-span-2">
               <img 
