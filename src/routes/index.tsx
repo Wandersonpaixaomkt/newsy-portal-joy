@@ -48,22 +48,26 @@ function Index() {
 
       <main className="container mx-auto px-6 py-10">
         {/* Urgent Alert Banner */}
-        <div className="mb-10 bg-brand-black text-white p-4 rounded-lg flex items-center justify-between gap-4 overflow-hidden border-l-4 border-primary">
-          <div className="flex items-center gap-3 shrink-0">
-            <span className="bg-primary text-primary-foreground px-2 py-0.5 rounded text-xs font-black uppercase flex items-center gap-1 animate-pulse">
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="mb-12 bg-brand-black text-white p-5 rounded-2xl flex items-center justify-between gap-6 overflow-hidden border-l-8 border-primary shadow-xl shadow-brand-black/10"
+        >
+          <div className="flex items-center gap-4 shrink-0">
+            <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-[10px] font-black uppercase flex items-center gap-1.5 animate-pulse tracking-widest">
               <Radio size={14} /> Ao Vivo
             </span>
-            <span className="font-bold text-sm md:text-base uppercase tracking-tight">Plantão Orange News:</span>
+            <span className="font-black text-sm md:text-base uppercase tracking-widest text-primary/90">Plantão:</span>
           </div>
           <div className="flex-1 overflow-hidden whitespace-nowrap">
-            <p className="text-sm md:text-base font-medium opacity-90 truncate italic">
-              Novas investimentos na infraestrutura regional prometem transformar o eixo Carajás até 2027.
+            <p className="text-sm md:text-lg font-bold truncate italic tracking-tight">
+              Vale anuncia expansão histórica em Carajás com foco em sustentabilidade.
             </p>
           </div>
-          <button className="shrink-0 text-primary hover:underline font-bold text-sm flex items-center gap-1">
-            VER MAIS <ChevronRight size={16} />
+          <button className="shrink-0 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl transition-all font-black text-xs flex items-center gap-2 uppercase tracking-widest cursor-pointer group">
+            ASSISTIR <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
           </button>
-        </div>
+        </motion.div>
 
         {/* Hero Section */}
         <motion.section 
