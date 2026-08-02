@@ -200,51 +200,56 @@ function Index() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-brand-black text-white pt-16 pb-8">
+      <footer className="bg-brand-black text-white pt-24 pb-12 border-t border-white/5">
         <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-            <div className="md:col-span-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-20">
+            <div className="lg:col-span-2">
               <img 
                 src={logoAsset.url} 
                 alt="Orange News" 
-                className="h-10 w-auto mb-6 brightness-0 invert"
+                className="h-12 w-auto mb-8 brightness-0 invert"
               />
-              <p className="text-white/60 max-w-sm mb-6 font-medium leading-relaxed">
-                Orange News Carajás: O seu portal definitivo de notícias sobre o Sudeste do Pará. Informação com credibilidade, agilidade e compromisso regional.
+              <p className="text-white/50 max-w-md mb-10 font-medium leading-loose text-lg">
+                Orange News Carajás: A voz definitiva do Sudeste do Pará. Levando informação de qualidade, com a força e a agilidade que a nossa região merece.
               </p>
-              <div className="flex gap-4">
-                {/* Social icons placeholders */}
+              <div className="flex gap-6">
                 {[1,2,3,4].map(i => (
-                  <div key={i} className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition-colors cursor-pointer border border-white/5">
-                    <span className="text-xs font-bold">IN</span>
-                  </div>
+                  <motion.div 
+                    key={i} 
+                    whileHover={{ y: -5, backgroundColor: 'var(--color-primary)' }}
+                    className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center transition-all cursor-pointer border border-white/10 group"
+                  >
+                    <span className="text-xs font-black group-hover:text-primary-foreground">FB</span>
+                  </motion.div>
                 ))}
               </div>
             </div>
             <div>
-              <h5 className="font-black mb-6 uppercase tracking-widest text-primary text-sm">Editorias</h5>
-              <ul className="flex flex-col gap-4 text-white/60 font-bold text-sm">
-                <li><a href="#" className="hover:text-white transition-colors">Política</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Economia</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Cidades</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Segurança</a></li>
+              <h5 className="font-black mb-8 uppercase tracking-[0.2em] text-primary text-xs">Editorias</h5>
+              <ul className="flex flex-col gap-5 text-white/40 font-bold text-sm">
+                <li><a href="#" className="hover:text-white hover:translate-x-2 transition-all inline-block">Política</a></li>
+                <li><a href="#" className="hover:text-white hover:translate-x-2 transition-all inline-block">Economia</a></li>
+                <li><a href="#" className="hover:text-white hover:translate-x-2 transition-all inline-block">Cidades</a></li>
+                <li><a href="#" className="hover:text-white hover:translate-x-2 transition-all inline-block">Segurança</a></li>
               </ul>
             </div>
             <div>
-              <h5 className="font-black mb-6 uppercase tracking-widest text-primary text-sm">Institucional</h5>
-              <ul className="flex flex-col gap-4 text-white/60 font-bold text-sm">
-                <li><a href="#" className="hover:text-white transition-colors">Quem Somos</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Anuncie</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contato</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Privacidade</a></li>
+              <h5 className="font-black mb-8 uppercase tracking-[0.2em] text-primary text-xs">Institucional</h5>
+              <ul className="flex flex-col gap-5 text-white/40 font-bold text-sm">
+                <li><a href="#" className="hover:text-white hover:translate-x-2 transition-all inline-block">Quem Somos</a></li>
+                <li><a href="#" className="hover:text-white hover:translate-x-2 transition-all inline-block">Anuncie</a></li>
+                <li><a href="#" className="hover:text-white hover:translate-x-2 transition-all inline-block">Contato</a></li>
+                <li><a href="#" className="hover:text-white hover:translate-x-2 transition-all inline-block">Privacidade</a></li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">
-            <p>© 2026 Orange News Carajás. Todos os direitos reservados.</p>
-            <p className="text-primary/80">A região em pauta. A notícia em movimento.</p>
+          <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">
+            <p>© 2026 Orange News Carajás. Desenvolvido com excelência regional.</p>
+            <div className="flex gap-8">
+              <p className="text-primary/60">A notícia em movimento.</p>
+              <p>Parauapebas • PA</p>
+            </div>
           </div>
-
         </div>
       </footer>
     </div>
