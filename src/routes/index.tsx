@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import logoAsset from "@/assets/logo.png.asset.json";
-import { Newspaper, TrendingUp, Radio, MapPin, ChevronRight, Search, Menu } from "lucide-react";
+import { Newspaper, TrendingUp, Radio, MapPin, ChevronRight, Search, Menu, ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -65,7 +66,12 @@ function Index() {
         </div>
 
         {/* Hero Section */}
-        <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16">
+        <motion.section 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="grid grid-cols-1 lg:grid-cols-12 gap-10 mb-20"
+        >
           <div className="lg:col-span-8 group cursor-pointer">
             <div className="relative aspect-[16/9] overflow-hidden rounded-2xl mb-6">
               <img 
