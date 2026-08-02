@@ -90,8 +90,8 @@
 }
 
 :root {
-  --radius: 0.5rem;
-  --background: oklch(1 0 0);
+  --radius: 1rem;
+  --background: oklch(0.99 0.005 264);
   --foreground: oklch(0.129 0.042 264.695);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.129 0.042 264.695);
@@ -99,16 +99,16 @@
   --popover-foreground: oklch(0.129 0.042 264.695);
   --primary: oklch(0.707 0.17 48.78);
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.968 0.007 247.896);
+  --secondary: oklch(0.96 0.01 264);
   --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.98 0.01 264);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
+  --muted: oklch(0.96 0.01 264);
+  --muted-foreground: oklch(0.4 0.02 264);
+  --accent: oklch(0.96 0.01 264);
   --accent-foreground: oklch(0.208 0.042 265.755);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
+  --border: oklch(0.9 0.01 264);
+  --input: oklch(0.9 0.01 264);
   --ring: oklch(0.707 0.17 48.78);
 }
 
@@ -137,16 +137,30 @@
 @layer base {
   * {
     border-color: var(--color-border);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
   }
 
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   
   h1, h2, h3, h4, h5, h6 {
     font-weight: 800;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .shadow-premium {
+    shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   }
 }

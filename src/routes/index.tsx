@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import logoAsset from "@/assets/logo.png.asset.json";
-import { Newspaper, TrendingUp, Radio, MapPin, ChevronRight, Search, Menu } from "lucide-react";
+import { Newspaper, TrendingUp, Radio, MapPin, ChevronRight, Search, Menu, ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -12,9 +13,9 @@ function Index() {
   return (
     <div className="min-h-screen bg-background font-sans">
       {/* Header Area */}
-      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4">
-          <div className="flex h-20 items-center justify-between gap-4">
+      <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl transition-all duration-300">
+        <div className="container mx-auto px-6">
+          <div className="flex h-24 items-center justify-between gap-8">
             <div className="flex items-center gap-6">
               <button className="lg:hidden text-foreground hover:text-primary transition-colors">
                 <Menu size={28} />
@@ -26,9 +27,12 @@ function Index() {
               />
             </div>
             
-            <nav className="hidden lg:flex items-center gap-8 text-sm font-semibold text-brand-black uppercase tracking-wider">
+            <nav className="hidden lg:flex items-center gap-8 text-[11px] font-black text-brand-black/70 uppercase tracking-[0.2em]">
               {categories.map(cat => (
-                <a key={cat} href="#" className="hover:text-primary transition-colors">{cat}</a>
+                <a key={cat} href="#" className="hover:text-primary transition-all relative group py-2">
+                  {cat}
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
+                </a>
               ))}
             </nav>
 
@@ -36,7 +40,7 @@ function Index() {
               <button className="text-foreground hover:text-primary transition-colors">
                 <Search size={24} />
               </button>
-              <button className="hidden md:flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-full font-black text-sm transition-all hover:scale-105 active:scale-95 shadow-lg shadow-primary/20">
+              <button className="hidden md:flex items-center gap-2 bg-primary text-primary-foreground px-6 py-2.5 rounded-full font-black text-xs transition-all hover:bg-primary/90 hover:scale-105 active:scale-95 shadow-lg shadow-primary/20 cursor-pointer">
                 ASSINE JÁ
               </button>
 
@@ -45,27 +49,36 @@ function Index() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-6 py-10">
         {/* Urgent Alert Banner */}
-        <div className="mb-10 bg-brand-black text-white p-4 rounded-lg flex items-center justify-between gap-4 overflow-hidden border-l-4 border-primary">
-          <div className="flex items-center gap-3 shrink-0">
-            <span className="bg-primary text-primary-foreground px-2 py-0.5 rounded text-xs font-black uppercase flex items-center gap-1 animate-pulse">
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="mb-12 bg-brand-black text-white p-5 rounded-2xl flex items-center justify-between gap-6 overflow-hidden border-l-8 border-primary shadow-xl shadow-brand-black/10"
+        >
+          <div className="flex items-center gap-4 shrink-0">
+            <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-[10px] font-black uppercase flex items-center gap-1.5 animate-pulse tracking-widest">
               <Radio size={14} /> Ao Vivo
             </span>
-            <span className="font-bold text-sm md:text-base uppercase tracking-tight">Plantão Orange News:</span>
+            <span className="font-black text-sm md:text-base uppercase tracking-widest text-primary/90">Plantão:</span>
           </div>
           <div className="flex-1 overflow-hidden whitespace-nowrap">
-            <p className="text-sm md:text-base font-medium opacity-90 truncate italic">
-              Novas investimentos na infraestrutura regional prometem transformar o eixo Carajás até 2027.
+            <p className="text-sm md:text-lg font-bold truncate italic tracking-tight">
+              Vale anuncia expansão histórica em Carajás com foco em sustentabilidade.
             </p>
           </div>
-          <button className="shrink-0 text-primary hover:underline font-bold text-sm flex items-center gap-1">
-            VER MAIS <ChevronRight size={16} />
+          <button className="shrink-0 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-xl transition-all font-black text-xs flex items-center gap-2 uppercase tracking-widest cursor-pointer group">
+            ASSISTIR <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
           </button>
-        </div>
+        </motion.div>
 
         {/* Hero Section */}
-        <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16">
+        <motion.section 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="grid grid-cols-1 lg:grid-cols-12 gap-10 mb-20"
+        >
           <div className="lg:col-span-8 group cursor-pointer">
             <div className="relative aspect-[16/9] overflow-hidden rounded-2xl mb-6">
               <img 
@@ -73,11 +86,11 @@ function Index() {
                 alt="Manchete Principal" 
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
-              <div className="absolute top-4 left-4 flex gap-2">
-                <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest shadow-lg">
+              <div className="absolute top-6 left-6 flex gap-3">
+                <span className="bg-primary text-primary-foreground px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/20">
                   URGENTE
                 </span>
-                <span className="bg-brand-black/80 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest border border-white/20">
+                <span className="bg-brand-black/40 backdrop-blur-md text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border border-white/10">
                   ECONOMIA
                 </span>
               </div>
@@ -89,135 +102,162 @@ function Index() {
             <p className="text-lg text-muted-foreground mb-4 line-clamp-3">
               O projeto prevê a geração de mais de 5 mil postos de trabalho diretos na região e um investimento bilionário que deve impulsionar o PIB do Pará nos próximos anos. Confira os detalhes do plano estratégico.
             </p>
-            <div className="flex items-center gap-4 text-sm font-bold text-brand-black/60">
-              <span className="flex items-center gap-1"><MapPin size={16} className="text-primary" /> Parauapebas, PA</span>
-              <span>•</span>
+            <div className="flex items-center gap-6 text-[10px] font-black text-brand-black/40 uppercase tracking-[0.2em] mb-4">
+              <span className="flex items-center gap-1.5"><MapPin size={16} className="text-primary" /> Parauapebas, PA</span>
+              <span className="w-1 h-1 rounded-full bg-primary/30" />
               <span>HÁ 2 HORAS</span>
             </div>
           </div>
 
           <div className="lg:col-span-4 flex flex-col gap-8">
-            <div className="bg-muted/30 p-6 rounded-2xl border border-border">
-              <h3 className="flex items-center gap-2 text-xl font-black mb-6 uppercase tracking-tight">
-                <TrendingUp size={24} className="text-primary" /> Mais Lidas
+            <div className="bg-card p-10 rounded-[2.5rem] border border-border shadow-2xl shadow-brand-black/5 flex-1 flex flex-col">
+              <h3 className="flex items-center gap-3 text-2xl font-black mb-10 uppercase tracking-tighter italic">
+                <TrendingUp size={28} className="text-primary" /> Mais Lidas
               </h3>
-              <div className="flex flex-col gap-6">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="flex gap-4 group cursor-pointer">
-                    <span className="text-4xl font-black text-primary/30 group-hover:text-primary transition-colors">0{i}</span>
-                    <div>
-                      <h4 className="font-bold leading-tight mb-2 group-hover:text-primary transition-colors">
-                        Prefeitura de Canaã abre inscrições para concurso público com salários de até R$ 12 mil.
+              <div className="flex flex-col gap-10">
+                {[
+                  { title: "Prefeitura de Canaã abre inscrições para concurso com salários de R$ 12 mil.", cat: "EDUCAÇÃO" },
+                  { title: "Novo shopping em Parauapebas deve gerar 2 mil vagas de emprego imediato.", cat: "ECONOMIA" },
+                  { title: "Segurança pública: região registra queda de 30% em índices de criminalidade.", cat: "CIDADES" }
+                ].map((item, i) => (
+                  <motion.div 
+                    key={i} 
+                    whileHover={{ x: 10 }}
+                    className="flex gap-6 group cursor-pointer"
+                  >
+                    <span className="text-5xl font-black text-primary/10 group-hover:text-primary/30 transition-colors leading-none">0{i+1}</span>
+                    <div className="flex flex-col gap-2">
+                      <h4 className="font-bold text-lg leading-tight group-hover:text-primary transition-colors">
+                        {item.title}
                       </h4>
-                      <span className="text-xs font-bold text-muted-foreground uppercase">EDUCAÇÃO</span>
+                      <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{item.cat}</span>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* News Grid */}
         <section className="mb-16">
-          <div className="flex items-center justify-between mb-8 border-b-2 border-primary pb-2">
-            <h3 className="text-2xl font-black uppercase tracking-tighter italic">Últimas Notícias</h3>
+          <div className="flex items-center justify-between mb-10 pb-4 border-b border-border">
+            <h3 className="text-3xl font-black uppercase tracking-tighter italic text-brand-black">Últimas Notícias</h3>
             <a href="#" className="text-sm font-bold text-primary hover:underline flex items-center gap-1">
               VER TODAS <ChevronRight size={18} />
             </a>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             {[
               {
                 title: "Obras no novo aeroporto regional avançam e entrega é antecipada.",
                 cat: "INFRAESTRUTURA",
-                img: "https://images.unsplash.com/photo-1436491865332-7a61a109c0f3?q=80&w=2070&auto=format&fit=crop"
+                img: "https://images.unsplash.com/photo-1436491865332-7a61a109c0f3?q=80&w=2070&auto=format&fit=crop",
+                location: "Parauapebas",
+                time: "Há 5 horas"
               },
               {
                 title: "Festival Gastronômico de Marabá espera recorde de público este ano.",
                 cat: "CULTURA",
-                img: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop"
+                img: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop",
+                location: "Marabá",
+                time: "Há 3 horas"
               },
               {
                 title: "Startups regionais ganham destaque em evento nacional de tecnologia.",
                 cat: "TECNOLOGIA",
-                img: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070&auto=format&fit=crop"
+                img: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070&auto=format&fit=crop",
+                location: "Canaã",
+                time: "Há 8 horas"
               }
             ].map((post, idx) => (
-              <div key={idx} className="group cursor-pointer">
-                <div className="aspect-video rounded-xl overflow-hidden mb-4 relative">
+              <motion.div 
+                key={idx} 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+                className="group cursor-pointer bg-card rounded-3xl overflow-hidden border border-border/50 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 flex flex-col"
+              >
+                <div className="aspect-[16/10] overflow-hidden relative">
                   <img 
                     src={post.img} 
                     alt={post.title} 
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                   />
-                  <div className="absolute top-3 left-3">
-                    <span className="bg-primary text-primary-foreground px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-widest shadow-lg">
+                  <div className="absolute top-4 left-4">
+                    <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg">
                       {post.cat}
                     </span>
-
                   </div>
                 </div>
-                <h4 className="text-xl font-bold mb-3 leading-tight group-hover:text-primary transition-colors">
-                  {post.title}
-                </h4>
-                <div className="flex items-center gap-3 text-xs font-bold text-muted-foreground">
-                  <span>CURIONÓPOLIS</span>
-                  <span>•</span>
-                  <span>HÁ 5 HORAS</span>
+                <div className="p-6 flex flex-col flex-1">
+                  <h4 className="text-xl font-bold mb-4 leading-tight group-hover:text-primary transition-colors flex-1 line-clamp-3">
+                    {post.title}
+                  </h4>
+                  <div className="flex items-center gap-3 text-xs font-bold text-muted-foreground pt-4 border-t border-border/50">
+                    <span className="flex items-center gap-1 uppercase tracking-wider"><MapPin size={14} className="text-primary/70" /> {post.location}</span>
+                    <span className="opacity-30">•</span>
+                    <span className="uppercase tracking-wider">{post.time}</span>
+                  </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </section>
       </main>
 
       {/* Footer */}
-      <footer className="bg-brand-black text-white pt-16 pb-8">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-            <div className="md:col-span-2">
+      <footer className="bg-brand-black text-white pt-24 pb-12 border-t border-white/5">
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-20">
+            <div className="lg:col-span-2">
               <img 
                 src={logoAsset.url} 
                 alt="Orange News" 
-                className="h-10 w-auto mb-6 brightness-0 invert"
+                className="h-12 w-auto mb-8 brightness-0 invert"
               />
-              <p className="text-white/60 max-w-sm mb-6 font-medium leading-relaxed">
-                Orange News Carajás: O seu portal definitivo de notícias sobre o Sudeste do Pará. Informação com credibilidade, agilidade e compromisso regional.
+              <p className="text-white/50 max-w-md mb-10 font-medium leading-loose text-lg">
+                Orange News Carajás: A voz definitiva do Sudeste do Pará. Levando informação de qualidade, com a força e a agilidade que a nossa região merece.
               </p>
-              <div className="flex gap-4">
-                {/* Social icons placeholders */}
+              <div className="flex gap-6">
                 {[1,2,3,4].map(i => (
-                  <div key={i} className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-primary transition-colors cursor-pointer border border-white/5">
-                    <span className="text-xs font-bold">IN</span>
-                  </div>
+                  <motion.div 
+                    key={i} 
+                    whileHover={{ y: -5, backgroundColor: 'var(--color-primary)' }}
+                    className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center transition-all cursor-pointer border border-white/10 group"
+                  >
+                    <span className="text-xs font-black group-hover:text-primary-foreground">FB</span>
+                  </motion.div>
                 ))}
               </div>
             </div>
             <div>
-              <h5 className="font-black mb-6 uppercase tracking-widest text-primary text-sm">Editorias</h5>
-              <ul className="flex flex-col gap-4 text-white/60 font-bold text-sm">
-                <li><a href="#" className="hover:text-white transition-colors">Política</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Economia</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Cidades</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Segurança</a></li>
+              <h5 className="font-black mb-8 uppercase tracking-[0.2em] text-primary text-xs">Editorias</h5>
+              <ul className="flex flex-col gap-5 text-white/40 font-bold text-sm">
+                <li><a href="#" className="hover:text-white hover:translate-x-2 transition-all inline-block">Política</a></li>
+                <li><a href="#" className="hover:text-white hover:translate-x-2 transition-all inline-block">Economia</a></li>
+                <li><a href="#" className="hover:text-white hover:translate-x-2 transition-all inline-block">Cidades</a></li>
+                <li><a href="#" className="hover:text-white hover:translate-x-2 transition-all inline-block">Segurança</a></li>
               </ul>
             </div>
             <div>
-              <h5 className="font-black mb-6 uppercase tracking-widest text-primary text-sm">Institucional</h5>
-              <ul className="flex flex-col gap-4 text-white/60 font-bold text-sm">
-                <li><a href="#" className="hover:text-white transition-colors">Quem Somos</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Anuncie</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contato</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Privacidade</a></li>
+              <h5 className="font-black mb-8 uppercase tracking-[0.2em] text-primary text-xs">Institucional</h5>
+              <ul className="flex flex-col gap-5 text-white/40 font-bold text-sm">
+                <li><a href="#" className="hover:text-white hover:translate-x-2 transition-all inline-block">Quem Somos</a></li>
+                <li><a href="#" className="hover:text-white hover:translate-x-2 transition-all inline-block">Anuncie</a></li>
+                <li><a href="#" className="hover:text-white hover:translate-x-2 transition-all inline-block">Contato</a></li>
+                <li><a href="#" className="hover:text-white hover:translate-x-2 transition-all inline-block">Privacidade</a></li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">
-            <p>© 2026 Orange News Carajás. Todos os direitos reservados.</p>
-            <p className="text-primary/80">A região em pauta. A notícia em movimento.</p>
+          <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-black text-white/20 uppercase tracking-[0.3em]">
+            <p>© 2026 Orange News Carajás. Desenvolvido com excelência regional.</p>
+            <div className="flex gap-8">
+              <p className="text-primary/60">A notícia em movimento.</p>
+              <p>Parauapebas • PA</p>
+            </div>
           </div>
-
         </div>
       </footer>
     </div>
