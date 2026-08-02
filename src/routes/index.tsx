@@ -27,9 +27,12 @@ function Index() {
               />
             </div>
             
-            <nav className="hidden lg:flex items-center gap-8 text-sm font-semibold text-brand-black uppercase tracking-wider">
+            <nav className="hidden lg:flex items-center gap-8 text-[11px] font-black text-brand-black/70 uppercase tracking-[0.2em]">
               {categories.map(cat => (
-                <a key={cat} href="#" className="hover:text-primary transition-colors">{cat}</a>
+                <a key={cat} href="#" className="hover:text-primary transition-all relative group py-2">
+                  {cat}
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
+                </a>
               ))}
             </nav>
 
