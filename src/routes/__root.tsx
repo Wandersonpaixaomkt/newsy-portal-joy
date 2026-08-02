@@ -77,14 +77,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Orange News Carajás | A notícia em movimento" },
+      { name: "description", content: "O seu portal definitivo de notícias sobre o Sudeste do Pará. Informação com credibilidade, agilidade e compromisso regional." },
+      { name: "author", content: "Orange News Carajás" },
+      { property: "og:title", content: "Orange News Carajás" },
+      { property: "og:description", content: "O seu portal definitivo de notícias sobre o Sudeste do Pará." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:site", content: "@OrangeNewsCarajas" },
+
     ],
     links: [
       {
