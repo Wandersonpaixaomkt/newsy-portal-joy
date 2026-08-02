@@ -72,57 +72,64 @@ function Index() {
         <motion.div 
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-10 bg-brand-black text-white p-4 rounded-xl flex items-center gap-6 overflow-hidden border-l-4 border-primary shadow-lg"
+          className="mb-8 md:mb-12 bg-brand-black text-white p-3 md:p-4 rounded-xl flex items-center gap-4 md:gap-6 overflow-hidden border-l-4 border-primary shadow-xl"
         >
-          <div className="flex items-center gap-3 shrink-0">
-            <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-[9px] font-black uppercase flex items-center gap-1.5 animate-pulse tracking-widest">
+          <div className="flex items-center gap-2 md:gap-3 shrink-0">
+            <span className="bg-primary text-primary-foreground px-2 md:px-3 py-1 rounded-full text-[8px] md:text-[9px] font-black uppercase flex items-center gap-1 md:gap-1.5 animate-pulse tracking-widest whitespace-nowrap">
               <Radio size={12} /> AO VIVO
             </span>
           </div>
-          <div className="flex-1 overflow-hidden whitespace-nowrap">
-            <p className="text-sm font-bold truncate tracking-tight uppercase italic text-primary">
+          <div className="flex-1 overflow-hidden">
+            <p className="text-xs md:text-sm font-bold truncate tracking-tight uppercase italic text-primary/90">
               Plantão: Vale anuncia expansão histórica em Carajás.
             </p>
           </div>
-          <button className="shrink-0 text-white hover:text-primary transition-colors font-black text-[10px] flex items-center gap-2 uppercase tracking-widest cursor-pointer group">
-            LER MAIS <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+          <button className="shrink-0 text-white/80 hover:text-primary transition-colors font-black text-[9px] md:text-[10px] flex items-center gap-1.5 md:gap-2 uppercase tracking-widest cursor-pointer group">
+            <span className="hidden xs:inline">LER MAIS</span> <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
           </button>
         </motion.div>
 
         {/* Hero Section - Classic Journalism Style */}
-        <section className="grid grid-cols-1 lg:grid-cols-12 gap-10 mb-20">
+        <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-10 mb-16 md:mb-24">
           {/* Main Headline */}
           <div className="lg:col-span-8 group cursor-pointer">
-            <div className="relative aspect-[16/9] overflow-hidden rounded-2xl mb-6 shadow-2xl">
+            <div className="relative aspect-[16/9] overflow-hidden rounded-2xl mb-6 shadow-2xl bg-muted">
               <img 
                 src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=2070&auto=format&fit=crop" 
                 alt="Manchete Principal" 
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
               />
-              <div className="absolute top-6 left-6 flex gap-3">
-                <span className="bg-primary text-primary-foreground px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-xl">
+              <div className="absolute top-4 md:top-6 left-4 md:left-6 flex gap-2 md:gap-3">
+                <span className="bg-primary text-primary-foreground px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] shadow-xl">
                   DESTAQUE
                 </span>
-                <span className="bg-brand-black/60 backdrop-blur-md text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em]">
+                <span className="bg-brand-black/60 backdrop-blur-md text-white px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em]">
                   ECONOMIA
                 </span>
               </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-brand-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-t from-brand-black/90 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
+              <div className="absolute bottom-0 left-0 p-4 md:p-8 lg:hidden">
+                 <h1 className="text-xl sm:text-3xl text-white font-black leading-tight uppercase italic line-clamp-2">
+                    Vale anuncia expansão histórica em Carajás.
+                 </h1>
+              </div>
             </div>
             
-            <div className="flex items-center gap-4 text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-4">
-              <span className="flex items-center gap-1.5"><MapPin size={14} /> PARAUAPEBAS</span>
-              <span>•</span>
-              <span className="text-muted-foreground">HÁ 2 HORAS</span>
+            <div className="hidden lg:block">
+              <div className="flex items-center gap-4 text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-4">
+                <span className="flex items-center gap-1.5"><MapPin size={14} /> PARAUAPEBAS</span>
+                <span className="text-muted-foreground/30">•</span>
+                <span className="text-muted-foreground">HÁ 2 HORAS</span>
+              </div>
+              
+              <h1 className="text-4xl md:text-5xl xl:text-6xl font-black mb-6 leading-[0.95] text-brand-black group-hover:text-primary transition-colors tracking-tighter uppercase italic">
+                Vale anuncia expansão histórica em Carajás com foco em sustentabilidade.
+              </h1>
+              
+              <p className="text-lg md:text-xl text-muted-foreground/80 mb-4 line-clamp-3 leading-relaxed font-medium">
+                O projeto estratégico prevê a geração de mais de 5 mil postos de trabalho diretos na região do sudeste paraense e um investmento bilionário que deve impulsionar o PIB estadual nos próximos anos.
+              </p>
             </div>
-            
-            <h1 className="text-4xl md:text-6xl font-black mb-6 leading-[1] text-brand-black group-hover:text-primary transition-colors tracking-tighter uppercase italic">
-              Vale anuncia expansão histórica em Carajás com foco em sustentabilidade.
-            </h1>
-            
-            <p className="text-xl text-muted-foreground mb-4 line-clamp-3 leading-relaxed font-medium">
-              O projeto estratégico prevê a geração de mais de 5 mil postos de trabalho diretos na região do sudeste paraense e um investimento bilionário que deve impulsionar o PIB estadual nos próximos anos.
-            </p>
           </div>
 
           {/* Secondary Headlines Grid */}
