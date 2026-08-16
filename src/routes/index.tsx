@@ -110,22 +110,23 @@ function Index() {
       <main className="container mx-auto px-6 py-10">
         {/* Plantão / Urgente */}
         <motion.div 
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 md:mb-12 bg-white/5 p-3 md:p-4 rounded-xl flex items-center gap-4 md:gap-6 overflow-hidden border-l-4 border-primary shadow-2xl backdrop-blur-md border border-white/5"
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="mb-8 md:mb-12 bg-white/5 p-3 md:p-4 rounded-3xl flex items-center gap-4 md:gap-6 overflow-hidden border-l-4 border-primary shadow-2xl backdrop-blur-md border border-white/10 hover:bg-white/10 transition-all duration-300 group"
         >
           <div className="flex items-center gap-2 md:gap-3 shrink-0">
-            <span className="bg-primary text-white px-2 md:px-3 py-1 rounded-full text-[8px] md:text-[9px] font-black uppercase flex items-center gap-1 md:gap-1.5 animate-pulse tracking-widest whitespace-nowrap">
-              <Radio size={12} /> AO VIVO
+            <span className="bg-primary text-white px-3 md:px-4 py-1.5 rounded-full text-[9px] md:text-[10px] font-black uppercase flex items-center gap-1.5 md:gap-2 animate-pulse tracking-widest whitespace-nowrap shadow-lg shadow-primary/20">
+              <Radio size={14} className="animate-pulse" /> AO VIVO
             </span>
           </div>
           <div className="flex-1 overflow-hidden">
-            <p className="text-xs md:text-sm font-bold truncate tracking-tight text-white/90">
+            <p className="text-sm md:text-base font-bold truncate tracking-tight text-white/90">
               Plantão: Acompanhe as últimas atualizações da região em tempo real no Norte em Foco.
             </p>
           </div>
-          <button className="shrink-0 text-white/60 hover:text-primary transition-colors font-black text-[9px] md:text-[10px] flex items-center gap-1.5 md:gap-2 uppercase tracking-widest cursor-pointer group">
-            <span className="hidden xs:inline">VER AGORA</span> <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+          <button className="shrink-0 text-white/60 hover:text-primary transition-all duration-300 font-black text-[10px] md:text-xs flex items-center gap-2 md:gap-3 uppercase tracking-widest cursor-pointer group/btn px-4 py-2 rounded-full hover:bg-white/5">
+            <span className="hidden xs:inline">VER AGORA</span> <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
           </button>
         </motion.div>
 
@@ -136,16 +137,21 @@ function Index() {
             {isLoadingFeatured || isLoadingNews ? (
               <Skeleton className="aspect-video w-full rounded-3xl bg-white/5" />
             ) : displayFeatured ? (
-              <div className="relative aspect-video overflow-hidden rounded-3xl shadow-2xl bg-white/5 border border-white/10">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8 }}
+                className="relative aspect-video overflow-hidden rounded-[2.5rem] shadow-premium bg-white/5 border border-white/10 group/hero"
+              >
                 <img 
                   src={displayFeatured.image_url || IMAGE_PLACEHOLDER} 
                   alt={displayFeatured.title} 
                   loading="eager"
                   className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-brand-black via-brand-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-t from-brand-black via-brand-black/30 to-transparent opacity-90 group-hover/hero:opacity-100 transition-opacity duration-700" />
                 
-                <div className="absolute inset-0 flex items-center justify-center">
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/hero:opacity-100 transition-all duration-500 scale-90 group-hover/hero:scale-100">
                    <div className="w-20 h-20 rounded-full bg-primary/90 text-white flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-transform duration-500">
                       <Play size={32} fill="currentColor" className="ml-1" />
                    </div>
@@ -166,14 +172,14 @@ function Index() {
                     <span className="text-white/30">•</span>
                     <span className="text-white/60">{formatTime(displayFeatured.published_at)}</span>
                   </div>
-                  <h1 className="text-2xl md:text-5xl xl:text-6xl font-black mb-4 md:mb-6 leading-[0.95] text-white group-hover:text-primary transition-colors tracking-tighter drop-shadow-2xl">
+                  <h1 className="text-3xl md:text-5xl xl:text-7xl font-black mb-4 md:mb-6 leading-[1] text-white group-hover/hero:text-primary transition-colors tracking-tighter drop-shadow-2xl">
                     {displayFeatured.title}
                   </h1>
                   <p className="text-sm md:text-lg text-white/70 max-w-2xl line-clamp-2 font-medium tracking-tight normal-case">
                     {displayArticleExcerpt(displayFeatured)}
                   </p>
                 </div>
-              </div>
+              </motion.div>
             ) : (
               <div className="aspect-video w-full rounded-3xl bg-white/5 flex items-center justify-center border border-dashed border-white/10">
                 <span className="text-white/20 font-bold tracking-widest">Nenhum destaque disponível</span>
@@ -190,16 +196,16 @@ function Index() {
               Array(3).fill(0).map((_, i) => <Skeleton key={i} className="h-24 w-full rounded-2xl bg-white/5" />)
             ) : secondaryNews.length > 0 ? (
               secondaryNews.slice(0, 3).map((post, idx) => (
-                <div key={idx} className="group cursor-pointer flex gap-4 p-3 rounded-2xl hover:bg-white/5 transition-all border border-transparent hover:border-white/5">
-                    <div className="w-28 md:w-36 aspect-video shrink-0 overflow-hidden rounded-xl relative bg-white/5">
+                <div key={idx} className="group cursor-pointer flex gap-4 p-3 rounded-3xl hover:bg-white/10 transition-all duration-300 border border-transparent hover:border-white/10 hover:shadow-premium">
+                    <div className="w-28 md:w-36 aspect-video shrink-0 overflow-hidden rounded-2xl relative bg-white/5">
                         <img src={post.img} alt={post.title} loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                         <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                            <Play size={16} fill="white" className="text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <Play size={16} fill="white" className="text-white opacity-0 group-hover:opacity-100 transition-all duration-300 scale-75 group-hover:scale-100" />
                         </div>
                     </div>
                     <div className="flex flex-col justify-center gap-1">
                         <span className="text-[9px] font-black text-primary uppercase tracking-widest">{post.cat}</span>
-                        <h3 className="text-xs md:text-sm font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2 tracking-tight text-white/90">
+                        <h3 className="text-xs md:text-sm font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2 tracking-tight text-white/90">
                             {post.title}
                         </h3>
                         <span className="text-[8px] font-black text-white/30 uppercase tracking-widest mt-1">{post.time}</span>
@@ -207,7 +213,7 @@ function Index() {
                 </div>
               ))
             ) : (
-              <div className="p-8 text-center bg-white/5 rounded-2xl border border-dashed border-white/10">
+              <div className="p-8 text-center bg-white/5 rounded-3xl border border-dashed border-white/10">
                  <span className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Aguardando novos conteúdos</span>
               </div>
             )}

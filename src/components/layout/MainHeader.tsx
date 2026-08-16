@@ -6,7 +6,7 @@ export function MainHeader() {
     <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-brand-black/95 backdrop-blur-xl transition-all duration-300">
       <div className="container mx-auto px-4 md:px-6 h-20 md:h-24 flex items-center justify-between gap-4">
         <div className="flex items-center gap-6">
-          <button className="text-white hover:text-primary transition-colors p-2 -ml-2">
+          <button className="text-white hover:text-primary transition-all duration-300 p-2 -ml-2 hover:bg-white/5 rounded-full">
             <Menu size={24} />
           </button>
           <Link to="/" className="flex items-center gap-2">
@@ -21,8 +21,8 @@ export function MainHeader() {
           </Link>
         </div>
         
-        <div className="hidden lg:flex items-center gap-3 bg-white/5 rounded-full px-5 py-2.5 w-full max-w-md focus-within:ring-2 focus-within:ring-primary/20 transition-all border border-white/5">
-            <Search className="text-white/40" size={18} />
+        <div className="hidden lg:flex items-center gap-3 bg-white/5 rounded-full px-5 py-2.5 w-full max-w-md focus-within:ring-2 focus-within:ring-primary/20 transition-all duration-300 border border-white/5 focus-within:border-primary/50 focus-within:bg-white/10 group">
+            <Search className="text-white/40 group-focus-within:text-primary transition-colors" size={18} />
             <input 
               type="text" 
               placeholder="Pesquisar notícias..." 
@@ -35,7 +35,7 @@ export function MainHeader() {
             <Search size={22} />
           </button>
           <div className="hidden md:flex items-center gap-2 mr-2">
-             <Link to="/" className="text-white/40 hover:text-white transition-colors p-2">
+             <Link to="/admin/login" className="text-white/40 hover:text-white hover:bg-white/5 transition-all duration-300 p-2 rounded-full">
                 <User size={20} />
              </Link>
           </div>
