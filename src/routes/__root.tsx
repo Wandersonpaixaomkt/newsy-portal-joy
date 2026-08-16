@@ -77,14 +77,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Orange News Carajás | A notícia em movimento" },
-      { name: "description", content: "O seu portal definitivo de notícias sobre o Sudeste do Pará. Informação com credibilidade, agilidade e compromisso regional." },
-      { name: "author", content: "Orange News Carajás" },
-      { property: "og:title", content: "Orange News Carajás" },
-      { property: "og:description", content: "O seu portal definitivo de notícias sobre o Sudeste do Pará." },
+      { title: "Norte em Foco | A região em pauta. A notícia em movimento." },
+      { name: "description", content: "O seu portal definitivo de notícias sobre o Sudeste do Pará e região. Informação com credibilidade, agilidade e força jornalística." },
+      { name: "author", content: "Norte em Foco" },
+      { property: "og:title", content: "Norte em Foco" },
+      { property: "og:description", content: "O seu portal definitivo de notícias sobre o Sudeste do Pará e região." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@OrangeNewsCarajas" },
+      { name: "twitter:site", content: "@NorteEmFoco" },
 
     ],
     links: [
