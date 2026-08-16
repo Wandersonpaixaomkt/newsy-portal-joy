@@ -62,7 +62,8 @@ function Index() {
   const displayFeaturedPost = featuredPost || news[0] || {
     title: "Carregando notícias...",
     image_url: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f",
-    city: { name: "Região" },
+    category: { name: "NOTÍCIA", slug: "noticia" },
+    city: { name: "Região", slug: "regiao" },
     published_at: new Date().toISOString(),
     excerpt: ""
   };
