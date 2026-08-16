@@ -1,20 +1,21 @@
 import { supabase } from "@/integrations/supabase/client";
+import { Database } from "@/integrations/supabase/types";
 
-export type Post = {
-  id: string;
-  title: string;
-  slug: string;
-  content: string | null;
-  excerpt: string | null;
-  image_url: string | null;
-  category: { name: string; slug: string } | null;
-  city: { name: string; slug: string } | null;
-  is_urgent: boolean;
-  is_featured: boolean;
-  published_at: string;
+export type Category = Database["public"]["Tables"]["categories"]["Row"];
+export type City = Database["public"]["Tables"]["cities"]["Row"];
+
+export type Post = Database["public"]["Tables"]["posts"]["Row"] & {
+  category: Pick<Category, "name" | "slug"> | null;
+  city: Pick<City, "name" | "slug"> | null;
 };
 
-// Map current 'posts' table to a more generic interface that we can later point to 'articles'
+// Error-safe response wrapper
+export type QueryResponse<T> = {
+  data: T | null;
+  error: Error | null;
+  isLoading: boolean;
+};
+
 export const fetchNews = async (): Promise<Post[]> => {
   const { data, error } = await supabase
     .from("posts")
@@ -27,10 +28,10 @@ export const fetchNews = async (): Promise<Post[]> => {
 
   if (error) {
     console.error("Error fetching news:", error);
-    throw new Error(error.message);
+    throw new Error("Erro ao carregar notícias. Por favor, tente novamente mais tarde.");
   }
 
-  return data as any as Post[];
+  return (data || []) as unknown as Post[];
 };
 
 export const fetchFeaturedPost = async (): Promise<Post | null> => {
@@ -48,10 +49,10 @@ export const fetchFeaturedPost = async (): Promise<Post | null> => {
 
   if (error) {
     console.error("Error fetching featured post:", error);
-    throw new Error(error.message);
+    throw new Error("Erro ao carregar destaque.");
   }
 
-  return data as any as Post;
+  return data as unknown as Post;
 };
 
 export const fetchUrgentPost = async (): Promise<Post | null> => {
@@ -69,8 +70,28 @@ export const fetchUrgentPost = async (): Promise<Post | null> => {
 
   if (error) {
     console.error("Error fetching urgent post:", error);
-    throw new Error(error.message);
+    throw new Error("Erro ao carregar plantão.");
   }
 
-  return data as any as Post;
+  return data as unknown as Post;
 };
+
+export const fetchNewsByCategory = async (categorySlug: string): Promise<Post[]> => {
+  const { data, error } = await supabase
+    .from("posts")
+    .select(`
+      *,
+      category:categories!inner(name, slug),
+      city:cities(name, slug)
+    `)
+    .eq("categories.slug", categorySlug)
+    .order("published_at", { ascending: false });
+
+  if (error) {
+    console.error(`Error fetching news for category ${categorySlug}:`, error);
+    throw new Error("Erro ao carregar notícias da categoria.");
+  }
+
+  return (data || []) as unknown as Post[];
+};
+
