@@ -1,5 +1,6 @@
 import { MapPin, ChevronRight, Play } from "lucide-react";
 import { motion } from "framer-motion";
+import { Link } from "@tanstack/react-router";
 
 interface NewsItem {
   title: string;
