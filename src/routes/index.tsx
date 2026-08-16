@@ -8,7 +8,7 @@ import { Footer } from "@/components/layout/Footer";
 import { motion } from "framer-motion";
 import { MapPin, Radio, ArrowRight, Play } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchArticles, fetchFeaturedArticle } from "@/lib/news";
+import { fetchNews, fetchFeaturedPost } from "@/lib/news";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -19,12 +19,12 @@ export const Route = createFileRoute("/")({
 function Index() {
   const { data: articles = [] } = useQuery({
     queryKey: ["articles"],
-    queryFn: fetchArticles,
+    queryFn: fetchNews,
   });
 
   const { data: featuredArticle } = useQuery({
     queryKey: ["featuredArticle"],
-    queryFn: fetchFeaturedArticle,
+    queryFn: fetchFeaturedPost,
   });
 
   const formatTime = (dateString: string | null) => {
@@ -39,25 +39,25 @@ function Index() {
     }
   };
 
-  const latestNews = articles.slice(0, 3).map(post => ({
+  const latestNews = articles.slice(0, 3).map((post: any) => ({
     title: post.title,
     cat: post.category?.name || "GERAL",
-    img: post.featured_image || "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f",
-    location: "Região",
+    img: post.image_url || "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f",
+    location: post.city?.name || "Região",
     time: formatTime(post.published_at)
   }));
 
-  const secondaryNews = articles.slice(3, 7).map(post => ({
+  const secondaryNews = articles.slice(3, 7).map((post: any) => ({
     title: post.title,
     cat: post.category?.name || "GERAL",
-    img: post.featured_image || "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f",
-    location: "Região",
+    img: post.image_url || "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f",
+    location: post.city?.name || "Região",
     time: formatTime(post.published_at)
   }));
 
   const displayFeatured = featuredArticle || articles[0] || {
     title: "Carregando notícias...",
-    featured_image: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f",
+    image_url: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f",
     category: { name: "DESTAQUE", slug: "destaque" },
     published_at: new Date().toISOString(),
     excerpt: "Conectando você com as principais informações do Norte do Brasil."
@@ -97,7 +97,7 @@ function Index() {
           <div className="lg:col-span-8 group cursor-pointer relative">
             <div className="relative aspect-video overflow-hidden rounded-3xl shadow-2xl bg-white/5 border border-white/10">
               <img 
-                src={displayFeatured.featured_image || "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f"} 
+                src={(displayFeatured as any).image_url || "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f"} 
                 alt={displayFeatured.title} 
                 className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
               />
@@ -121,7 +121,7 @@ function Index() {
 
               <div className="absolute bottom-0 left-0 p-6 md:p-10 w-full">
                 <div className="flex items-center gap-4 text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-4 italic">
-                  <span className="flex items-center gap-1.5"><MapPin size={14} /> REGIÃO</span>
+                  <span className="flex items-center gap-1.5"><MapPin size={14} /> {(displayFeatured as any).city?.name || "REGIÃO"}</span>
                   <span className="text-white/30">•</span>
                   <span className="text-white/60">{formatTime(displayFeatured.published_at)}</span>
                 </div>
@@ -140,7 +140,7 @@ function Index() {
             <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white/40 mb-2 italic flex items-center gap-2">
                <span className="w-8 h-[2px] bg-primary"></span> PRÓXIMAS NOTÍCIAS
             </h3>
-            {secondaryNews.slice(0, 3).map((post, idx) => (
+            {secondaryNews.slice(0, 3).map((post: any, idx: number) => (
                 <div key={idx} className="group cursor-pointer flex gap-4 p-3 rounded-2xl hover:bg-white/5 transition-all border border-transparent hover:border-white/5">
                     <div className="w-28 md:w-36 aspect-video shrink-0 overflow-hidden rounded-xl relative">
                         <img src={post.img} alt={post.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
