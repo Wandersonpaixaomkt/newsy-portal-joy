@@ -72,7 +72,7 @@ export const fetchFeaturedPost = async (): Promise<Post | null> => {
     throw new Error("Erro ao carregar destaque.");
   }
 
-  return data ? (mapPostData([data])[0]) : null;
+  return data ? (mapPostData([data])[0] || null) : null;
 };
 
 export const fetchUrgentPost = async (): Promise<Post | null> => {
@@ -93,7 +93,7 @@ export const fetchUrgentPost = async (): Promise<Post | null> => {
     throw new Error("Erro ao carregar plantão.");
   }
 
-  return data ? (mapPostData([data])[0]) : null;
+  return data ? (mapPostData([data])[0] || null) : null;
 };
 
 export const fetchNewsByCategory = async (categorySlug: string): Promise<Post[]> => {
