@@ -10,33 +10,216 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteRouteImport } from './routes/admin/route'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as AdminAnalyticsIndexRouteImport } from './routes/admin/analytics/index'
+import { Route as AdminAutoresIndexRouteImport } from './routes/admin/autores/index'
+import { Route as AdminCategoriasIndexRouteImport } from './routes/admin/categorias/index'
+import { Route as AdminConfiguracoesIndexRouteImport } from './routes/admin/configuracoes/index'
+import { Route as AdminFontesIndexRouteImport } from './routes/admin/fontes/index'
+import { Route as AdminLoginIndexRouteImport } from './routes/admin/login/index'
+import { Route as AdminMidiasIndexRouteImport } from './routes/admin/midias/index'
+import { Route as AdminNoticiasIndexRouteImport } from './routes/admin/noticias/index'
+import { Route as AdminNoticiasNovaRouteImport } from './routes/admin/noticias/nova'
+import { Route as AdminPublicidadeIndexRouteImport } from './routes/admin/publicidade/index'
+import { Route as AdminTagsIndexRouteImport } from './routes/admin/tags/index'
+import { Route as AdminUsuariosIndexRouteImport } from './routes/admin/usuarios/index'
+import { Route as AdminNoticiasIdIndexRouteImport } from './routes/admin/noticias/$id/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRouteRoute = AdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAnalyticsIndexRoute = AdminAnalyticsIndexRouteImport.update({
+  id: '/analytics/',
+  path: '/analytics/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminAutoresIndexRoute = AdminAutoresIndexRouteImport.update({
+  id: '/autores/',
+  path: '/autores/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminCategoriasIndexRoute = AdminCategoriasIndexRouteImport.update({
+  id: '/categorias/',
+  path: '/categorias/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminConfiguracoesIndexRoute = AdminConfiguracoesIndexRouteImport.update({
+  id: '/configuracoes/',
+  path: '/configuracoes/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminFontesIndexRoute = AdminFontesIndexRouteImport.update({
+  id: '/fontes/',
+  path: '/fontes/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminLoginIndexRoute = AdminLoginIndexRouteImport.update({
+  id: '/login/',
+  path: '/login/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminMidiasIndexRoute = AdminMidiasIndexRouteImport.update({
+  id: '/midias/',
+  path: '/midias/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminNoticiasIndexRoute = AdminNoticiasIndexRouteImport.update({
+  id: '/noticias/',
+  path: '/noticias/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminNoticiasNovaRoute = AdminNoticiasNovaRouteImport.update({
+  id: '/noticias/nova',
+  path: '/noticias/nova',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminPublicidadeIndexRoute = AdminPublicidadeIndexRouteImport.update({
+  id: '/publicidade/',
+  path: '/publicidade/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminTagsIndexRoute = AdminTagsIndexRouteImport.update({
+  id: '/tags/',
+  path: '/tags/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminUsuariosIndexRoute = AdminUsuariosIndexRouteImport.update({
+  id: '/usuarios/',
+  path: '/usuarios/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminNoticiasIdIndexRoute = AdminNoticiasIdIndexRouteImport.update({
+  id: '/noticias/$id/',
+  path: '/noticias/$id/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
+  '/admin/': typeof AdminIndexRoute
+  '/admin/noticias/nova': typeof AdminNoticiasNovaRoute
+  '/admin/analytics/': typeof AdminAnalyticsIndexRoute
+  '/admin/autores/': typeof AdminAutoresIndexRoute
+  '/admin/categorias/': typeof AdminCategoriasIndexRoute
+  '/admin/configuracoes/': typeof AdminConfiguracoesIndexRoute
+  '/admin/fontes/': typeof AdminFontesIndexRoute
+  '/admin/login/': typeof AdminLoginIndexRoute
+  '/admin/midias/': typeof AdminMidiasIndexRoute
+  '/admin/noticias/': typeof AdminNoticiasIndexRoute
+  '/admin/publicidade/': typeof AdminPublicidadeIndexRoute
+  '/admin/tags/': typeof AdminTagsIndexRoute
+  '/admin/usuarios/': typeof AdminUsuariosIndexRoute
+  '/admin/noticias/$id/': typeof AdminNoticiasIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminIndexRoute
+  '/admin/noticias/nova': typeof AdminNoticiasNovaRoute
+  '/admin/analytics': typeof AdminAnalyticsIndexRoute
+  '/admin/autores': typeof AdminAutoresIndexRoute
+  '/admin/categorias': typeof AdminCategoriasIndexRoute
+  '/admin/configuracoes': typeof AdminConfiguracoesIndexRoute
+  '/admin/fontes': typeof AdminFontesIndexRoute
+  '/admin/login': typeof AdminLoginIndexRoute
+  '/admin/midias': typeof AdminMidiasIndexRoute
+  '/admin/noticias': typeof AdminNoticiasIndexRoute
+  '/admin/publicidade': typeof AdminPublicidadeIndexRoute
+  '/admin/tags': typeof AdminTagsIndexRoute
+  '/admin/usuarios': typeof AdminUsuariosIndexRoute
+  '/admin/noticias/$id': typeof AdminNoticiasIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteRouteWithChildren
+  '/admin/': typeof AdminIndexRoute
+  '/admin/noticias/nova': typeof AdminNoticiasNovaRoute
+  '/admin/analytics/': typeof AdminAnalyticsIndexRoute
+  '/admin/autores/': typeof AdminAutoresIndexRoute
+  '/admin/categorias/': typeof AdminCategoriasIndexRoute
+  '/admin/configuracoes/': typeof AdminConfiguracoesIndexRoute
+  '/admin/fontes/': typeof AdminFontesIndexRoute
+  '/admin/login/': typeof AdminLoginIndexRoute
+  '/admin/midias/': typeof AdminMidiasIndexRoute
+  '/admin/noticias/': typeof AdminNoticiasIndexRoute
+  '/admin/publicidade/': typeof AdminPublicidadeIndexRoute
+  '/admin/tags/': typeof AdminTagsIndexRoute
+  '/admin/usuarios/': typeof AdminUsuariosIndexRoute
+  '/admin/noticias/$id/': typeof AdminNoticiasIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/admin/'
+    | '/admin/noticias/nova'
+    | '/admin/analytics/'
+    | '/admin/autores/'
+    | '/admin/categorias/'
+    | '/admin/configuracoes/'
+    | '/admin/fontes/'
+    | '/admin/login/'
+    | '/admin/midias/'
+    | '/admin/noticias/'
+    | '/admin/publicidade/'
+    | '/admin/tags/'
+    | '/admin/usuarios/'
+    | '/admin/noticias/$id/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/admin'
+    | '/admin/noticias/nova'
+    | '/admin/analytics'
+    | '/admin/autores'
+    | '/admin/categorias'
+    | '/admin/configuracoes'
+    | '/admin/fontes'
+    | '/admin/login'
+    | '/admin/midias'
+    | '/admin/noticias'
+    | '/admin/publicidade'
+    | '/admin/tags'
+    | '/admin/usuarios'
+    | '/admin/noticias/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/admin/'
+    | '/admin/noticias/nova'
+    | '/admin/analytics/'
+    | '/admin/autores/'
+    | '/admin/categorias/'
+    | '/admin/configuracoes/'
+    | '/admin/fontes/'
+    | '/admin/login/'
+    | '/admin/midias/'
+    | '/admin/noticias/'
+    | '/admin/publicidade/'
+    | '/admin/tags/'
+    | '/admin/usuarios/'
+    | '/admin/noticias/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRouteRoute: typeof AdminRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +231,155 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/analytics/': {
+      id: '/admin/analytics/'
+      path: '/analytics'
+      fullPath: '/admin/analytics/'
+      preLoaderRoute: typeof AdminAnalyticsIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/autores/': {
+      id: '/admin/autores/'
+      path: '/autores'
+      fullPath: '/admin/autores/'
+      preLoaderRoute: typeof AdminAutoresIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/categorias/': {
+      id: '/admin/categorias/'
+      path: '/categorias'
+      fullPath: '/admin/categorias/'
+      preLoaderRoute: typeof AdminCategoriasIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/configuracoes/': {
+      id: '/admin/configuracoes/'
+      path: '/configuracoes'
+      fullPath: '/admin/configuracoes/'
+      preLoaderRoute: typeof AdminConfiguracoesIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/fontes/': {
+      id: '/admin/fontes/'
+      path: '/fontes'
+      fullPath: '/admin/fontes/'
+      preLoaderRoute: typeof AdminFontesIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/login/': {
+      id: '/admin/login/'
+      path: '/login'
+      fullPath: '/admin/login/'
+      preLoaderRoute: typeof AdminLoginIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/midias/': {
+      id: '/admin/midias/'
+      path: '/midias'
+      fullPath: '/admin/midias/'
+      preLoaderRoute: typeof AdminMidiasIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/noticias/': {
+      id: '/admin/noticias/'
+      path: '/noticias'
+      fullPath: '/admin/noticias/'
+      preLoaderRoute: typeof AdminNoticiasIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/noticias/nova': {
+      id: '/admin/noticias/nova'
+      path: '/noticias/nova'
+      fullPath: '/admin/noticias/nova'
+      preLoaderRoute: typeof AdminNoticiasNovaRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/publicidade/': {
+      id: '/admin/publicidade/'
+      path: '/publicidade'
+      fullPath: '/admin/publicidade/'
+      preLoaderRoute: typeof AdminPublicidadeIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/tags/': {
+      id: '/admin/tags/'
+      path: '/tags'
+      fullPath: '/admin/tags/'
+      preLoaderRoute: typeof AdminTagsIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/usuarios/': {
+      id: '/admin/usuarios/'
+      path: '/usuarios'
+      fullPath: '/admin/usuarios/'
+      preLoaderRoute: typeof AdminUsuariosIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/noticias/$id/': {
+      id: '/admin/noticias/$id/'
+      path: '/noticias/$id'
+      fullPath: '/admin/noticias/$id/'
+      preLoaderRoute: typeof AdminNoticiasIdIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
   }
 }
 
+interface AdminRouteRouteChildren {
+  AdminIndexRoute: typeof AdminIndexRoute
+  AdminNoticiasNovaRoute: typeof AdminNoticiasNovaRoute
+  AdminAnalyticsIndexRoute: typeof AdminAnalyticsIndexRoute
+  AdminAutoresIndexRoute: typeof AdminAutoresIndexRoute
+  AdminCategoriasIndexRoute: typeof AdminCategoriasIndexRoute
+  AdminConfiguracoesIndexRoute: typeof AdminConfiguracoesIndexRoute
+  AdminFontesIndexRoute: typeof AdminFontesIndexRoute
+  AdminLoginIndexRoute: typeof AdminLoginIndexRoute
+  AdminMidiasIndexRoute: typeof AdminMidiasIndexRoute
+  AdminNoticiasIndexRoute: typeof AdminNoticiasIndexRoute
+  AdminPublicidadeIndexRoute: typeof AdminPublicidadeIndexRoute
+  AdminTagsIndexRoute: typeof AdminTagsIndexRoute
+  AdminUsuariosIndexRoute: typeof AdminUsuariosIndexRoute
+  AdminNoticiasIdIndexRoute: typeof AdminNoticiasIdIndexRoute
+}
+
+const AdminRouteRouteChildren: AdminRouteRouteChildren = {
+  AdminIndexRoute: AdminIndexRoute,
+  AdminNoticiasNovaRoute: AdminNoticiasNovaRoute,
+  AdminAnalyticsIndexRoute: AdminAnalyticsIndexRoute,
+  AdminAutoresIndexRoute: AdminAutoresIndexRoute,
+  AdminCategoriasIndexRoute: AdminCategoriasIndexRoute,
+  AdminConfiguracoesIndexRoute: AdminConfiguracoesIndexRoute,
+  AdminFontesIndexRoute: AdminFontesIndexRoute,
+  AdminLoginIndexRoute: AdminLoginIndexRoute,
+  AdminMidiasIndexRoute: AdminMidiasIndexRoute,
+  AdminNoticiasIndexRoute: AdminNoticiasIndexRoute,
+  AdminPublicidadeIndexRoute: AdminPublicidadeIndexRoute,
+  AdminTagsIndexRoute: AdminTagsIndexRoute,
+  AdminUsuariosIndexRoute: AdminUsuariosIndexRoute,
+  AdminNoticiasIdIndexRoute: AdminNoticiasIdIndexRoute,
+}
+
+const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
+  AdminRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRouteRoute: AdminRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
