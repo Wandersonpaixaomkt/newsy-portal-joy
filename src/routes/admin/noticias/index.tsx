@@ -69,7 +69,7 @@ function NoticiasList() {
             </tr>
           </thead>
           <tbody className="divide-y divide-neutral-700">
-            {noticias?.map((noticia) => (
+            {noticias?.map((noticia: any) => (
               <tr key={noticia.id} className="hover:bg-neutral-700/50 transition-colors">
                 <td className="px-6 py-4">
                   <div className="font-medium max-w-md truncate">{noticia.title}</div>
