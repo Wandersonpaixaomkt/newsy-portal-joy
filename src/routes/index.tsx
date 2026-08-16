@@ -68,8 +68,9 @@ function Index() {
   
   // Specific sections
   const politicsAndCities = articles.filter(a => 
-    a.category?.slug === "politica" || a.category?.slug === "parauapebas"
+    a.category?.slug === "politica" || a.category?.slug === "cidades"
   ).slice(0, 3).map(mapToView);
+
 
   if (newsError) {
     return (
