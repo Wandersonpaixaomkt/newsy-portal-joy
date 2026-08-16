@@ -14,6 +14,137 @@ export type Database = {
   }
   public: {
     Tables: {
+      ad_campaigns: {
+        Row: {
+          advertiser_id: string | null
+          created_at: string | null
+          end_date: string | null
+          id: string
+          name: string
+          start_date: string | null
+          status: string | null
+        }
+        Insert: {
+          advertiser_id?: string | null
+          created_at?: string | null
+          end_date?: string | null
+          id?: string
+          name: string
+          start_date?: string | null
+          status?: string | null
+        }
+        Update: {
+          advertiser_id?: string | null
+          created_at?: string | null
+          end_date?: string | null
+          id?: string
+          name?: string
+          start_date?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ad_campaigns_advertiser_id_fkey"
+            columns: ["advertiser_id"]
+            isOneToOne: false
+            referencedRelation: "advertisers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ad_creatives: {
+        Row: {
+          alt_text: string | null
+          campaign_id: string | null
+          created_at: string | null
+          device: string | null
+          id: string
+          image_url: string | null
+          script_content: string | null
+          slot_id: string | null
+          target_url: string | null
+        }
+        Insert: {
+          alt_text?: string | null
+          campaign_id?: string | null
+          created_at?: string | null
+          device?: string | null
+          id?: string
+          image_url?: string | null
+          script_content?: string | null
+          slot_id?: string | null
+          target_url?: string | null
+        }
+        Update: {
+          alt_text?: string | null
+          campaign_id?: string | null
+          created_at?: string | null
+          device?: string | null
+          id?: string
+          image_url?: string | null
+          script_content?: string | null
+          slot_id?: string | null
+          target_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ad_creatives_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "ad_campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ad_creatives_slot_id_fkey"
+            columns: ["slot_id"]
+            isOneToOne: false
+            referencedRelation: "ad_slots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ad_slots: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id: string
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      advertisers: {
+        Row: {
+          contact_email: string | null
+          created_at: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          contact_email?: string | null
+          created_at?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          contact_email?: string | null
+          created_at?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           created_at: string
