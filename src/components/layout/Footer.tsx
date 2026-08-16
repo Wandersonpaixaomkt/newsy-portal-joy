@@ -7,8 +7,8 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           <div className="lg:col-span-1">
             <div className="flex flex-col mb-6">
-              <span className="text-2xl font-black tracking-tighter text-white leading-none italic uppercase">
-                NORTE<span className="text-primary">EM</span>FOCO
+              <span className="text-2xl font-black tracking-tighter text-white leading-none">
+                Norte<span className="text-primary">em</span>Foco
               </span>
               <span className="text-[8px] font-bold tracking-[0.3em] text-white/40 uppercase leading-none mt-1">
                 Portal de Notícias
@@ -25,7 +25,7 @@ export function Footer() {
           </div>
           
           <div>
-            <h5 className="font-black text-xs uppercase tracking-[0.2em] text-primary mb-6 italic">Cidades</h5>
+            <h5 className="font-black text-xs uppercase tracking-[0.2em] text-primary mb-6">Cidades</h5>
             <ul className="flex flex-col gap-3 text-white/40 font-bold text-xs uppercase tracking-widest">
               <li><a href="#" className="hover:text-white transition-colors">Parauapebas</a></li>
               <li><a href="#" className="hover:text-white transition-colors">Canaã dos Carajás</a></li>
@@ -37,7 +37,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h5 className="font-black text-xs uppercase tracking-[0.2em] text-primary mb-6 italic">Editorias</h5>
+            <h5 className="font-black text-xs uppercase tracking-[0.2em] text-primary mb-6">Editorias</h5>
             <ul className="flex flex-col gap-3 text-white/40 font-bold text-xs uppercase tracking-widest">
               <li><a href="#" className="hover:text-white transition-colors">Política</a></li>
               <li><a href="#" className="hover:text-white transition-colors">Mineração</a></li>
@@ -48,7 +48,7 @@ export function Footer() {
           </div>
 
           <div>
-            <h5 className="font-black text-xs uppercase tracking-[0.2em] text-primary mb-6 italic">Contato</h5>
+            <h5 className="font-black text-xs uppercase tracking-[0.2em] text-primary mb-6">Contato</h5>
             <ul className="flex flex-col gap-4 text-white/40 font-bold text-xs uppercase tracking-widest">
               <li className="flex items-center gap-2"><Phone size={14} className="text-primary" /> (94) 99999-9999</li>
               <li className="flex items-center gap-2"><Mail size={14} className="text-primary" /> contato@norteemfoco.com.br</li>

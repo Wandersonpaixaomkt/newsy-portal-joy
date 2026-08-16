@@ -16,7 +16,7 @@ export function NewsGrid({ title, items }: { title?: string, items: NewsItem[] }
     <section>
       {title && (
         <div className="flex items-center justify-between mb-6 md:mb-10 pb-4 border-b border-white/10">
-          <h3 className="text-xl md:text-3xl font-black uppercase tracking-tighter italic text-white">{title}</h3>
+          <h3 className="text-xl md:text-3xl font-black uppercase tracking-tighter text-white">{title}</h3>
           <a href="#" className="text-[10px] font-black text-primary hover:text-white transition-colors flex items-center gap-1 uppercase tracking-widest group">
             Ver Tudo <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
           </a>
@@ -60,7 +60,7 @@ export function NewsGrid({ title, items }: { title?: string, items: NewsItem[] }
                     <span>•</span>
                     <span>{post.time}</span>
                 </div>
-              <h4 className="text-lg font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2 uppercase italic text-white tracking-tight normal-case">
+              <h4 className="text-lg font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2 text-white tracking-tight normal-case">
                 {post.title}
               </h4>
             </div>
