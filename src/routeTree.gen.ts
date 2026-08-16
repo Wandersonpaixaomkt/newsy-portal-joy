@@ -12,7 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as AdminCategoriasIndexRouteImport } from './routes/admin/categorias/index'
 import { Route as AdminLoginIndexRouteImport } from './routes/admin/login/index'
+import { Route as AdminNoticiasIndexRouteImport } from './routes/admin/noticias/index'
+import { Route as AdminUsuariosIndexRouteImport } from './routes/admin/usuarios/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -29,9 +32,24 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminCategoriasIndexRoute = AdminCategoriasIndexRouteImport.update({
+  id: '/categorias/',
+  path: '/categorias/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminLoginIndexRoute = AdminLoginIndexRouteImport.update({
   id: '/login/',
   path: '/login/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminNoticiasIndexRoute = AdminNoticiasIndexRouteImport.update({
+  id: '/noticias/',
+  path: '/noticias/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
+const AdminUsuariosIndexRoute = AdminUsuariosIndexRouteImport.update({
+  id: '/usuarios/',
+  path: '/usuarios/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
 
@@ -39,26 +57,56 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/admin/': typeof AdminIndexRoute
+  '/admin/categorias/': typeof AdminCategoriasIndexRoute
   '/admin/login/': typeof AdminLoginIndexRoute
+  '/admin/noticias/': typeof AdminNoticiasIndexRoute
+  '/admin/usuarios/': typeof AdminUsuariosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminIndexRoute
+  '/admin/categorias': typeof AdminCategoriasIndexRoute
   '/admin/login': typeof AdminLoginIndexRoute
+  '/admin/noticias': typeof AdminNoticiasIndexRoute
+  '/admin/usuarios': typeof AdminUsuariosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
   '/admin/': typeof AdminIndexRoute
+  '/admin/categorias/': typeof AdminCategoriasIndexRoute
   '/admin/login/': typeof AdminLoginIndexRoute
+  '/admin/noticias/': typeof AdminNoticiasIndexRoute
+  '/admin/usuarios/': typeof AdminUsuariosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/admin/' | '/admin/login/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/admin/'
+    | '/admin/categorias/'
+    | '/admin/login/'
+    | '/admin/noticias/'
+    | '/admin/usuarios/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/admin/login'
-  id: '__root__' | '/' | '/admin' | '/admin/' | '/admin/login/'
+  to:
+    | '/'
+    | '/admin'
+    | '/admin/categorias'
+    | '/admin/login'
+    | '/admin/noticias'
+    | '/admin/usuarios'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/admin/'
+    | '/admin/categorias/'
+    | '/admin/login/'
+    | '/admin/noticias/'
+    | '/admin/usuarios/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -89,6 +137,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/categorias/': {
+      id: '/admin/categorias/'
+      path: '/categorias'
+      fullPath: '/admin/categorias/'
+      preLoaderRoute: typeof AdminCategoriasIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/admin/login/': {
       id: '/admin/login/'
       path: '/login'
@@ -96,17 +151,37 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/noticias/': {
+      id: '/admin/noticias/'
+      path: '/noticias'
+      fullPath: '/admin/noticias/'
+      preLoaderRoute: typeof AdminNoticiasIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
+    '/admin/usuarios/': {
+      id: '/admin/usuarios/'
+      path: '/usuarios'
+      fullPath: '/admin/usuarios/'
+      preLoaderRoute: typeof AdminUsuariosIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
   }
 }
 
 interface AdminRouteRouteChildren {
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminCategoriasIndexRoute: typeof AdminCategoriasIndexRoute
   AdminLoginIndexRoute: typeof AdminLoginIndexRoute
+  AdminNoticiasIndexRoute: typeof AdminNoticiasIndexRoute
+  AdminUsuariosIndexRoute: typeof AdminUsuariosIndexRoute
 }
 
 const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminIndexRoute: AdminIndexRoute,
+  AdminCategoriasIndexRoute: AdminCategoriasIndexRoute,
   AdminLoginIndexRoute: AdminLoginIndexRoute,
+  AdminNoticiasIndexRoute: AdminNoticiasIndexRoute,
+  AdminUsuariosIndexRoute: AdminUsuariosIndexRoute,
 }
 
 const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
