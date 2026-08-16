@@ -10,12 +10,12 @@ import { Database } from "@/integrations/supabase/types";
 
 export type Category = Database["public"]["Tables"]["categories"]["Row"];
 export type City = Database["public"]["Tables"]["cities"]["Row"];
+export type Author = Database["public"]["Tables"]["authors"]["Row"];
 
 export type Post = Database["public"]["Tables"]["posts"]["Row"] & {
   category: Pick<Category, "name" | "slug"> | null;
   city: Pick<City, "name" | "slug"> | null;
-  // Campos extras para compatibilidade futura com 'articles'
-  author?: { name: string } | null;
+  author: Pick<Author, "name" | "slug"> | null;
   tags?: string[];
 };
 
@@ -28,11 +28,12 @@ export type QueryResponse<T> = {
 /**
  * Mapeia post do banco para o modelo da UI do Norte em Foco
  */
-const mapPostData = (data: Database["public"]["Tables"]["posts"]["Row"][] | null): Post[] => {
+const mapPostData = (data: any[] | null): Post[] => {
   return (data || []).map(post => ({
     ...post,
-    category: (post as any).category || null,
-    city: (post as any).city || null,
+    category: post.category || null,
+    city: post.city || null,
+    author: post.author || null,
     image_url: post.image_url || null
   })) as Post[];
 };
@@ -43,7 +44,8 @@ export const fetchNews = async (): Promise<Post[]> => {
     .select(`
       *,
       category:categories(name, slug),
-      city:cities(name, slug)
+      city:cities(name, slug),
+      author:authors(name, slug)
     `)
     .order("published_at", { ascending: false });
 
@@ -61,7 +63,8 @@ export const fetchFeaturedPost = async (): Promise<Post | null> => {
     .select(`
       *,
       category:categories(name, slug),
-      city:cities(name, slug)
+      city:cities(name, slug),
+      author:authors(name, slug)
     `)
     .eq("is_featured", true)
     .order("published_at", { ascending: false })
@@ -82,7 +85,8 @@ export const fetchUrgentPost = async (): Promise<Post | null> => {
     .select(`
       *,
       category:categories(name, slug),
-      city:cities(name, slug)
+      city:cities(name, slug),
+      author:authors(name, slug)
     `)
     .eq("is_urgent", true)
     .order("published_at", { ascending: false })
@@ -103,7 +107,8 @@ export const fetchNewsByCategory = async (categorySlug: string): Promise<Post[]>
     .select(`
       *,
       category:categories!inner(name, slug),
-      city:cities(name, slug)
+      city:cities(name, slug),
+      author:authors(name, slug)
     `)
     .eq("categories.slug", categorySlug)
     .order("published_at", { ascending: false });

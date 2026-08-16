@@ -23,6 +23,7 @@ function NovaNoticia() {
     content: '',
     category_id: '',
     city_id: '',
+    author_id: '',
     image_url: '',
     is_featured: false,
     is_urgent: false,
@@ -41,6 +42,15 @@ function NovaNoticia() {
     queryKey: ['admin-cities'],
     queryFn: async () => {
       const { data, error } = await supabase.from('cities').select('*').order('name');
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: authors } = useQuery({
+    queryKey: ['admin-authors'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('authors').select('*').order('name');
       if (error) throw error;
       return data;
     },
@@ -158,6 +168,20 @@ function NovaNoticia() {
                 <option value="">Selecionar Cidade</option>
                 {cities?.map(city => (
                   <option key={city.id} value={city.id}>{city.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Autor</Label>
+              <select 
+                className="w-full bg-neutral-900 border border-neutral-700 rounded-md p-2"
+                value={formData.author_id}
+                onChange={e => setFormData({...formData, author_id: e.target.value})}
+              >
+                <option value="">Selecionar Autor</option>
+                {authors?.map(author => (
+                  <option key={author.id} value={author.id}>{author.name}</option>
                 ))}
               </select>
             </div>
