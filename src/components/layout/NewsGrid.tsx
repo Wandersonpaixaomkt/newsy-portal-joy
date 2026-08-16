@@ -16,10 +16,10 @@ export function NewsGrid({ title, items }: { title?: string, items: NewsItem[] }
     <section>
       {title && (
         <div className="flex items-center justify-between mb-6 md:mb-10 pb-4 border-b border-white/10">
-          <h3 className="text-xl md:text-3xl font-black uppercase tracking-tighter text-white">{title}</h3>
-          <a href="#" className="text-[10px] font-black text-primary hover:text-white transition-colors flex items-center gap-1 uppercase tracking-widest group">
-            Ver Tudo <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
-          </a>
+          <h3 className="text-2xl md:text-4xl font-black uppercase tracking-tighter text-white">{title}</h3>
+          <Link to={"/noticias" as any} className="text-[10px] font-black text-primary hover:text-white transition-all duration-300 flex items-center gap-2 uppercase tracking-[0.2em] group/all px-4 py-2 rounded-full hover:bg-white/5">
+            Ver Tudo <ChevronRight size={16} className="group-hover/all:translate-x-1 transition-transform" />
+          </Link>
         </div>
       )}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
