@@ -35,7 +35,7 @@ export function MainHeader() {
             <Search size={22} />
           </button>
           <div className="hidden md:flex items-center gap-2 mr-2">
-             <Link to="/admin" className="text-white/40 hover:text-white transition-colors p-2">
+             <Link to="/" className="text-white/40 hover:text-white transition-colors p-2">
                 <User size={20} />
              </Link>
           </div>

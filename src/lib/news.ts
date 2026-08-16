@@ -1,60 +1,75 @@
 import { supabase } from "@/integrations/supabase/client";
 
-export type Article = {
+export type Post = {
   id: string;
   title: string;
   slug: string;
   content: string | null;
   excerpt: string | null;
-  featured_image: string | null;
-  category_id: string | null;
-  category?: { name: string; slug: string } | null;
-  status: 'draft' | 'published' | 'scheduled' | 'review';
+  image_url: string | null;
+  category: { name: string; slug: string } | null;
+  city: { name: string; slug: string } | null;
+  is_urgent: boolean;
   is_featured: boolean;
-  published_at: string | null;
-  created_at: string;
-  updated_at: string;
-  author?: { full_name: string } | null;
-  source?: { name: string; url: string } | null;
+  published_at: string;
 };
 
-export const fetchArticles = async (): Promise<Article[]> => {
+export const fetchNews = async (): Promise<Post[]> => {
   const { data, error } = await supabase
-    .from("articles")
+    .from("posts")
     .select(`
       *,
       category:categories(name, slug),
-      author:profiles(full_name)
+      city:cities(name, slug)
     `)
-    .eq('status', 'published')
     .order("published_at", { ascending: false });
 
   if (error) {
-    console.error("Error fetching articles:", error);
+    console.error("Error fetching news:", error);
     throw new Error(error.message);
   }
 
-  return data as any as Article[];
+  return data as any as Post[];
 };
 
-export const fetchFeaturedArticle = async (): Promise<Article | null> => {
+export const fetchFeaturedPost = async (): Promise<Post | null> => {
   const { data, error } = await supabase
-    .from("articles")
+    .from("posts")
     .select(`
       *,
       category:categories(name, slug),
-      author:profiles(full_name)
+      city:cities(name, slug)
     `)
-    .eq('status', 'published')
     .eq("is_featured", true)
     .order("published_at", { ascending: false })
     .limit(1)
     .maybeSingle();
 
   if (error) {
-    console.error("Error fetching featured article:", error);
+    console.error("Error fetching featured post:", error);
     throw new Error(error.message);
   }
 
-  return data as any as Article;
+  return data as any as Post;
+};
+
+export const fetchUrgentPost = async (): Promise<Post | null> => {
+  const { data, error } = await supabase
+    .from("posts")
+    .select(`
+      *,
+      category:categories(name, slug),
+      city:cities(name, slug)
+    `)
+    .eq("is_urgent", true)
+    .order("published_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Error fetching urgent post:", error);
+    throw new Error(error.message);
+  }
+
+  return data as any as Post;
 };
