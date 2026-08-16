@@ -43,7 +43,7 @@ export function Sidebar() {
             {[1, 2, 3, 4, 5].map(i => (
                 <div key={i} className="flex gap-4 group cursor-pointer border-b border-white/5 pb-4 last:border-0 last:pb-0">
                     <span className="text-3xl font-black text-primary/20 group-hover:text-primary transition-colors leading-none">0{i}</span>
-                    <p className="text-sm font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2 text-white/80 tracking-tight">
+                    <p className="text-sm font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2 text-white/80 tracking-tight normal-case">
                         Vale anuncia novos investimentos para o projeto S11D em Canaã.
                     </p>
                 </div>
