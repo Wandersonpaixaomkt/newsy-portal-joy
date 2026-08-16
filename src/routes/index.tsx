@@ -172,14 +172,14 @@ function Index() {
                     <span className="text-white/30">•</span>
                     <span className="text-white/60">{formatTime(displayFeatured.published_at)}</span>
                   </div>
-                  <h1 className="text-2xl md:text-5xl xl:text-6xl font-black mb-4 md:mb-6 leading-[0.95] text-white group-hover:text-primary transition-colors tracking-tighter drop-shadow-2xl">
+                  <h1 className="text-3xl md:text-5xl xl:text-7xl font-black mb-4 md:mb-6 leading-[1] text-white group-hover/hero:text-primary transition-colors tracking-tighter drop-shadow-2xl">
                     {displayFeatured.title}
                   </h1>
                   <p className="text-sm md:text-lg text-white/70 max-w-2xl line-clamp-2 font-medium tracking-tight normal-case">
                     {displayArticleExcerpt(displayFeatured)}
                   </p>
                 </div>
-              </div>
+              </motion.div>
             ) : (
               <div className="aspect-video w-full rounded-3xl bg-white/5 flex items-center justify-center border border-dashed border-white/10">
                 <span className="text-white/20 font-bold tracking-widest">Nenhum destaque disponível</span>
