@@ -1,19 +1,39 @@
 import { supabase } from "@/integrations/supabase/client";
 import { Database } from "@/integrations/supabase/types";
 
+// Tipagens baseadas no schema esperado para Norte em Foco
+// Nota: O schema atual no banco contém 'posts', 'categories', 'cities'.
+// O projeto oficial esperado deve conter 'articles', 'authors', 'tags', etc.
+// Como o Project Ref jlhbgriiyfijxqyhrgkm não possui essas tabelas,
+// mantemos o mapeamento para as tabelas existentes até que a migração/conexão seja corrigida
+// para o Project Ref ggchlyiiabfifrngnjah mencionado pelo usuário.
+
 export type Category = Database["public"]["Tables"]["categories"]["Row"];
 export type City = Database["public"]["Tables"]["cities"]["Row"];
 
 export type Post = Database["public"]["Tables"]["posts"]["Row"] & {
   category: Pick<Category, "name" | "slug"> | null;
   city: Pick<City, "name" | "slug"> | null;
+  // Campos extras para compatibilidade futura com 'articles'
+  author?: { name: string } | null;
+  tags?: string[];
 };
 
-// Error-safe response wrapper
 export type QueryResponse<T> = {
   data: T | null;
   error: Error | null;
   isLoading: boolean;
+};
+
+/**
+ * Mapeia post do banco para o modelo da UI do Norte em Foco
+ */
+const mapPostData = (data: any[] | null): Post[] => {
+  return (data || []).map(post => ({
+    ...post,
+    // Garante que o fallback de imagem funcione corretamente se não houver news-media configurado
+    image_url: post.image_url || null
+  })) as Post[];
 };
 
 export const fetchNews = async (): Promise<Post[]> => {
@@ -28,10 +48,10 @@ export const fetchNews = async (): Promise<Post[]> => {
 
   if (error) {
     console.error("Error fetching news:", error);
-    throw new Error("Erro ao carregar notícias. Por favor, tente novamente mais tarde.");
+    throw new Error("Erro ao carregar notícias.");
   }
 
-  return (data || []) as unknown as Post[];
+  return mapPostData(data);
 };
 
 export const fetchFeaturedPost = async (): Promise<Post | null> => {
@@ -52,7 +72,7 @@ export const fetchFeaturedPost = async (): Promise<Post | null> => {
     throw new Error("Erro ao carregar destaque.");
   }
 
-  return data as unknown as Post;
+  return data ? (mapPostData([data])[0] || null) : null;
 };
 
 export const fetchUrgentPost = async (): Promise<Post | null> => {
@@ -73,7 +93,7 @@ export const fetchUrgentPost = async (): Promise<Post | null> => {
     throw new Error("Erro ao carregar plantão.");
   }
 
-  return data as unknown as Post;
+  return data ? (mapPostData([data])[0] || null) : null;
 };
 
 export const fetchNewsByCategory = async (categorySlug: string): Promise<Post[]> => {
@@ -92,6 +112,5 @@ export const fetchNewsByCategory = async (categorySlug: string): Promise<Post[]>
     throw new Error("Erro ao carregar notícias da categoria.");
   }
 
-  return (data || []) as unknown as Post[];
+  return mapPostData(data);
 };
-
