@@ -28,10 +28,11 @@ export type QueryResponse<T> = {
 /**
  * Mapeia post do banco para o modelo da UI do Norte em Foco
  */
-const mapPostData = (data: any[] | null): Post[] => {
+const mapPostData = (data: Database["public"]["Tables"]["posts"]["Row"][] | null): Post[] => {
   return (data || []).map(post => ({
     ...post,
-    // Garante que o fallback de imagem funcione corretamente se não houver news-media configurado
+    category: (post as any).category || null,
+    city: (post as any).city || null,
     image_url: post.image_url || null
   })) as Post[];
 };

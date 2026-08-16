@@ -80,11 +80,11 @@ function NoticiasList() {
                 </td>
                 <td className="px-6 py-4">
                   <span className="px-2 py-1 bg-neutral-900 rounded text-xs text-neutral-300">
-                    {(noticia.category as any)?.name || 'Sem categoria'}
+                    {noticia.category?.name || 'Sem categoria'}
                   </span>
                 </td>
                 <td className="px-6 py-4 text-sm text-neutral-300">
-                  {(noticia.author as any)?.name || 'Anônimo'}
+                  {noticia.author?.name || 'Anônimo'}
                 </td>
                 <td className="px-6 py-4">
                   <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase ${
