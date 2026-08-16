@@ -44,23 +44,7 @@ export const fetchNews = async (): Promise<Post[]> => {
       category:categories(name, slug),
       city:cities(name, slug)
     `)
-    .eq('is_published', true) // Filtra apenas publicados (se a coluna existir, caso contrário falha silenciosamente ou ignoramos)
     .order("published_at", { ascending: false });
-
-  // Se 'is_published' falhar por não existir no schema atual, tentamos sem ele
-  if (error && error.message.includes("column \"is_published\" does not exist")) {
-    const { data: retryData, error: retryError } = await supabase
-      .from("posts")
-      .select(`
-        *,
-        category:categories(name, slug),
-        city:cities(name, slug)
-      `)
-      .order("published_at", { ascending: false });
-
-    if (retryError) throw new Error("Erro ao carregar notícias.");
-    return mapPostData(retryData);
-  }
 
   if (error) {
     console.error("Error fetching news:", error);
