@@ -112,10 +112,10 @@ function Index() {
         <motion.div 
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 md:mb-12 bg-white/5 p-3 md:p-4 rounded-xl flex items-center gap-4 md:gap-6 overflow-hidden border-l-4 border-primary shadow-2xl backdrop-blur-md border border-white/5"
+          className="mb-8 md:mb-12 bg-white/5 p-3 md:p-4 rounded-3xl flex items-center gap-4 md:gap-6 overflow-hidden border-l-4 border-primary shadow-2xl backdrop-blur-md border border-white/10 hover:bg-white/10 transition-colors group"
         >
           <div className="flex items-center gap-2 md:gap-3 shrink-0">
-            <span className="bg-primary text-white px-2 md:px-3 py-1 rounded-full text-[8px] md:text-[9px] font-black uppercase flex items-center gap-1 md:gap-1.5 animate-pulse tracking-widest whitespace-nowrap">
+            <span className="bg-primary text-white px-2 md:px-3 py-1 rounded-full text-[8px] md:text-[9px] font-black uppercase flex items-center gap-1 md:gap-1.5 animate-pulse tracking-widest whitespace-nowrap shadow-lg shadow-primary/20">
               <Radio size={12} /> AO VIVO
             </span>
           </div>
@@ -190,7 +190,7 @@ function Index() {
               Array(3).fill(0).map((_, i) => <Skeleton key={i} className="h-24 w-full rounded-2xl bg-white/5" />)
             ) : secondaryNews.length > 0 ? (
               secondaryNews.slice(0, 3).map((post, idx) => (
-                <div key={idx} className="group cursor-pointer flex gap-4 p-3 rounded-2xl hover:bg-white/5 transition-all border border-transparent hover:border-white/5">
+                <div key={idx} className="group cursor-pointer flex gap-4 p-3 rounded-3xl hover:bg-white/10 transition-all duration-300 border border-transparent hover:border-white/10 hover:shadow-premium">
                     <div className="w-28 md:w-36 aspect-video shrink-0 overflow-hidden rounded-xl relative bg-white/5">
                         <img src={post.img} alt={post.title} loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                         <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
@@ -199,7 +199,7 @@ function Index() {
                     </div>
                     <div className="flex flex-col justify-center gap-1">
                         <span className="text-[9px] font-black text-primary uppercase tracking-widest">{post.cat}</span>
-                        <h3 className="text-xs md:text-sm font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2 tracking-tight text-white/90">
+                        <h3 className="text-xs md:text-sm font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2 tracking-tight text-white/90">
                             {post.title}
                         </h3>
                         <span className="text-[8px] font-black text-white/30 uppercase tracking-widest mt-1">{post.time}</span>
