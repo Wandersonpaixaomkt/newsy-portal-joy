@@ -23,7 +23,7 @@ export function CategoryMenu() {
           {categories.map(cat => (
             <Link 
               key={cat.slug} 
-              to={cat.slug === "" ? "/" : `/noticias/${cat.slug}`}
+              to={cat.slug === "" ? "/" : (cat.slug as any)}
               className="whitespace-nowrap hover:text-primary transition-all relative group py-2 shrink-0 px-2 rounded-md hover:bg-white/5"
             >
               {cat.name}
