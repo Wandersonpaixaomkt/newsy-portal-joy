@@ -105,16 +105,16 @@ function Index() {
           className="mb-8 md:mb-12 bg-white/5 p-3 md:p-4 rounded-xl flex items-center gap-4 md:gap-6 overflow-hidden border-l-4 border-primary shadow-2xl backdrop-blur-md border border-white/5"
         >
           <div className="flex items-center gap-2 md:gap-3 shrink-0">
-            <span className="bg-primary text-white px-2 md:px-3 py-1 rounded-full text-[8px] md:text-[9px] font-black uppercase flex items-center gap-1 md:gap-1.5 animate-pulse tracking-widest whitespace-nowrap italic">
+            <span className="bg-primary text-white px-2 md:px-3 py-1 rounded-full text-[8px] md:text-[9px] font-black uppercase flex items-center gap-1 md:gap-1.5 animate-pulse tracking-widest whitespace-nowrap">
               <Radio size={12} /> AO VIVO
             </span>
           </div>
           <div className="flex-1 overflow-hidden">
-            <p className="text-xs md:text-sm font-bold truncate tracking-tight uppercase italic text-white/90">
+            <p className="text-xs md:text-sm font-bold truncate tracking-tight text-white/90">
               Plantão: Acompanhe as últimas atualizações da região em tempo real no Norte em Foco.
             </p>
           </div>
-          <button className="shrink-0 text-white/60 hover:text-primary transition-colors font-black text-[9px] md:text-[10px] flex items-center gap-1.5 md:gap-2 uppercase tracking-widest cursor-pointer group italic">
+          <button className="shrink-0 text-white/60 hover:text-primary transition-colors font-black text-[9px] md:text-[10px] flex items-center gap-1.5 md:gap-2 uppercase tracking-widest cursor-pointer group">
             <span className="hidden xs:inline">VER AGORA</span> <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
           </button>
         </motion.div>
@@ -142,7 +142,7 @@ function Index() {
                 </div>
 
                 <div className="absolute top-6 left-6 flex gap-3">
-                  <span className="bg-primary text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-xl italic">
+                  <span className="bg-primary text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-xl">
                     DESTAQUE
                   </span>
                   <span className="bg-white/10 backdrop-blur-md text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border border-white/10">
@@ -151,12 +151,12 @@ function Index() {
                 </div>
 
                 <div className="absolute bottom-0 left-0 p-6 md:p-10 w-full">
-                  <div className="flex items-center gap-4 text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-4 italic">
+                  <div className="flex items-center gap-4 text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-4">
                     <span className="flex items-center gap-1.5"><MapPin size={14} /> {displayFeatured.city?.name || "REGIÃO"}</span>
                     <span className="text-white/30">•</span>
                     <span className="text-white/60">{formatTime(displayFeatured.published_at)}</span>
                   </div>
-                  <h1 className="text-2xl md:text-5xl xl:text-6xl font-black mb-4 md:mb-6 leading-[0.95] text-white group-hover:text-primary transition-colors tracking-tighter uppercase italic drop-shadow-2xl">
+                  <h1 className="text-2xl md:text-5xl xl:text-6xl font-black mb-4 md:mb-6 leading-[0.95] text-white group-hover:text-primary transition-colors tracking-tighter drop-shadow-2xl">
                     {displayFeatured.title}
                   </h1>
                   <p className="text-sm md:text-lg text-white/70 max-w-2xl line-clamp-2 font-medium tracking-tight normal-case">
@@ -166,14 +166,14 @@ function Index() {
               </div>
             ) : (
               <div className="aspect-video w-full rounded-3xl bg-white/5 flex items-center justify-center border border-dashed border-white/10">
-                <span className="text-white/20 font-bold uppercase tracking-widest italic">Nenhum destaque disponível</span>
+                <span className="text-white/20 font-bold tracking-widest">Nenhum destaque disponível</span>
               </div>
             )}
           </div>
 
           {/* Secondary Headlines - Vertical List */}
           <div className="lg:col-span-4 flex flex-col gap-6">
-            <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white/40 mb-2 italic flex items-center gap-2">
+            <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white/40 mb-2 flex items-center gap-2">
                <span className="w-8 h-[2px] bg-primary"></span> PRÓXIMAS NOTÍCIAS
             </h3>
             {isLoadingNews ? (
@@ -188,8 +188,8 @@ function Index() {
                         </div>
                     </div>
                     <div className="flex flex-col justify-center gap-1">
-                        <span className="text-[9px] font-black text-primary uppercase tracking-widest italic">{post.cat}</span>
-                        <h3 className="text-xs md:text-sm font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2 uppercase italic tracking-tight text-white/90">
+                        <span className="text-[9px] font-black text-primary uppercase tracking-widest">{post.cat}</span>
+                        <h3 className="text-xs md:text-sm font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2 tracking-tight text-white/90">
                             {post.title}
                         </h3>
                         <span className="text-[8px] font-black text-white/30 uppercase tracking-widest mt-1">{post.time}</span>
@@ -198,7 +198,7 @@ function Index() {
               ))
             ) : (
               <div className="p-8 text-center bg-white/5 rounded-2xl border border-dashed border-white/10">
-                 <span className="text-[10px] font-bold text-white/20 uppercase tracking-widest italic">Aguardando novos conteúdos</span>
+                 <span className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Aguardando novos conteúdos</span>
               </div>
             )}
           </div>
@@ -219,14 +219,14 @@ function Index() {
                     ) : (
                       <div className="py-20 text-center bg-white/5 rounded-3xl border border-dashed border-white/10">
                         <Loader2 className="h-8 w-8 text-primary animate-spin mx-auto mb-4 opacity-20" />
-                        <p className="text-white/20 font-black uppercase tracking-[0.2em] italic">Carregando editorial regional...</p>
+                        <p className="text-white/20 font-black uppercase tracking-[0.2em]">Carregando editorial regional...</p>
                       </div>
                     )}
                     
                     {/* Horizontal Ad Slot */}
                     <div className="w-full h-32 md:h-48 bg-white/5 rounded-3xl border border-dashed border-white/10 flex items-center justify-center relative group overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                        <span className="text-xs font-black text-white/20 uppercase tracking-[0.4em] italic">Espaço Publicitário</span>
+                        <span className="text-xs font-black text-white/20 uppercase tracking-[0.4em]">Espaço Publicitário</span>
                     </div>
 
                     {politicsAndCities.length > 0 && (
