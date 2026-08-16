@@ -11,8 +11,8 @@ export function MainHeader() {
           </button>
           <Link to="/" className="flex items-center gap-2">
             <div className="flex flex-col">
-              <span className="text-2xl md:text-3xl font-black tracking-tighter text-white leading-none italic uppercase">
-                NORTE<span className="text-primary">EM</span>FOCO
+              <span className="text-2xl md:text-3xl font-black tracking-tighter text-white leading-none">
+                Norte<span className="text-primary">em</span>Foco
               </span>
               <span className="text-[8px] md:text-[9px] font-bold tracking-[0.3em] text-white/40 uppercase leading-none mt-1">
                 Portal de Notícias
@@ -39,7 +39,7 @@ export function MainHeader() {
                 <User size={20} />
              </Link>
           </div>
-          <button className="bg-primary text-white px-4 md:px-6 py-2 md:py-2.5 rounded-full font-black text-[10px] md:text-xs transition-all hover:bg-primary/90 hover:scale-105 active:scale-95 shadow-lg shadow-primary/20 cursor-pointer whitespace-nowrap uppercase italic tracking-wider">
+          <button className="bg-primary text-white px-4 md:px-6 py-2 md:py-2.5 rounded-full font-black text-[10px] md:text-xs transition-all hover:bg-primary/90 hover:scale-105 active:scale-95 shadow-lg shadow-primary/20 cursor-pointer whitespace-nowrap tracking-wider">
             <Phone size={14} className="inline mr-2" /> <span className="hidden sm:inline">Envie sua Pauta</span><span className="sm:hidden">Pauta</span>
           </button>
         </div>
