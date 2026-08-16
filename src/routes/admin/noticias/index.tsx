@@ -19,6 +19,7 @@ function NoticiasList() {
       const { data, error } = await supabase
         .from('posts')
         .select('*, category:categories(name), author:authors(name)')
+        .returns<any>()
         .order('created_at', { ascending: false });
       
       if (error) throw error;

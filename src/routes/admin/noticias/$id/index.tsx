@@ -24,6 +24,7 @@ function EditarNoticia() {
     content: '',
     category_id: '',
     city_id: '',
+    author_id: '',
     image_url: '',
     is_featured: false,
     is_urgent: false,
@@ -47,6 +48,7 @@ function EditarNoticia() {
         content: post.content || '',
         category_id: post.category_id || '',
         city_id: post.city_id || '',
+        author_id: post.author_id || '',
         image_url: post.image_url || '',
         is_featured: post.is_featured || false,
         is_urgent: post.is_urgent || false,
@@ -67,6 +69,15 @@ function EditarNoticia() {
     queryKey: ['admin-cities'],
     queryFn: async () => {
       const { data, error } = await supabase.from('cities').select('*').order('name');
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: authors } = useQuery({
+    queryKey: ['admin-authors'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('authors').select('*').order('name');
       if (error) throw error;
       return data;
     },
@@ -187,6 +198,20 @@ function EditarNoticia() {
                 <option value="">Selecionar Cidade</option>
                 {cities?.map(city => (
                   <option key={city.id} value={city.id}>{city.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Autor</Label>
+              <select 
+                className="w-full bg-neutral-900 border border-neutral-700 rounded-md p-2"
+                value={formData.author_id}
+                onChange={e => setFormData({...formData, author_id: e.target.value})}
+              >
+                <option value="">Selecionar Autor</option>
+                {authors?.map(author => (
+                  <option key={author.id} value={author.id}>{author.name}</option>
                 ))}
               </select>
             </div>
