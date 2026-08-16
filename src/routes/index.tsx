@@ -81,7 +81,7 @@ function Index() {
           </div>
           <div className="flex-1 overflow-hidden">
             <p className="text-xs md:text-sm font-bold truncate tracking-tight uppercase italic text-primary/90">
-              Plantão: Vale anuncia expansão histórica em Carajás.
+              Plantão: {displayUrgentPost?.title}
             </p>
           </div>
           <button className="shrink-0 text-white/80 hover:text-primary transition-colors font-black text-[9px] md:text-[10px] flex items-center gap-1.5 md:gap-2 uppercase tracking-widest cursor-pointer group">
