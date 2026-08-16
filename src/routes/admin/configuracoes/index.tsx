@@ -55,7 +55,7 @@ function SettingsPage() {
               <Label className="text-base">Modo Manutenção</Label>
               <p className="text-sm text-neutral-500">Desativa o acesso público ao portal.</p>
             </div>
-            <Switch checked={settings?.maintenanceMode} />
+            <Switch checked={!!settings?.maintenanceMode} />
           </div>
 
           <div className="flex items-center justify-between">
@@ -63,7 +63,7 @@ function SettingsPage() {
               <Label className="text-base">Permitir Comentários</Label>
               <p className="text-sm text-neutral-500">Habilita a seção de comentários nas notícias.</p>
             </div>
-            <Switch checked={settings?.allowComments} />
+            <Switch checked={!!settings?.allowComments} />
           </div>
         </div>
 
