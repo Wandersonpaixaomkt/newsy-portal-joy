@@ -15,6 +15,16 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    title: "Norte em Foco | Portal de Notícias do Sudeste do Pará",
+    meta: [
+      { name: "description", content: "A região em pauta. A notícia em movimento. Acompanhe as últimas notícias de Parauapebas, Canaã dos Carajás, Marabá e todo o Sudeste do Pará." },
+      { property: "og:title", content: "Norte em Foco | Portal de Notícias" },
+      { property: "og:description", content: "Informação com credibilidade sobre o Sudeste do Pará." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" }
+    ]
+  }),
   component: Index,
 });
 

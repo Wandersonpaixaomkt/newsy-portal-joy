@@ -19,6 +19,7 @@ function NoticiasList() {
       const { data, error } = await supabase
         .from('posts')
         .select('*, category:categories(name), author:authors(name)')
+        .returns<any>()
         .order('created_at', { ascending: false });
       
       if (error) throw error;
@@ -68,7 +69,7 @@ function NoticiasList() {
             </tr>
           </thead>
           <tbody className="divide-y divide-neutral-700">
-            {noticias?.map((noticia) => (
+            {noticias?.map((noticia: any) => (
               <tr key={noticia.id} className="hover:bg-neutral-700/50 transition-colors">
                 <td className="px-6 py-4">
                   <div className="font-medium max-w-md truncate">{noticia.title}</div>
@@ -80,11 +81,11 @@ function NoticiasList() {
                 </td>
                 <td className="px-6 py-4">
                   <span className="px-2 py-1 bg-neutral-900 rounded text-xs text-neutral-300">
-                    {(noticia.category as any)?.name || 'Sem categoria'}
+                    {noticia.category?.name || 'Sem categoria'}
                   </span>
                 </td>
                 <td className="px-6 py-4 text-sm text-neutral-300">
-                  {(noticia.author as any)?.name || 'Anônimo'}
+                  {noticia.author?.name || 'Anônimo'}
                 </td>
                 <td className="px-6 py-4">
                   <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase ${

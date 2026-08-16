@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet, Link, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, Outlet, Link, useNavigate, redirect } from '@tanstack/react-router';
 import { supabase } from '@/integrations/supabase/client';
 import { 
   LayoutDashboard, 
@@ -22,6 +22,14 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 export const Route = createFileRoute('/admin')({
+  beforeLoad: async ({ location }) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session && location.pathname !== '/admin/login') {
+      throw redirect({
+        to: '/admin/login',
+      });
+    }
+  },
   component: AdminLayout,
 });
 

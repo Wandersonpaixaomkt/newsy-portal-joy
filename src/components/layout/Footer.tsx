@@ -27,23 +27,23 @@ export function Footer() {
           <div>
             <h5 className="font-black text-xs uppercase tracking-[0.2em] text-primary mb-6">Cidades</h5>
             <ul className="flex flex-col gap-3 text-white/40 font-bold text-xs uppercase tracking-widest">
-              <li><a href="#" className="hover:text-white transition-colors">Parauapebas</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Canaã dos Carajás</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Marabá</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Curionópolis</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Eldorado</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Belém / Pará</a></li>
+              <li><a href="/noticias/parauapebas" className="hover:text-white transition-colors">Parauapebas</a></li>
+              <li><a href="/noticias/canaa-dos-carajas" className="hover:text-white transition-colors">Canaã dos Carajás</a></li>
+              <li><a href="/noticias/maraba" className="hover:text-white transition-colors">Marabá</a></li>
+              <li><a href="/noticias/curionopolis" className="hover:text-white transition-colors">Curionópolis</a></li>
+              <li><a href="/noticias/eldorado" className="hover:text-white transition-colors">Eldorado</a></li>
+              <li><a href="/noticias/belem" className="hover:text-white transition-colors">Belém / Pará</a></li>
             </ul>
           </div>
 
           <div>
             <h5 className="font-black text-xs uppercase tracking-[0.2em] text-primary mb-6">Editorias</h5>
             <ul className="flex flex-col gap-3 text-white/40 font-bold text-xs uppercase tracking-widest">
-              <li><a href="#" className="hover:text-white transition-colors">Política</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Mineração</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Polícia</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Emprego</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Utilidade Pública</a></li>
+              <li><a href="/noticias/politica" className="hover:text-white transition-colors">Política</a></li>
+              <li><a href="/noticias/mineracao" className="hover:text-white transition-colors">Mineração</a></li>
+              <li><a href="/noticias/policia" className="hover:text-white transition-colors">Polícia</a></li>
+              <li><a href="/noticias/emprego" className="hover:text-white transition-colors">Emprego</a></li>
+              <li><a href="/noticias/utilidade-publica" className="hover:text-white transition-colors">Utilidade Pública</a></li>
             </ul>
           </div>
 
