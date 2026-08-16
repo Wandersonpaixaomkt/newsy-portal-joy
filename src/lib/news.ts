@@ -14,6 +14,7 @@ export type Post = {
   published_at: string;
 };
 
+// Map current 'posts' table to a more generic interface that we can later point to 'articles'
 export const fetchNews = async (): Promise<Post[]> => {
   const { data, error } = await supabase
     .from("posts")
