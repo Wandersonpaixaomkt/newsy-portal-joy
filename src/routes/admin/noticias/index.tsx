@@ -95,7 +95,7 @@ function NoticiasList() {
                 </td>
                 <td className="px-6 py-4 text-right space-x-2">
                   <Button variant="ghost" size="icon" asChild>
-                    <Link to={`/admin/noticias/${noticia.id}`}>
+                    <Link to="/admin/noticias/$id" params={{ id: noticia.id }}>
                       <Edit2 className="w-4 h-4" />
                     </Link>
                   </Button>
