@@ -10,6 +10,8 @@ interface NewsItem {
 }
 
 export function NewsGrid({ title, items }: { title?: string, items: NewsItem[] }) {
+  if (items.length === 0) return null;
+
   return (
     <section>
       {title && (
@@ -30,11 +32,16 @@ export function NewsGrid({ title, items }: { title?: string, items: NewsItem[] }
             transition={{ delay: idx * 0.05 }}
             className="group cursor-pointer flex flex-col bg-white/5 rounded-2xl overflow-hidden border border-white/5 hover:border-primary/50 transition-all duration-300"
           >
-            <div className="aspect-video overflow-hidden relative">
+            <div className="aspect-video overflow-hidden relative bg-white/5">
               <img 
                 src={post.img} 
                 alt={post.title} 
+                loading="lazy"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=2070&auto=format&fit=crop";
+                }}
               />
               <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors flex items-center justify-center">
                  <div className="w-12 h-12 rounded-full bg-primary/90 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transform scale-75 group-hover:scale-100 transition-all duration-300">
@@ -53,7 +60,7 @@ export function NewsGrid({ title, items }: { title?: string, items: NewsItem[] }
                     <span>•</span>
                     <span>{post.time}</span>
                 </div>
-              <h4 className="text-lg font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2 uppercase italic text-white tracking-tight">
+              <h4 className="text-lg font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2 uppercase italic text-white tracking-tight normal-case">
                 {post.title}
               </h4>
             </div>
