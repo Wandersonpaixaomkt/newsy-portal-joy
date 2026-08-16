@@ -7,59 +7,67 @@ import { NewsGrid } from "@/components/layout/NewsGrid";
 import { Footer } from "@/components/layout/Footer";
 import { motion } from "framer-motion";
 import { MapPin, TrendingUp, Radio, ArrowRight } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { fetchNews, fetchFeaturedPost, fetchUrgentPost } from "@/lib/news";
+import { formatDistanceToNow } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 export const Route = createFileRoute("/")({
   component: Index,
 });
 
 function Index() {
-  const latestNews = [
-    {
-      title: "Canaã dos Carajás anuncia festival de gastronomia com atrações nacionais.",
-      cat: "CULTURA",
-      img: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop",
-      location: "Canaã",
-      time: "Há 2 horas"
-    },
-    {
-      title: "Mineração: Novas tecnologias aumentam eficiência e segurança na Serra Sul.",
-      cat: "MINERAÇÃO",
-      img: "https://images.unsplash.com/photo-1578319439584-104c94d37305?q=80&w=2070&auto=format&fit=crop",
-      location: "Canaã",
-      time: "Há 4 horas"
-    },
-    {
-      title: "Parauapebas registra saldo positivo na geração de empregos no último trimestre.",
-      cat: "ECONOMIA",
-      img: "https://images.unsplash.com/photo-1521791136366-39853759d2fe?q=80&w=2070&auto=format&fit=crop",
-      location: "Parauapebas",
-      time: "Há 6 horas"
-    }
-  ];
+  const { data: news = [] } = useQuery({
+    queryKey: ["news"],
+    queryFn: fetchNews,
+  });
 
-  const secondaryNews = [
-      {
-        title: "Obras de saneamento avançam em bairros periféricos de Parauapebas.",
-        cat: "CIDADES",
-        img: "https://images.unsplash.com/photo-1541888946425-d81bb19480c5?q=80&w=2070&auto=format&fit=crop",
-        location: "Parauapebas",
-        time: "Há 1 dia"
-      },
-      {
-        title: "Polícia Militar intensifica rondas comerciais no centro de Marabá.",
-        cat: "SEGURANÇA",
-        img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=2070&auto=format&fit=crop",
-        location: "Marabá",
-        time: "Há 8 horas"
-      },
-      {
-        title: "Curionópolis recebe novos equipamentos de saúde para o hospital municipal.",
-        cat: "SAÚDE",
-        img: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=2070&auto=format&fit=crop",
-        location: "Curionópolis",
-        time: "Há 3 horas"
-      }
-  ];
+  const { data: featuredPost } = useQuery({
+    queryKey: ["featuredPost"],
+    queryFn: fetchFeaturedPost,
+  });
+
+  const { data: urgentPost } = useQuery({
+    queryKey: ["urgentPost"],
+    queryFn: fetchUrgentPost,
+  });
+
+  const formatTime = (dateString: string) => {
+    try {
+      return formatDistanceToNow(new Date(dateString), {
+        addSuffix: true,
+        locale: ptBR,
+      });
+    } catch (e) {
+      return "Recentemente";
+    }
+  };
+
+  const latestNews = news.slice(0, 3).map(post => ({
+    title: post.title,
+    cat: post.category?.name || "GERAL",
+    img: post.image_url || "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f",
+    location: post.city?.name || "Região",
+    time: formatTime(post.published_at)
+  }));
+
+  const secondaryNews = news.slice(3, 7).map(post => ({
+    title: post.title,
+    cat: post.category?.name || "GERAL",
+    img: post.image_url || "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f",
+    location: post.city?.name || "Região",
+    time: formatTime(post.published_at)
+  }));
+
+  const displayFeaturedPost = featuredPost || news[0] || {
+    title: "Carregando notícias...",
+    image_url: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f",
+    city: { name: "Região" },
+    published_at: new Date().toISOString(),
+    excerpt: ""
+  };
+  
+  const displayUrgentPost = urgentPost || { title: "Vale anuncia expansão histórica em Carajás." };
 
   return (
     <div className="min-h-screen bg-background font-sans">
@@ -95,7 +103,7 @@ function Index() {
           <div className="lg:col-span-8 group cursor-pointer">
             <div className="relative aspect-[16/9] overflow-hidden rounded-2xl mb-6 shadow-2xl bg-muted">
               <img 
-                src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=2070&auto=format&fit=crop" 
+                src={displayFeaturedPost.image_url || "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=2070&auto=format&fit=crop"} 
                 alt="Manchete Principal" 
                 className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
               />
@@ -104,30 +112,30 @@ function Index() {
                   DESTAQUE
                 </span>
                 <span className="bg-brand-black/60 backdrop-blur-md text-white px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em]">
-                  ECONOMIA
+                  {displayFeaturedPost.category?.name || "NOTÍCIA"}
                 </span>
               </div>
               <div className="absolute inset-0 bg-gradient-to-t from-brand-black/90 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
               <div className="absolute bottom-0 left-0 p-4 md:p-8 lg:hidden">
                  <h1 className="text-xl sm:text-3xl text-white font-black leading-tight uppercase italic line-clamp-2">
-                    Vale anuncia expansão histórica em Carajás.
+                    {displayFeaturedPost.title}
                  </h1>
               </div>
             </div>
             
             <div className="hidden lg:block">
               <div className="flex items-center gap-4 text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-4">
-                <span className="flex items-center gap-1.5"><MapPin size={14} /> PARAUAPEBAS</span>
+                <span className="flex items-center gap-1.5"><MapPin size={14} /> {displayFeaturedPost.city?.name || "REGIÃO"}</span>
                 <span className="text-muted-foreground/30">•</span>
-                <span className="text-muted-foreground">HÁ 2 HORAS</span>
+                <span className="text-muted-foreground">{formatTime(displayFeaturedPost.published_at)}</span>
               </div>
               
               <h1 className="text-4xl md:text-5xl xl:text-6xl font-black mb-6 leading-[0.95] text-brand-black group-hover:text-primary transition-colors tracking-tighter uppercase italic">
-                Vale anuncia expansão histórica em Carajás com foco em sustentabilidade.
+                {displayFeaturedPost.title}
               </h1>
               
               <p className="text-lg md:text-xl text-muted-foreground/80 mb-4 line-clamp-3 leading-relaxed font-medium">
-                O projeto estratégico prevê a geração de mais de 5 mil postos de trabalho diretos na região do sudeste paraense e um investmento bilionário que deve impulsionar o PIB estadual nos próximos anos.
+                {displayFeaturedPost.excerpt}
               </p>
             </div>
           </div>
