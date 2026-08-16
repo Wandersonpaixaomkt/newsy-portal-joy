@@ -197,10 +197,10 @@ function Index() {
             ) : secondaryNews.length > 0 ? (
               secondaryNews.slice(0, 3).map((post, idx) => (
                 <div key={idx} className="group cursor-pointer flex gap-4 p-3 rounded-3xl hover:bg-white/10 transition-all duration-300 border border-transparent hover:border-white/10 hover:shadow-premium">
-                    <div className="w-28 md:w-36 aspect-video shrink-0 overflow-hidden rounded-xl relative bg-white/5">
+                    <div className="w-28 md:w-36 aspect-video shrink-0 overflow-hidden rounded-2xl relative bg-white/5">
                         <img src={post.img} alt={post.title} loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                         <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                            <Play size={16} fill="white" className="text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <Play size={16} fill="white" className="text-white opacity-0 group-hover:opacity-100 transition-all duration-300 scale-75 group-hover:scale-100" />
                         </div>
                     </div>
                     <div className="flex flex-col justify-center gap-1">
@@ -213,7 +213,7 @@ function Index() {
                 </div>
               ))
             ) : (
-              <div className="p-8 text-center bg-white/5 rounded-2xl border border-dashed border-white/10">
+              <div className="p-8 text-center bg-white/5 rounded-3xl border border-dashed border-white/10">
                  <span className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Aguardando novos conteúdos</span>
               </div>
             )}

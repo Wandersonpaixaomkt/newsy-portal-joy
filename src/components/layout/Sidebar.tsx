@@ -19,10 +19,10 @@ export function Sidebar() {
             <span className="w-1.5 h-1.5 bg-primary rounded-full" /> Siga-nos
         </h4>
         <div className="grid grid-cols-4 gap-2">
-            <a href="#" className="aspect-square bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center hover:bg-primary text-white transition-all duration-300 text-[10px] font-black uppercase hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">IG</a>
-            <a href="#" className="aspect-square bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center hover:bg-primary text-white transition-all duration-300 text-[10px] font-black uppercase hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">FB</a>
-            <a href="#" className="aspect-square bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center hover:bg-primary text-white transition-all duration-300 text-[10px] font-black uppercase hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">TW</a>
-            <a href="#" className="aspect-square bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center hover:bg-primary text-white transition-all duration-300 text-[10px] font-black uppercase hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">YT</a>
+            <a href="#" className="aspect-square bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center hover:bg-primary text-white transition-all duration-500 text-[10px] font-black uppercase hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">IG</a>
+            <a href="#" className="aspect-square bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center hover:bg-primary text-white transition-all duration-500 text-[10px] font-black uppercase hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">FB</a>
+            <a href="#" className="aspect-square bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center hover:bg-primary text-white transition-all duration-500 text-[10px] font-black uppercase hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">TW</a>
+            <a href="#" className="aspect-square bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center hover:bg-primary text-white transition-all duration-500 text-[10px] font-black uppercase hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1">YT</a>
         </div>
       </div>
 
@@ -30,7 +30,7 @@ export function Sidebar() {
         <h4 className="font-black text-sm uppercase tracking-widest mb-4 flex items-center gap-2 text-white">
             <span className="w-1.5 h-1.5 bg-primary rounded-full" /> Publicidade
         </h4>
-        <div className="aspect-[3/4] bg-white/5 rounded-xl flex items-center justify-center border border-dashed border-white/10">
+        <div className="aspect-[3/4] bg-white/5 rounded-2xl flex items-center justify-center border border-dashed border-white/10">
             <span className="text-[10px] font-black text-white/20 uppercase tracking-widest">Anuncie Aqui</span>
         </div>
       </div>
