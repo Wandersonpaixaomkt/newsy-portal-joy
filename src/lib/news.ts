@@ -14,6 +14,7 @@ export type Post = {
   published_at: string;
 };
 
+// Map current 'posts' table to a more generic interface that we can later point to 'articles'
 export const fetchNews = async (): Promise<Post[]> => {
   const { data, error } = await supabase
     .from("posts")
@@ -43,9 +44,9 @@ export const fetchFeaturedPost = async (): Promise<Post | null> => {
     .eq("is_featured", true)
     .order("published_at", { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
 
-  if (error && error.code !== "PGRST116") {
+  if (error) {
     console.error("Error fetching featured post:", error);
     throw new Error(error.message);
   }

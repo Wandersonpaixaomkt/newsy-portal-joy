@@ -6,9 +6,9 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { NewsGrid } from "@/components/layout/NewsGrid";
 import { Footer } from "@/components/layout/Footer";
 import { motion } from "framer-motion";
-import { MapPin, TrendingUp, Radio, ArrowRight } from "lucide-react";
+import { MapPin, Radio, ArrowRight, Play } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchNews, fetchFeaturedPost, fetchUrgentPost } from "@/lib/news";
+import { fetchNews, fetchFeaturedPost } from "@/lib/news";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -17,22 +17,18 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const { data: news = [] } = useQuery({
-    queryKey: ["news"],
+  const { data: articles = [] } = useQuery({
+    queryKey: ["articles"],
     queryFn: fetchNews,
   });
 
-  const { data: featuredPost } = useQuery({
-    queryKey: ["featuredPost"],
+  const { data: featuredArticle } = useQuery({
+    queryKey: ["featuredArticle"],
     queryFn: fetchFeaturedPost,
   });
 
-  const { data: urgentPost } = useQuery({
-    queryKey: ["urgentPost"],
-    queryFn: fetchUrgentPost,
-  });
-
-  const formatTime = (dateString: string) => {
+  const formatTime = (dateString: string | null) => {
+    if (!dateString) return "Recentemente";
     try {
       return formatDistanceToNow(new Date(dateString), {
         addSuffix: true,
@@ -43,7 +39,7 @@ function Index() {
     }
   };
 
-  const latestNews = news.slice(0, 3).map(post => ({
+  const latestNews = (articles as any[]).slice(0, 3).map((post) => ({
     title: post.title,
     cat: post.category?.name || "GERAL",
     img: post.image_url || "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f",
@@ -51,7 +47,7 @@ function Index() {
     time: formatTime(post.published_at)
   }));
 
-  const secondaryNews = news.slice(3, 7).map(post => ({
+  const secondaryNews = (articles as any[]).slice(3, 7).map((post) => ({
     title: post.title,
     cat: post.category?.name || "GERAL",
     img: post.image_url || "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f",
@@ -59,19 +55,16 @@ function Index() {
     time: formatTime(post.published_at)
   }));
 
-  const displayFeaturedPost = featuredPost || news[0] || {
+  const displayFeatured = (featuredArticle || (articles as any[])[0] || {
     title: "Carregando notícias...",
     image_url: "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f",
-    category: { name: "NOTÍCIA", slug: "noticia" },
-    city: { name: "Região", slug: "regiao" },
+    category: { name: "DESTAQUE", slug: "destaque" },
     published_at: new Date().toISOString(),
-    excerpt: ""
-  };
-  
-  const displayUrgentPost = urgentPost || { title: "Vale anuncia expansão histórica em Carajás." };
+    excerpt: "Conectando você com as principais informações do Norte do Brasil."
+  }) as any;
 
   return (
-    <div className="min-h-screen bg-background font-sans">
+    <div className="min-h-screen bg-brand-black font-sans text-white">
       <TopBar />
       <MainHeader />
       <CategoryMenu />
@@ -81,117 +74,104 @@ function Index() {
         <motion.div 
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8 md:mb-12 bg-brand-black text-white p-3 md:p-4 rounded-xl flex items-center gap-4 md:gap-6 overflow-hidden border-l-4 border-primary shadow-xl"
+          className="mb-8 md:mb-12 bg-white/5 p-3 md:p-4 rounded-xl flex items-center gap-4 md:gap-6 overflow-hidden border-l-4 border-primary shadow-2xl backdrop-blur-md border border-white/5"
         >
           <div className="flex items-center gap-2 md:gap-3 shrink-0">
-            <span className="bg-primary text-primary-foreground px-2 md:px-3 py-1 rounded-full text-[8px] md:text-[9px] font-black uppercase flex items-center gap-1 md:gap-1.5 animate-pulse tracking-widest whitespace-nowrap">
+            <span className="bg-primary text-white px-2 md:px-3 py-1 rounded-full text-[8px] md:text-[9px] font-black uppercase flex items-center gap-1 md:gap-1.5 animate-pulse tracking-widest whitespace-nowrap italic">
               <Radio size={12} /> AO VIVO
             </span>
           </div>
           <div className="flex-1 overflow-hidden">
-            <p className="text-xs md:text-sm font-bold truncate tracking-tight uppercase italic text-primary/90">
-              Plantão: {displayUrgentPost?.title}
+            <p className="text-xs md:text-sm font-bold truncate tracking-tight uppercase italic text-white/90">
+              Plantão: Acompanhe as últimas atualizações da região em tempo real no Norte em Foco.
             </p>
           </div>
-          <button className="shrink-0 text-white/80 hover:text-primary transition-colors font-black text-[9px] md:text-[10px] flex items-center gap-1.5 md:gap-2 uppercase tracking-widest cursor-pointer group">
-            <span className="hidden xs:inline">LER MAIS</span> <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+          <button className="shrink-0 text-white/60 hover:text-primary transition-colors font-black text-[9px] md:text-[10px] flex items-center gap-1.5 md:gap-2 uppercase tracking-widest cursor-pointer group italic">
+            <span className="hidden xs:inline">VER AGORA</span> <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
           </button>
         </motion.div>
 
-        {/* Hero Section - Classic Journalism Style */}
+        {/* Hero Section - Video Channel Style */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-10 mb-16 md:mb-24">
-          {/* Main Headline */}
-          <div className="lg:col-span-8 group cursor-pointer">
-            <div className="relative aspect-[16/9] overflow-hidden rounded-2xl mb-6 shadow-2xl bg-muted">
+          {/* Main Hero Card */}
+          <div className="lg:col-span-8 group cursor-pointer relative">
+            <div className="relative aspect-video overflow-hidden rounded-3xl shadow-2xl bg-white/5 border border-white/10">
               <img 
-                src={displayFeaturedPost.image_url || "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=2070&auto=format&fit=crop"} 
-                alt="Manchete Principal" 
+                src={displayFeatured.image_url || "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f"} 
+                alt={displayFeatured.title} 
                 className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
               />
-              <div className="absolute top-4 md:top-6 left-4 md:left-6 flex gap-2 md:gap-3">
-                <span className="bg-primary text-primary-foreground px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] shadow-xl">
+              <div className="absolute inset-0 bg-gradient-to-t from-brand-black via-brand-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500" />
+              
+              {/* Play Button Icon for Video Feel */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                 <div className="w-20 h-20 rounded-full bg-primary/90 text-white flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-transform duration-500">
+                    <Play size={32} fill="currentColor" className="ml-1" />
+                 </div>
+              </div>
+
+              <div className="absolute top-6 left-6 flex gap-3">
+                <span className="bg-primary text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-xl italic">
                   DESTAQUE
                 </span>
-                <span className="bg-brand-black/60 backdrop-blur-md text-white px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em]">
-                  {displayFeaturedPost.category?.name || "NOTÍCIA"}
+                <span className="bg-white/10 backdrop-blur-md text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border border-white/10">
+                  {displayFeatured.category?.name || "NOTÍCIA"}
                 </span>
               </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-brand-black/90 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-500" />
-              <div className="absolute bottom-0 left-0 p-4 md:p-8 lg:hidden">
-                 <h1 className="text-xl sm:text-3xl text-white font-black leading-tight uppercase italic line-clamp-2">
-                    {displayFeaturedPost.title}
-                 </h1>
+
+              <div className="absolute bottom-0 left-0 p-6 md:p-10 w-full">
+                <div className="flex items-center gap-4 text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-4 italic">
+                  <span className="flex items-center gap-1.5"><MapPin size={14} /> {displayFeatured.city?.name || "REGIÃO"}</span>
+                  <span className="text-white/30">•</span>
+                  <span className="text-white/60">{formatTime(displayFeatured.published_at)}</span>
+                </div>
+                <h1 className="text-2xl md:text-5xl xl:text-6xl font-black mb-4 md:mb-6 leading-[0.95] text-white group-hover:text-primary transition-colors tracking-tighter uppercase italic drop-shadow-2xl">
+                  {displayFeatured.title}
+                </h1>
+                <p className="text-sm md:text-lg text-white/70 max-w-2xl line-clamp-2 font-medium tracking-tight">
+                  {displayArticleExcerpt(displayFeatured)}
+                </p>
               </div>
-            </div>
-            
-            <div className="hidden lg:block">
-              <div className="flex items-center gap-4 text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-4">
-                <span className="flex items-center gap-1.5"><MapPin size={14} /> {displayFeaturedPost.city?.name || "REGIÃO"}</span>
-                <span className="text-muted-foreground/30">•</span>
-                <span className="text-muted-foreground">{formatTime(displayFeaturedPost.published_at)}</span>
-              </div>
-              
-              <h1 className="text-4xl md:text-5xl xl:text-6xl font-black mb-6 leading-[0.95] text-brand-black group-hover:text-primary transition-colors tracking-tighter uppercase italic">
-                {displayFeaturedPost.title}
-              </h1>
-              
-              <p className="text-lg md:text-xl text-muted-foreground/80 mb-4 line-clamp-3 leading-relaxed font-medium">
-                {displayFeaturedPost.excerpt}
-              </p>
             </div>
           </div>
 
-          {/* Secondary Headlines Grid */}
-          <div className="lg:col-span-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6 md:gap-8">
-            {secondaryNews.slice(0, 2).map((post, idx) => (
-                <div key={idx} className="group cursor-pointer border-b border-border/50 lg:border-border pb-6 last:border-0 sm:border-b-0 lg:border-b">
-                    <div className="aspect-[16/9] overflow-hidden rounded-xl mb-4 relative shadow-md">
+          {/* Secondary Headlines - Vertical List */}
+          <div className="lg:col-span-4 flex flex-col gap-6">
+            <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white/40 mb-2 italic flex items-center gap-2">
+               <span className="w-8 h-[2px] bg-primary"></span> PRÓXIMAS NOTÍCIAS
+            </h3>
+            {secondaryNews.slice(0, 3).map((post: any, idx: number) => (
+                <div key={idx} className="group cursor-pointer flex gap-4 p-3 rounded-2xl hover:bg-white/5 transition-all border border-transparent hover:border-white/5">
+                    <div className="w-28 md:w-36 aspect-video shrink-0 overflow-hidden rounded-xl relative">
                         <img src={post.img} alt={post.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                        <div className="absolute top-3 left-3">
-                            <span className="bg-brand-black/80 backdrop-blur-sm text-white px-2 py-1 rounded text-[8px] font-black uppercase tracking-widest">{post.cat}</span>
+                        <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                            <Play size={16} fill="white" className="text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
                     </div>
-                    <div className="flex items-center gap-2 text-[8px] font-black text-muted-foreground/60 uppercase tracking-widest mb-2">
-                        <span>{post.location}</span>
-                        <span className="text-primary">•</span>
-                        <span>{post.time}</span>
+                    <div className="flex flex-col justify-center gap-1">
+                        <span className="text-[9px] font-black text-primary uppercase tracking-widest italic">{post.cat}</span>
+                        <h3 className="text-xs md:text-sm font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2 uppercase italic tracking-tight text-white/90">
+                            {post.title}
+                        </h3>
+                        <span className="text-[8px] font-black text-white/30 uppercase tracking-widest mt-1">{post.time}</span>
                     </div>
-                    <h3 className="text-base md:text-lg font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2 md:line-clamp-none">
-                        {post.title}
-                    </h3>
                 </div>
             ))}
           </div>
         </section>
 
-        {/* Home Sections Grid */}
+        {/* Content Sections */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
             <div className="lg:col-span-8 flex flex-col gap-20">
-                {/* Regional News Block */}
-                <NewsGrid title="Notícias da Região" items={latestNews} />
+                <NewsGrid title="Últimas da Região" items={latestNews} />
                 
-                {/* Another Category Block */}
-                <section>
-                    <div className="flex items-center justify-between mb-8 pb-4 border-b-2 border-brand-black">
-                        <h3 className="text-xl md:text-2xl font-black uppercase tracking-tighter italic text-brand-black">Política & Mineração</h3>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
-                        {secondaryNews.map((post, idx) => (
-                            <div key={idx} className="flex gap-4 group cursor-pointer p-4 rounded-xl hover:bg-muted/50 transition-all border border-transparent hover:border-border/50">
-                                <div className="w-24 md:w-32 h-20 md:h-24 shrink-0 rounded-lg overflow-hidden shadow-sm">
-                                    <img src={post.img} alt={post.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                                </div>
-                                <div className="flex flex-col justify-center">
-                                    <span className="text-[9px] font-black text-primary uppercase tracking-widest mb-1">{post.cat}</span>
-                                    <h4 className="text-xs md:text-sm font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2 uppercase">
-                                        {post.title}
-                                    </h4>
-                                    <span className="text-[8px] font-black text-muted-foreground/60 uppercase mt-2 block">{post.time}</span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </section>
+                {/* Horizontal Ad Slot */}
+                <div className="w-full h-32 md:h-48 bg-white/5 rounded-3xl border border-dashed border-white/10 flex items-center justify-center relative group overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                    <span className="text-xs font-black text-white/20 uppercase tracking-[0.4em] italic">Espaço Publicitário</span>
+                </div>
+
+                <NewsGrid title="Cidades & Política" items={secondaryNews.slice(0, 3)} />
             </div>
 
             {/* Sidebar */}
@@ -204,4 +184,10 @@ function Index() {
       <Footer />
     </div>
   );
+}
+
+function displayArticleExcerpt(article: any) {
+  if (article.excerpt) return article.excerpt;
+  if (article.content) return article.content.substring(0, 150) + "...";
+  return "Confira os detalhes desta notícia exclusiva no portal Norte em Foco.";
 }
