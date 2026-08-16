@@ -79,9 +79,9 @@ function EditarNoticia() {
         .from('posts')
         .update({
           ...formData,
-          published_at: status === 'published' ? new Date().toISOString() : post?.published_at,
+          published_at: status === 'published' ? new Date().toISOString() : (post?.published_at || null),
           updated_at: new Date().toISOString(),
-        })
+        } as any)
         .eq('id', id);
 
       if (error) throw error;

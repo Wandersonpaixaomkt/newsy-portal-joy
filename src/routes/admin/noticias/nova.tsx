@@ -52,7 +52,7 @@ function NovaNoticia() {
       const { error } = await supabase.from('posts').insert([{
         ...formData,
         published_at: status === 'published' ? new Date().toISOString() : null,
-      }]);
+      } as any]);
 
       if (error) throw error;
 
