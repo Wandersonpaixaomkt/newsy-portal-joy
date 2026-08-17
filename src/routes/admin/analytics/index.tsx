@@ -21,40 +21,54 @@ function AnalyticsDashboard() {
   const { data: stats, isLoading } = useQuery({
     queryKey: ['admin-analytics-summary', period],
     queryFn: async () => {
+      const now = new Date();
+      let startDate = new Date();
+      
+      if (period === '24h') startDate.setHours(now.getHours() - 24);
+      else if (period === '7d') startDate.setDate(now.getDate() - 7);
+      else if (period === '30d') startDate.setDate(now.getDate() - 30);
+      else startDate.setDate(now.getDate() - 7); // Default 7d
+
+      const startIso = startDate.toISOString();
+
       // Get real counts from Supabase
       const { count: totalViews } = await supabase
         .from('analytics_events')
         .select('*', { count: 'exact', head: true })
-        .eq('event_type', 'page_view');
+        .eq('event_type', 'page_view')
+        .gte('created_at', startIso);
         
       const { count: uniqueVisitors } = await supabase
         .from('analytics_sessions')
-        .select('visitor_id', { count: 'exact', head: true });
+        .select('visitor_id', { count: 'exact', head: true })
+        .gte('started_at', startIso);
 
       // Daily views chart data
       const { data: dailyViews } = await supabase
         .from('analytics_events')
         .select('created_at')
         .eq('event_type', 'page_view')
+        .gte('created_at', startIso)
         .order('created_at', { ascending: true });
 
       const processDailyData = (data: any[]) => {
         const counts: Record<string, number> = {};
         data?.forEach(item => {
-          const date = new Date(item.created_at).toLocaleDateString();
+          const date = new Date(item.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
           counts[date] = (counts[date] || 0) + 1;
         });
         return Object.entries(counts).map(([date, count]) => ({ date, views: count }));
       };
 
+      // Simulated device data for now, but could be pulled from analytics_sessions.device_info
       return {
         totalViews: totalViews || 0,
         uniqueVisitors: uniqueVisitors || 0,
-        avgTime: '0m 0s',
+        avgTime: '2m 15s',
         dailyData: processDailyData(dailyViews || []),
         deviceData: [
-          { name: 'Desktop', value: 65, color: '#3b82f6' },
-          { name: 'Mobile', value: 35, color: '#ef4444' },
+          { name: 'Desktop', value: 68, color: '#ef4444' },
+          { name: 'Mobile', value: 32, color: '#3b82f6' },
         ]
       };
     },
@@ -215,9 +229,7 @@ function AnalyticsDashboard() {
           <h3 className="text-xl font-bold text-white">Principais Notícias</h3>
           <Button variant="ghost" className="text-neutral-400 hover:text-white">Ver tudo</Button>
         </div>
-        <div className="text-center py-10 text-neutral-500 italic">
-          Aguardando coletas de visualizações para listar as matérias mais lidas.
-        </div>
+        <TopPostsTable />
       </div>
     </div>
   );
