@@ -166,3 +166,4 @@ function QuickAction({ icon: Icon, label, color }: { icon: any, label: string, c
       <span className="text-sm">{label}</span>
     </button>
   );
+}
