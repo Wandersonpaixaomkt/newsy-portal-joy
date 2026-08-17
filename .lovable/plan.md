@@ -4,27 +4,27 @@ Updating the editorial structure, visual identity of articles, advertising space
 
 ## User Improvements
 ### Visual Identity and Content Protection
-- Remove black background from articles in the public area, replacing it with a light, cleaner background.
-- Implement social sharing buttons (Facebook, WhatsApp, Telegram) in the article view.
-- Update global categories: remove "Polícia" and "Eldorado do Carajás"; add "Brasil" and "Tech & Business".
+- **Article Visuals**: Remove the black background from article pages (`/noticia/:slug`) and replace it with a clean white/light gray aesthetic.
+- **Social Sharing**: Add Facebook, WhatsApp, and Telegram sharing buttons to article pages.
+- **Category Cleanup**: Remove "Polícia" and "Eldorado do Carajás" from the menu; add "Brasil" and "Tech & Business".
 
-### Advertising Layout
-- **Homepage (Top)**: Banner between the header and featured news (1500x230).
-- **Homepage (Middle)**: Banner (2560x533) that respects the sidebar grid.
-- **Right Sidebar**: Dedicated column for 1:1 (Square) and 3:4 (Vertical) ads.
+### Advertising Layout (Home Page)
+- **Top Banner**: Insert a 1500x230 banner between the header and the main featured news.
+- **Middle Banner**: Insert a 2560x533 banner in the middle of the home page, ensuring it fits the responsive grid.
+- **Right Sidebar**: Add a dedicated column for ads in 1:1 (Square) and 3:4 (Vertical) formats.
 
 ### Administrative Panel
-- Upgrade the news editor to support rich text formatting (text size, image insertion, etc.).
+- **Rich Editor**: Enhance the news content field with formatting options (text size, image insertion) to allow better article layouting.
 
 ## Technical Details
-### Editorial Changes
-- Update `MainHeader.tsx` and `src/lib/news.ts` constants to reflect new categories.
-- Ensure the database or local mock data aligns with "Brasil" and "Tech & Business".
+### Editorial Logic
+- Update `MainHeader.tsx` category list.
+- Adjust `fetchNews` and category-specific filters in `src/lib/news.ts` if necessary.
 
-### Layout & UI
-- Modify `src/routes/noticia/$slug.tsx` to use a light background and add the `ShareButtons` component.
-- Adjust `src/routes/index.tsx` grid to include a persistent right column for ads.
-- Update `AdBanner` component to support specific dimensions and locations.
+### UI Components
+- Update `src/routes/noticia/$slug.tsx` styling: change `bg-brand-black` to `bg-white` and text colors accordingly.
+- Create a new `ShareButtons` component for social interaction.
+- Modify `src/routes/index.tsx` to implement the new grid structure (Main Content + Ad Sidebar).
 
-### Admin Upgrade
-- Integrate a rich text editor (like Tiptap or a simplified version using a better library if available, or enhance the current Textarea with formatting tools).
+### Admin Features
+- Update `src/routes/admin/noticias/nova.tsx` and `src/routes/admin/noticias/$id/index.tsx` to use a more capable editor.
