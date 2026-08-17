@@ -156,3 +156,13 @@ function StatCard({ title, value, color, icon: Icon, description }: {
     </Card>
   );
 }
+
+function QuickAction({ icon: Icon, label, color }: { icon: any, label: string, color: string }) {
+  return (
+    <button className={`${color} p-6 rounded-lg text-white font-bold hover:opacity-90 transition-opacity flex flex-col items-center justify-center gap-2 group`}>
+      <div className="p-3 bg-white/10 rounded-full group-hover:scale-110 transition-transform">
+        {Icon}
+      </div>
+      <span className="text-sm">{label}</span>
+    </button>
+  );
