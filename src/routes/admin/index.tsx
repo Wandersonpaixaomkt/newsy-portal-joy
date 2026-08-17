@@ -14,8 +14,12 @@ import {
   Calendar,
   MousePointer2,
   Clock,
-  LayoutDashboard
+  LayoutDashboard,
+  Zap,
+  Radio
 } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -107,7 +111,8 @@ function AdminDashboard() {
           onlineUsers: onlineUsers || 0,
           adClicks: adClicks || 0,
           shares: shares || 0,
-          chartData
+          chartData,
+          alerts: (await supabase.from('competitor_alerts').select('*').eq('is_read', false).order('created_at', { ascending: false }).limit(3)).data || []
         };
       } catch (err) {
         console.error('Error in Executive Dashboard:', err);
@@ -144,6 +149,25 @@ function AdminDashboard() {
           </SelectContent>
         </Select>
       </div>
+
+      {stats?.alerts && stats.alerts.length > 0 && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 text-red-500 font-bold uppercase tracking-widest text-xs italic">
+            <Radio className="w-4 h-4 animate-pulse" /> Radar de Relevância
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {stats.alerts.map((alert: any) => (
+              <Alert key={alert.id} className="bg-red-950/20 border-red-900/30 text-white">
+                <Zap className="h-4 w-4 text-yellow-500" />
+                <AlertTitle className="text-[10px] font-black uppercase text-red-500">{alert.type}</AlertTitle>
+                <AlertDescription className="text-xs font-medium">
+                  {alert.message}
+                </AlertDescription>
+              </Alert>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Primary Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
