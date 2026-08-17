@@ -79,19 +79,19 @@ function FontesList() {
                   </div>
                   <div>
                     <h4 className="font-bold text-white">{source.name}</h4>
-                    <p className="text-xs text-neutral-500">{source.rss_url || source.base_url}</p>
+                    <p className="text-xs text-neutral-500">{source.rss_url || source.domain}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-6">
                    <div className="text-right">
                      <div className="text-xs text-neutral-500 uppercase">Status</div>
-                     <Badge className={source.is_active ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}>
-                       {source.is_active ? 'Ativo' : 'Inativo'}
+                     <Badge className={source.status === 'active' ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}>
+                       {source.status === 'active' ? 'Ativo' : 'Inativo'}
                      </Badge>
                    </div>
                    <div className="text-right">
                      <div className="text-xs text-neutral-500 uppercase">Frequência</div>
-                     <div className="text-sm font-medium">{source.check_frequency_minutes} min</div>
+                     <div className="text-sm font-medium">{source.frequency_minutes || 60} min</div>
                    </div>
                    <Button variant="ghost" size="icon">
                      <ExternalLink className="w-4 h-4" />
