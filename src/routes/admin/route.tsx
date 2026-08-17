@@ -68,12 +68,12 @@ function AdminLayout() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0f0f0f] text-neutral-200 flex overflow-hidden">
+    <div className="min-h-screen bg-brand-dark text-neutral-200 flex overflow-hidden">
       {/* Sidebar para Desktop */}
-      <aside className={`hidden lg:flex flex-col border-r border-neutral-800 transition-all duration-300 ${isSidebarCollapsed ? 'w-20' : 'w-64'}`}>
+      <aside className={`hidden lg:flex flex-col border-r border-white/5 transition-all duration-300 ${isSidebarCollapsed ? 'w-20' : 'w-64'}`}>
         <div className="p-6 flex items-center justify-between">
-          {!isSidebarCollapsed && <h1 className="text-xl font-black text-red-600 tracking-tighter uppercase italic">Norte em Foco</h1>}
-          <Button variant="ghost" size="icon" onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} className="hover:bg-neutral-800">
+          {!isSidebarCollapsed && <h1 className="text-xl font-black text-primary tracking-tighter uppercase italic">Norte em Foco</h1>}
+          <Button variant="ghost" size="icon" onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} className="hover:bg-white/5">
             {isSidebarCollapsed ? <Menu className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
           </Button>
         </div>
@@ -83,8 +83,8 @@ function AdminLayout() {
             <Link 
               key={item.to}
               to={item.to} 
-              activeProps={{ className: 'bg-red-600/10 text-red-500 border-red-600/20' }}
-              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-neutral-800 transition-colors border border-transparent"
+              activeProps={{ className: 'bg-primary/10 text-primary border-primary/20' }}
+              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 transition-colors border border-transparent"
             >
               <item.icon className="w-5 h-5 flex-shrink-0" />
               {!isSidebarCollapsed && <span className="font-medium">{item.label}</span>}
@@ -109,7 +109,7 @@ function AdminLayout() {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-16 border-b border-neutral-800 bg-[#0f0f0f]/80 backdrop-blur-xl flex items-center justify-between px-6 sticky top-0 z-10">
+        <header className="h-16 border-b border-white/5 bg-brand-dark/80 backdrop-blur-xl flex items-center justify-between px-6 sticky top-0 z-10">
           {!ENV.ADMIN_AUTH_ENABLED ? (
             <div className="flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 px-3 py-1.5 rounded-full text-yellow-500 text-[10px] uppercase tracking-widest font-bold">
               <AlertTriangle size={14} /> <span>Atenção: Painel em modo aberto (Sem Login)</span>
@@ -119,7 +119,7 @@ function AdminLayout() {
               <span>Autenticação Ativa</span>
             </div>
           )}
-          <h1 className="hidden lg:block text-lg font-black text-red-600 uppercase italic">Norte em Foco</h1>
+          <h1 className="hidden lg:block text-lg font-black text-primary uppercase italic">Norte em Foco</h1>
           <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="lg:hidden">
             <Menu className="w-6 h-6" />
           </Button>

@@ -21,6 +21,7 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { AdminCard } from '@/components/admin/AdminCard';
 import { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -138,11 +139,11 @@ function AdminDashboard() {
           <p className="text-neutral-400">Indicadores reais de performance e conteúdo.</p>
         </header>
         <Select value={period} onValueChange={setPeriod}>
-          <SelectTrigger className="w-[180px] bg-neutral-800 border-neutral-700 text-white">
+          <SelectTrigger className="w-[180px] bg-brand-dark border-white/10 text-white">
             <Calendar className="w-4 h-4 mr-2" />
             <SelectValue placeholder="Período" />
           </SelectTrigger>
-          <SelectContent className="bg-neutral-800 border-neutral-700 text-white">
+          <SelectContent className="bg-brand-dark border-white/10 text-white">
             <SelectItem value="24h">Últimas 24 horas</SelectItem>
             <SelectItem value="7d">Últimos 7 dias</SelectItem>
             <SelectItem value="30d">Últimos 30 dias</SelectItem>
@@ -187,11 +188,8 @@ function AdminDashboard() {
 
       {/* Performance & Conversão */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2 bg-neutral-800 border-neutral-700">
-          <CardHeader>
-            <CardTitle className="text-lg font-bold text-white uppercase tracking-widest italic">Tendência de Audiência</CardTitle>
-          </CardHeader>
-          <CardContent className="h-[300px]">
+        <AdminCard className="lg:col-span-2" title="Tendência de Audiência">
+          <div className="h-[300px]">
             {stats?.chartData && stats.chartData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={stats.chartData}>
@@ -242,8 +240,8 @@ function AdminDashboard() {
                 <p className="text-[10px] text-red-500 font-black uppercase tracking-widest mb-1">Dica de Performance</p>
                 <p className="text-xs text-neutral-400">O engajamento aumentou nos últimos 7 dias. Revise seus rascunhos para manter o ritmo.</p>
              </div>
-          </CardContent>
-        </Card>
+          </div>
+        </AdminCard>
       </div>
     </div>
   );
@@ -253,7 +251,7 @@ function MetricCard({ title, value, icon: Icon, color }: { title: string, value:
   const displayValue = value === undefined || value === null ? "..." : value;
   
   return (
-    <Card className="bg-neutral-800 border-neutral-700 hover:border-red-600/30 transition-all duration-300">
+    <Card className="bg-brand-dark border-white/10 hover:border-primary/30 transition-all duration-300">
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-2">
           <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">{title}</span>
