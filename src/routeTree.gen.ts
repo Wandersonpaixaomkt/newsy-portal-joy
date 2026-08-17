@@ -23,6 +23,7 @@ import { Route as AdminMidiasIndexRouteImport } from './routes/admin/midias/inde
 import { Route as AdminNoticiasIndexRouteImport } from './routes/admin/noticias/index'
 import { Route as AdminNoticiasNovaRouteImport } from './routes/admin/noticias/nova'
 import { Route as AdminPublicidadeIndexRouteImport } from './routes/admin/publicidade/index'
+import { Route as AdminSeoIndexRouteImport } from './routes/admin/seo/index'
 import { Route as AdminTagsIndexRouteImport } from './routes/admin/tags/index'
 import { Route as AdminUsuariosIndexRouteImport } from './routes/admin/usuarios/index'
 import { Route as AdminNoticiasIdIndexRouteImport } from './routes/admin/noticias/$id/index'
@@ -97,6 +98,11 @@ const AdminPublicidadeIndexRoute = AdminPublicidadeIndexRouteImport.update({
   path: '/publicidade/',
   getParentRoute: () => AdminRouteRoute,
 } as any)
+const AdminSeoIndexRoute = AdminSeoIndexRouteImport.update({
+  id: '/seo/',
+  path: '/seo/',
+  getParentRoute: () => AdminRouteRoute,
+} as any)
 const AdminTagsIndexRoute = AdminTagsIndexRouteImport.update({
   id: '/tags/',
   path: '/tags/',
@@ -128,6 +134,7 @@ export interface FileRoutesByFullPath {
   '/admin/midias/': typeof AdminMidiasIndexRoute
   '/admin/noticias/': typeof AdminNoticiasIndexRoute
   '/admin/publicidade/': typeof AdminPublicidadeIndexRoute
+  '/admin/seo/': typeof AdminSeoIndexRoute
   '/admin/tags/': typeof AdminTagsIndexRoute
   '/admin/usuarios/': typeof AdminUsuariosIndexRoute
   '/admin/noticias/$id/': typeof AdminNoticiasIdIndexRoute
@@ -146,6 +153,7 @@ export interface FileRoutesByTo {
   '/admin/midias': typeof AdminMidiasIndexRoute
   '/admin/noticias': typeof AdminNoticiasIndexRoute
   '/admin/publicidade': typeof AdminPublicidadeIndexRoute
+  '/admin/seo': typeof AdminSeoIndexRoute
   '/admin/tags': typeof AdminTagsIndexRoute
   '/admin/usuarios': typeof AdminUsuariosIndexRoute
   '/admin/noticias/$id': typeof AdminNoticiasIdIndexRoute
@@ -166,6 +174,7 @@ export interface FileRoutesById {
   '/admin/midias/': typeof AdminMidiasIndexRoute
   '/admin/noticias/': typeof AdminNoticiasIndexRoute
   '/admin/publicidade/': typeof AdminPublicidadeIndexRoute
+  '/admin/seo/': typeof AdminSeoIndexRoute
   '/admin/tags/': typeof AdminTagsIndexRoute
   '/admin/usuarios/': typeof AdminUsuariosIndexRoute
   '/admin/noticias/$id/': typeof AdminNoticiasIdIndexRoute
@@ -187,6 +196,7 @@ export interface FileRouteTypes {
     | '/admin/midias/'
     | '/admin/noticias/'
     | '/admin/publicidade/'
+    | '/admin/seo/'
     | '/admin/tags/'
     | '/admin/usuarios/'
     | '/admin/noticias/$id/'
@@ -205,6 +215,7 @@ export interface FileRouteTypes {
     | '/admin/midias'
     | '/admin/noticias'
     | '/admin/publicidade'
+    | '/admin/seo'
     | '/admin/tags'
     | '/admin/usuarios'
     | '/admin/noticias/$id'
@@ -224,6 +235,7 @@ export interface FileRouteTypes {
     | '/admin/midias/'
     | '/admin/noticias/'
     | '/admin/publicidade/'
+    | '/admin/seo/'
     | '/admin/tags/'
     | '/admin/usuarios/'
     | '/admin/noticias/$id/'
@@ -335,6 +347,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPublicidadeIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }
+    '/admin/seo/': {
+      id: '/admin/seo/'
+      path: '/seo'
+      fullPath: '/admin/seo/'
+      preLoaderRoute: typeof AdminSeoIndexRouteImport
+      parentRoute: typeof AdminRouteRoute
+    }
     '/admin/tags/': {
       id: '/admin/tags/'
       path: '/tags'
@@ -371,6 +390,7 @@ interface AdminRouteRouteChildren {
   AdminMidiasIndexRoute: typeof AdminMidiasIndexRoute
   AdminNoticiasIndexRoute: typeof AdminNoticiasIndexRoute
   AdminPublicidadeIndexRoute: typeof AdminPublicidadeIndexRoute
+  AdminSeoIndexRoute: typeof AdminSeoIndexRoute
   AdminTagsIndexRoute: typeof AdminTagsIndexRoute
   AdminUsuariosIndexRoute: typeof AdminUsuariosIndexRoute
   AdminNoticiasIdIndexRoute: typeof AdminNoticiasIdIndexRoute
@@ -388,6 +408,7 @@ const AdminRouteRouteChildren: AdminRouteRouteChildren = {
   AdminMidiasIndexRoute: AdminMidiasIndexRoute,
   AdminNoticiasIndexRoute: AdminNoticiasIndexRoute,
   AdminPublicidadeIndexRoute: AdminPublicidadeIndexRoute,
+  AdminSeoIndexRoute: AdminSeoIndexRoute,
   AdminTagsIndexRoute: AdminTagsIndexRoute,
   AdminUsuariosIndexRoute: AdminUsuariosIndexRoute,
   AdminNoticiasIdIndexRoute: AdminNoticiasIdIndexRoute,

@@ -8,6 +8,9 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { analytics } from "../lib/analytics";
+import { useLocation } from "@tanstack/react-router";
+
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -117,6 +120,15 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Analytics initialization
+    analytics.initSession();
+    
+    // Page view tracking
+    analytics.trackPageView();
+  }, [location.pathname]);
 
   return (
     <QueryClientProvider client={queryClient}>

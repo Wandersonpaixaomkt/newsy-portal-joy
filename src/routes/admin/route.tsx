@@ -16,8 +16,10 @@ import {
   ExternalLink,
   ChevronLeft,
   Menu,
-  AlertTriangle
+  AlertTriangle,
+  Search
 } from 'lucide-react';
+
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -59,7 +61,9 @@ function AdminLayout() {
     { label: 'Fontes', icon: LinkIcon, to: '/admin/fontes' as const },
     { label: 'Publicidade', icon: Megaphone, to: '/admin/publicidade' as const },
     { label: 'Analytics', icon: BarChart3, to: '/admin/analytics' as const },
+    { label: 'SEO', icon: Search, to: '/admin/seo' as const },
     { label: 'Usuários', icon: UserCog, to: '/admin/usuarios' as const },
+
     { label: 'Configurações', icon: Settings, to: '/admin/configuracoes' as const },
   ];
 
