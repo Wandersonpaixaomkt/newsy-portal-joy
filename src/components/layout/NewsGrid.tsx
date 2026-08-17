@@ -20,7 +20,7 @@ export function NewsGrid({ title, items }: { title?: string, items: NewsItem[] }
       {title && (
         <div className="flex items-center justify-between mb-6 md:mb-10 pb-4 border-b border-white/10">
           <h3 className="text-2xl md:text-4xl font-black uppercase tracking-tighter text-white">{title}</h3>
-          <Link to={"/noticias" as any} className="text-[10px] font-black text-primary hover:text-white transition-all duration-300 flex items-center gap-2 uppercase tracking-[0.2em] group/all px-4 py-2 rounded-full hover:bg-white/5">
+          <Link to="/" className="text-[10px] font-black text-primary hover:text-white transition-all duration-300 flex items-center gap-2 uppercase tracking-[0.2em] group/all px-4 py-2 rounded-full hover:bg-white/5">
             Ver Tudo <ChevronRight size={16} className="group-hover/all:translate-x-1 transition-transform" />
           </Link>
         </div>
@@ -29,8 +29,8 @@ export function NewsGrid({ title, items }: { title?: string, items: NewsItem[] }
         {items.map((post, idx) => (
           <Link
             key={idx} 
-            to={"/noticia/$slug" as any}
-            params={{ slug: post.slug || post.id }}
+            to="/noticia/$slug"
+            params={{ slug: post.slug || post.id || "" }}
             className="group cursor-pointer flex flex-col bg-white/5 rounded-3xl overflow-hidden border border-white/5 hover:border-primary/40 hover:bg-white/10 transition-all duration-500 hover:shadow-premium shadow-2xl"
           >
             <div className="aspect-video overflow-hidden relative bg-white/5">
