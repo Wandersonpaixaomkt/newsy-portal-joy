@@ -234,3 +234,69 @@ function AnalyticsDashboard() {
     </div>
   );
 }
+
+function TopPostsTable() {
+  const { data: topPosts, isLoading } = useQuery({
+    queryKey: ['admin-top-posts'],
+    queryFn: async () => {
+      // For now, let's fetch events and aggregate manually to ensure it works without complex RPC
+      const { data: events } = await supabase
+        .from('analytics_events')
+        .select('post_id, posts(title, slug)')
+        .eq('event_type', 'page_view')
+        .not('post_id', 'is', null)
+        .order('created_at', { ascending: false })
+        .limit(1000);
+
+      const counts: Record<string, { count: number, title: string, slug: string }> = {};
+      events?.forEach((e: any) => {
+        if (!e.post_id || !e.posts) return;
+        if (!counts[e.post_id]) {
+          counts[e.post_id] = { 
+            count: 0, 
+            title: e.posts.title || 'Notícia sem título', 
+            slug: e.posts.slug || '' 
+          };
+        }
+        counts[e.post_id].count++;
+      });
+
+      return Object.entries(counts)
+        .map(([id, data]) => ({ id, ...data }))
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 5);
+    }
+  });
+
+  if (isLoading) return <div className="space-y-2"><div className="h-8 bg-neutral-900 rounded animate-pulse w-full"></div><div className="h-8 bg-neutral-900 rounded animate-pulse w-full"></div></div>;
+
+  if (!topPosts || topPosts.length === 0) return <div className="text-center py-10 text-neutral-500 italic">Nenhum dado de visualização coletado ainda.</div>;
+
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-left">
+        <thead>
+          <tr className="text-xs text-neutral-500 uppercase border-b border-neutral-700">
+            <th className="pb-3 font-medium">Título</th>
+            <th className="pb-3 font-medium text-right">Visualizações</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-neutral-700">
+          {topPosts.map(post => (
+            <tr key={post.id} className="group">
+              <td className="py-4">
+                <div className="font-medium text-sm group-hover:text-red-500 transition-colors truncate max-w-md">
+                  {post.title}
+                </div>
+                <div className="text-[10px] text-neutral-600">/{post.slug}</div>
+              </td>
+              <td className="py-4 text-right font-bold text-white">
+                {post.count.toLocaleString()}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
