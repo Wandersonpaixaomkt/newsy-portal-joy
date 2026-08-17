@@ -99,10 +99,11 @@ function AnalyticsDashboard() {
       });
       const totalEvents = events?.length || 1;
       const deviceData = Object.entries(deviceMap).map(([name, count]) => ({
-        name,
+        name: name || 'Desconhecido',
         value: Math.round((count / totalEvents) * 100),
         color: name === 'mobile' ? '#ef4444' : '#3b82f6'
       }));
+
 
       // Hourly peak
       const hourlyMap: Record<number, number> = {};
@@ -132,7 +133,11 @@ function AnalyticsDashboard() {
         const b = info?.browser || 'Outros';
         browserMap[b] = (browserMap[b] || 0) + 1;
       });
-      const browserData = Object.entries(browserMap).map(([name, count]) => ({ name, count }));
+      const browserData = Object.entries(browserMap).map(([name, count]) => ({ 
+        name: name || 'Outros', 
+        count 
+      }));
+
 
       return {
         totalViews: totalViews || 0,
