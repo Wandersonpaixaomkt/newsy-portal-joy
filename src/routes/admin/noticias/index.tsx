@@ -6,6 +6,7 @@ import { ptBR } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
 import { Link } from '@tanstack/react-router';
 import { Plus, Search, Edit2, Trash2, Eye } from 'lucide-react';
+import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 
 export const Route = createFileRoute('/admin/noticias/')({

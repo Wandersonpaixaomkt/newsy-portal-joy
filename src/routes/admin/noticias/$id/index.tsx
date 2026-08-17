@@ -88,8 +88,7 @@ function EditarNoticia() {
   const handleUpdate = async (status: 'draft' | 'published') => {
     setLoading(true);
     try {
-      // Remover campos que não pertencem à tabela posts se necessário ou garantir tipagem
-      const { data: updateData } = await supabase.rpc('get_current_time'); // Apenas para teste de conexão se necessário
+      // Garantir atualização do post
       
       const updatePayload = {
         ...formData,
