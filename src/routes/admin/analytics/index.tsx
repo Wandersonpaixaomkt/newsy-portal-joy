@@ -7,7 +7,7 @@ import { TrendingUp, Users, Clock, Calendar, AlertCircle, MapPin, Globe, Share2,
 import { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Skeleton } from '@/components/ui/skeleton';
+import { AdminCard } from '@/components/admin/AdminCard';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
   AreaChart, Area, PieChart, Pie, Cell 
@@ -67,7 +67,7 @@ function AnalyticsDashboard() {
     },
   });
 
-  if (isLoading) return <div className="p-8 animate-pulse bg-neutral-800 rounded-lg h-96"></div>;
+  if (isLoading) return <div className="p-8 animate-pulse bg-brand-dark border border-white/5 rounded-2xl h-96 shadow-premium"></div>;
 
   return (
     <div className="space-y-8">
@@ -77,11 +77,11 @@ function AnalyticsDashboard() {
           <p className="text-neutral-400">Inteligência de dados e comportamento do usuário.</p>
         </div>
         <Select value={period} onValueChange={setPeriod}>
-          <SelectTrigger className="w-[180px] bg-neutral-800 border-neutral-700">
+          <SelectTrigger className="w-[180px] bg-brand-dark border-white/10">
             <Calendar className="w-4 h-4 mr-2" />
             <SelectValue placeholder="Período" />
           </SelectTrigger>
-          <SelectContent className="bg-neutral-800 border-neutral-700">
+          <SelectContent className="bg-brand-dark border-white/10">
             <SelectItem value="24h">24 Horas</SelectItem>
             <SelectItem value="7d">7 Dias</SelectItem>
             <SelectItem value="30d">30 Dias</SelectItem>
@@ -97,55 +97,47 @@ function AnalyticsDashboard() {
       </div>
 
       <Tabs defaultValue="geral" className="space-y-6">
-        <TabsList className="bg-neutral-800 border-neutral-700">
+        <TabsList className="bg-brand-dark border-white/5 shadow-premium">
           <TabsTrigger value="geral">Visão Geral</TabsTrigger>
           <TabsTrigger value="jornada">Jornada do Usuário</TabsTrigger>
           <TabsTrigger value="botoes">Análise de Botões</TabsTrigger>
         </TabsList>
 
         <TabsContent value="geral">
-          <Card className="bg-neutral-800 border-neutral-700">
-            <CardHeader><CardTitle>Audiência em Tempo Real</CardTitle></CardHeader>
-            <CardContent className="h-[300px]">
-              <div className="flex items-center justify-center h-full text-neutral-500 italic text-sm">
-                Visualização de dados agregados ativa.
-              </div>
-            </CardContent>
-          </Card>
+          <AdminCard title="Audiência em Tempo Real">
+            <div className="h-[300px] flex items-center justify-center text-neutral-500 italic text-sm">
+              Visualização de dados agregados ativa.
+            </div>
+          </AdminCard>
         </TabsContent>
 
         <TabsContent value="jornada">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="bg-neutral-800 border-neutral-700">
-              <CardHeader><CardTitle className="text-sm uppercase text-neutral-500">Fluxos de Navegação Populares</CardTitle></CardHeader>
-              <CardContent className="space-y-4">
+            <AdminCard title="Fluxos de Navegação Populares">
+              <div className="space-y-4">
                 {stats?.topJourneys.map((j, i) => (
-                  <div key={i} className="flex justify-between items-center border-b border-neutral-700 pb-2 last:border-0">
+                  <div key={i} className="flex justify-between items-center border-b border-white/5 pb-2 last:border-0">
                     <span className="text-xs text-white font-medium">{j.path}</span>
-                    <span className="text-xs font-bold text-red-500">{j.count} sessões</span>
+                    <span className="text-xs font-bold text-primary">{j.count} sessões</span>
                   </div>
                 ))}
-              </CardContent>
-            </Card>
-            <Card className="bg-neutral-800 border-neutral-700">
-              <CardHeader><CardTitle className="text-sm uppercase text-neutral-500">Pontos de Abandono</CardTitle></CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex justify-between text-xs"><span>Home</span><span className="text-red-500">12%</span></div>
-                  <div className="flex justify-between text-xs"><span>Notícias/Slug</span><span className="text-red-500">45%</span></div>
-                  <div className="flex justify-between text-xs"><span>Categorias</span><span className="text-red-500">8%</span></div>
-                </div>
-              </CardContent>
-            </Card>
+              </div>
+            </AdminCard>
+            <AdminCard title="Pontos de Abandono">
+              <div className="space-y-3">
+                <div className="flex justify-between text-xs"><span>Home</span><span className="text-primary font-bold">12%</span></div>
+                <div className="flex justify-between text-xs"><span>Notícias/Slug</span><span className="text-primary font-bold">45%</span></div>
+                <div className="flex justify-between text-xs"><span>Categorias</span><span className="text-primary font-bold">8%</span></div>
+              </div>
+            </AdminCard>
           </div>
         </TabsContent>
 
         <TabsContent value="botoes">
-          <Card className="bg-neutral-800 border-neutral-700">
-            <CardHeader><CardTitle className="text-sm uppercase text-neutral-500">Elementos Mais Clicados (CTR)</CardTitle></CardHeader>
-            <CardContent className="space-y-4">
+          <AdminCard title="Elementos Mais Clicados (CTR)">
+            <div className="space-y-4">
               {stats?.topClicks.map((c, i) => (
-                <div key={i} className="flex justify-between items-center border-b border-neutral-700 pb-2 last:border-0">
+                <div key={i} className="flex justify-between items-center border-b border-white/5 pb-2 last:border-0">
                   <div className="flex items-center gap-2">
                     <MousePointer2 className="w-3 h-3 text-blue-500" />
                     <span className="text-xs text-white font-mono">{c.id}</span>
@@ -153,8 +145,8 @@ function AnalyticsDashboard() {
                   <span className="text-xs font-bold text-green-500">{c.count} cliques</span>
                 </div>
               ))}
-            </CardContent>
-          </Card>
+            </div>
+          </AdminCard>
         </TabsContent>
       </Tabs>
     </div>
@@ -163,10 +155,10 @@ function AnalyticsDashboard() {
 
 function StatCard({ title, value, icon: Icon, color }: any) {
   return (
-    <Card className="bg-neutral-800 border-neutral-700">
+    <Card className="bg-brand-dark border-white/10 shadow-premium">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-[10px] font-black text-neutral-500 uppercase">{title}</CardTitle>
-        <Icon className={`h-4 w-4 ${color}`} />
+        <CardTitle className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">{title}</CardTitle>
+        <Icon className={`h-4 w-4 \${color}`} />
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-black">{typeof value === 'number' ? value.toLocaleString() : value}</div>

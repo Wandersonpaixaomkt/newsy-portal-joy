@@ -44,10 +44,10 @@ function NoticiasList() {
   if (isLoading) return (
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-8">
-        <div className="h-10 w-48 bg-neutral-800 rounded animate-pulse" />
-        <div className="h-10 w-32 bg-neutral-800 rounded animate-pulse" />
+        <div className="h-10 w-48 bg-brand-dark border border-white/5 rounded-2xl animate-pulse" />
+        <div className="h-10 w-32 bg-brand-dark border border-white/5 rounded-2xl animate-pulse" />
       </div>
-      <div className="bg-neutral-800 rounded-lg border border-neutral-700 p-8 text-center">
+      <div className="bg-brand-dark rounded-2xl border border-white/5 p-8 text-center shadow-premium">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4" />
         <p className="text-neutral-400">Carregando notícias...</p>
       </div>
@@ -84,14 +84,14 @@ function NoticiasList() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
           <Input 
             placeholder="Buscar por título ou autor..." 
-            className="pl-10 bg-neutral-800 border-neutral-700"
+            className="pl-10 bg-brand-dark border-white/10 rounded-xl focus:border-primary/50"
           />
         </div>
       </div>
 
-      <div className="bg-neutral-800 rounded-lg border border-neutral-700 overflow-hidden">
+      <div className="bg-brand-dark rounded-2xl border border-white/5 overflow-hidden shadow-premium">
         <table className="w-full text-left">
-          <thead className="bg-neutral-900 border-b border-neutral-700">
+          <thead className="bg-white/5 border-b border-white/5">
             <tr>
               <th className="px-6 py-4 text-sm font-semibold text-neutral-400">Título</th>
               <th className="px-6 py-4 text-sm font-semibold text-neutral-400">Categoria</th>
@@ -100,9 +100,9 @@ function NoticiasList() {
               <th className="px-6 py-4 text-sm font-semibold text-neutral-400 text-right">Ações</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-neutral-700">
+          <tbody className="divide-y divide-white/5">
             {noticias?.map((noticia: any) => (
-              <tr key={noticia.id} className="hover:bg-neutral-700/50 transition-colors">
+              <tr key={noticia.id} className="hover:bg-white/5 transition-colors">
                 <td className="px-6 py-4">
                   <div className="font-medium max-w-md truncate">{noticia.title}</div>
                   <div className="text-xs text-neutral-500 mt-1">
@@ -112,7 +112,7 @@ function NoticiasList() {
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <span className="px-2 py-1 bg-neutral-900 rounded text-xs text-neutral-300">
+                  <span className="px-2 py-1 bg-white/5 rounded text-xs text-neutral-300">
                     {noticia.category?.name || 'Sem categoria'}
                   </span>
                 </td>

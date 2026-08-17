@@ -133,7 +133,7 @@ function EditarNoticia() {
       </div>
 
       <Tabs defaultValue="conteudo" className="space-y-6">
-        <TabsList className="bg-neutral-800 border-neutral-700">
+        <TabsList className="bg-brand-dark border-white/5">
           <TabsTrigger value="conteudo">Conteúdo Editorial</TabsTrigger>
           <TabsTrigger value="seo">SEO e Metadados</TabsTrigger>
         </TabsList>
@@ -141,18 +141,18 @@ function EditarNoticia() {
         <TabsContent value="conteudo">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-6">
-              <div className="bg-neutral-800 p-6 rounded-lg border border-neutral-700 space-y-4">
+              <div className="bg-brand-dark p-6 rounded-2xl border border-white/5 space-y-4 shadow-premium">
                 <div className="space-y-2">
                   <Label>Título da Manchete</Label>
-                  <Input value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="bg-neutral-900 border-neutral-700 font-bold" />
+                  <Input value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="bg-brand-dark border-white/10 font-bold focus:border-primary/50" />
                 </div>
                 <div className="space-y-2">
                   <Label>Slug (URL)</Label>
-                  <Input value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} className="bg-neutral-900 border-neutral-700 text-xs" />
+                  <Input value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} className="bg-brand-dark border-white/10 text-xs focus:border-primary/50" />
                 </div>
                 <div className="space-y-2">
                   <Label>Resumo</Label>
-                  <Textarea value={formData.excerpt} onChange={e => setFormData({...formData, excerpt: e.target.value})} className="bg-neutral-900 border-neutral-700 h-24" />
+                  <Textarea value={formData.excerpt} onChange={e => setFormData({...formData, excerpt: e.target.value})} className="bg-brand-dark border-white/10 h-24 focus:border-primary/50" />
                 </div>
                 <div className="space-y-2">
                   <Label>Conteúdo</Label>
@@ -165,11 +165,11 @@ function EditarNoticia() {
             </div>
             
             <div className="space-y-6">
-              <div className="bg-neutral-800 p-6 rounded-lg border border-neutral-700 space-y-6">
+              <div className="bg-brand-dark p-6 rounded-2xl border border-white/5 space-y-6 shadow-premium">
                 <div className="space-y-2">
                   <Label>Categoria</Label>
                   <select 
-                    className="w-full bg-neutral-900 border border-neutral-700 rounded-md p-2 text-white" 
+                    className="w-full bg-brand-dark border border-white/10 rounded-xl p-2 text-white focus:border-primary/50" 
                     value={formData.category_id} 
                     onChange={e => setFormData({...formData, category_id: e.target.value})}
                   >
@@ -180,7 +180,7 @@ function EditarNoticia() {
                 <div className="space-y-2">
                   <Label>Cidade</Label>
                   <select 
-                    className="w-full bg-neutral-900 border border-neutral-700 rounded-md p-2 text-white" 
+                    className="w-full bg-brand-dark border border-white/10 rounded-xl p-2 text-white focus:border-primary/50" 
                     value={formData.city_id} 
                     onChange={e => setFormData({...formData, city_id: e.target.value})}
                   >
@@ -193,7 +193,7 @@ function EditarNoticia() {
                   <Input 
                     value={formData.image_url} 
                     onChange={e => setFormData({...formData, image_url: e.target.value})} 
-                    className="bg-neutral-900 border-neutral-700" 
+                    className="bg-brand-dark border-white/10 focus:border-primary/50" 
                   />
                   {formData.image_url && (
                     <img src={formData.image_url} alt="Preview" className="mt-2 w-full aspect-video object-cover rounded border border-neutral-700" />
@@ -206,7 +206,7 @@ function EditarNoticia() {
                     id="is_featured" 
                     checked={formData.is_featured} 
                     onChange={e => setFormData({...formData, is_featured: e.target.checked})}
-                    className="w-4 h-4 rounded border-neutral-700 bg-neutral-900 text-red-600"
+                    className="w-4 h-4 rounded border-white/10 bg-brand-dark text-primary"
                   />
                   <Label htmlFor="is_featured" className="cursor-pointer">Notícia em Destaque</Label>
                 </div>
@@ -217,7 +217,7 @@ function EditarNoticia() {
                     id="is_urgent" 
                     checked={formData.is_urgent} 
                     onChange={e => setFormData({...formData, is_urgent: e.target.checked})}
-                    className="w-4 h-4 rounded border-neutral-700 bg-neutral-900 text-red-600"
+                    className="w-4 h-4 rounded border-white/10 bg-brand-dark text-primary"
                   />
                   <Label htmlFor="is_urgent" className="cursor-pointer text-red-500 font-bold">Plantão Urgente</Label>
                 </div>
@@ -228,30 +228,30 @@ function EditarNoticia() {
 
         <TabsContent value="seo">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="bg-neutral-800 p-6 rounded-lg border border-neutral-700 space-y-4">
+            <div className="bg-brand-dark p-6 rounded-2xl border border-white/5 space-y-4 shadow-premium">
               <h3 className="font-bold flex items-center gap-2 text-red-500"><Search className="w-4 h-4" /> Otimização para Google</h3>
               <div className="space-y-2">
                 <Label>Meta Title (Max 60 caracteres)</Label>
-                <Input value={formData.meta_title} onChange={e => setFormData({...formData, meta_title: e.target.value})} className="bg-neutral-900 border-neutral-700" maxLength={60} />
+                <Input value={formData.meta_title} onChange={e => setFormData({...formData, meta_title: e.target.value})} className="bg-brand-dark border-white/10 focus:border-primary/50" maxLength={60} />
               </div>
               <div className="space-y-2">
                 <Label>Meta Description (Max 160 caracteres)</Label>
-                <Textarea value={formData.meta_description} onChange={e => setFormData({...formData, meta_description: e.target.value})} className="bg-neutral-900 border-neutral-700" maxLength={160} />
+                <Textarea value={formData.meta_description} onChange={e => setFormData({...formData, meta_description: e.target.value})} className="bg-brand-dark border-white/10 focus:border-primary/50" maxLength={160} />
               </div>
               <div className="space-y-2">
                 <Label>Canonical URL</Label>
-                <Input value={formData.canonical_url} onChange={e => setFormData({...formData, canonical_url: e.target.value})} className="bg-neutral-900 border-neutral-700" />
+                <Input value={formData.canonical_url} onChange={e => setFormData({...formData, canonical_url: e.target.value})} className="bg-brand-dark border-white/10 focus:border-primary/50" />
               </div>
             </div>
-            <div className="bg-neutral-800 p-6 rounded-lg border border-neutral-700 space-y-4">
+            <div className="bg-brand-dark p-6 rounded-2xl border border-white/5 space-y-4 shadow-premium">
               <h3 className="font-bold flex items-center gap-2 text-blue-500"><Share2 className="w-4 h-4" /> Social Graph (Facebook/Twitter)</h3>
               <div className="space-y-2">
                 <Label>Imagem de Compartilhamento (OG Image)</Label>
-                <Input value={formData.og_image_url} onChange={e => setFormData({...formData, og_image_url: e.target.value})} className="bg-neutral-900 border-neutral-700" />
+                <Input value={formData.og_image_url} onChange={e => setFormData({...formData, og_image_url: e.target.value})} className="bg-brand-dark border-white/10 focus:border-primary/50" />
               </div>
               <div className="space-y-2">
                 <Label>Robots Meta</Label>
-                <select className="w-full bg-neutral-900 border border-neutral-700 rounded-md p-2" value={formData.robots_meta} onChange={e => setFormData({...formData, robots_meta: e.target.value})}>
+                <select className="w-full bg-brand-dark border border-white/10 rounded-xl p-2 text-white focus:border-primary/50" value={formData.robots_meta} onChange={e => setFormData({...formData, robots_meta: e.target.value})}>
                   <option value="index, follow">Index, Follow</option>
                   <option value="noindex, nofollow">NoIndex, NoFollow</option>
                 </select>
