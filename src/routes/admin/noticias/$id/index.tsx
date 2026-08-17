@@ -251,7 +251,7 @@ function EditarNoticia() {
               </div>
               <div className="space-y-2">
                 <Label>Robots Meta</Label>
-                <select className="w-full bg-neutral-900 border border-neutral-700 rounded-md p-2" value={formData.robots_meta} onChange={e => setFormData({...formData, robots_meta: e.target.value})}>
+                <select className="w-full bg-brand-dark border border-white/10 rounded-xl p-2 text-white focus:border-primary/50" value={formData.robots_meta} onChange={e => setFormData({...formData, robots_meta: e.target.value})}>
                   <option value="index, follow">Index, Follow</option>
                   <option value="noindex, nofollow">NoIndex, NoFollow</option>
                 </select>
