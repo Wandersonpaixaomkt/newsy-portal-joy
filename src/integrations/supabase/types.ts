@@ -145,6 +145,104 @@ export type Database = {
         }
         Relationships: []
       }
+      analytics_events: {
+        Row: {
+          created_at: string | null
+          device_type: string | null
+          element_id: string | null
+          event_type: string
+          id: string
+          metadata: Json | null
+          page_path: string
+          post_id: string | null
+          referrer: string | null
+          session_id: string
+          user_agent: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          device_type?: string | null
+          element_id?: string | null
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          page_path: string
+          post_id?: string | null
+          referrer?: string | null
+          session_id: string
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          device_type?: string | null
+          element_id?: string | null
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          page_path?: string
+          post_id?: string | null
+          referrer?: string | null
+          session_id?: string
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_events_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      analytics_sessions: {
+        Row: {
+          device_info: Json | null
+          ended_at: string | null
+          entry_page: string | null
+          exit_page: string | null
+          id: string
+          location_city: string | null
+          location_country: string | null
+          location_region: string | null
+          started_at: string | null
+          visitor_id: string
+        }
+        Insert: {
+          device_info?: Json | null
+          ended_at?: string | null
+          entry_page?: string | null
+          exit_page?: string | null
+          id?: string
+          location_city?: string | null
+          location_country?: string | null
+          location_region?: string | null
+          started_at?: string | null
+          visitor_id: string
+        }
+        Update: {
+          device_info?: Json | null
+          ended_at?: string | null
+          entry_page?: string | null
+          exit_page?: string | null
+          id?: string
+          location_city?: string | null
+          location_country?: string | null
+          location_region?: string | null
+          started_at?: string | null
+          visitor_id?: string
+        }
+        Relationships: []
+      }
       authors: {
         Row: {
           avatar_url: string | null
@@ -226,6 +324,104 @@ export type Database = {
         }
         Relationships: []
       }
+      competitor_articles: {
+        Row: {
+          category: string | null
+          city: string | null
+          content: string | null
+          discovered_at: string | null
+          id: string
+          image_url: string | null
+          is_urgent: boolean | null
+          metadata: Json | null
+          published_at: string | null
+          relevance_score: number | null
+          source_id: string | null
+          status: string | null
+          summary: string | null
+          title: string
+          url: string
+        }
+        Insert: {
+          category?: string | null
+          city?: string | null
+          content?: string | null
+          discovered_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_urgent?: boolean | null
+          metadata?: Json | null
+          published_at?: string | null
+          relevance_score?: number | null
+          source_id?: string | null
+          status?: string | null
+          summary?: string | null
+          title: string
+          url: string
+        }
+        Update: {
+          category?: string | null
+          city?: string | null
+          content?: string | null
+          discovered_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_urgent?: boolean | null
+          metadata?: Json | null
+          published_at?: string | null
+          relevance_score?: number | null
+          source_id?: string | null
+          status?: string | null
+          summary?: string | null
+          title?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "competitor_articles_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "competitor_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      competitor_sources: {
+        Row: {
+          created_at: string | null
+          domain: string
+          frequency_minutes: number | null
+          id: string
+          last_scraped_at: string | null
+          name: string
+          rss_url: string | null
+          sitemap_url: string | null
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          domain: string
+          frequency_minutes?: number | null
+          id?: string
+          last_scraped_at?: string | null
+          name: string
+          rss_url?: string | null
+          sitemap_url?: string | null
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          domain?: string
+          frequency_minutes?: number | null
+          id?: string
+          last_scraped_at?: string | null
+          name?: string
+          rss_url?: string | null
+          sitemap_url?: string | null
+          status?: string | null
+        }
+        Relationships: []
+      }
       post_tags: {
         Row: {
           post_id: string
@@ -259,50 +455,71 @@ export type Database = {
       posts: {
         Row: {
           author_id: string | null
+          canonical_url: string | null
           category_id: string | null
           city_id: string | null
           content: string | null
           created_at: string
           excerpt: string | null
+          focus_keyword: string | null
           id: string
           image_url: string | null
           is_featured: boolean | null
           is_urgent: boolean | null
+          meta_description: string | null
+          meta_title: string | null
+          og_image: string | null
           published_at: string | null
+          seo_score: number | null
           slug: string
           title: string
+          twitter_card: string | null
           updated_at: string
         }
         Insert: {
           author_id?: string | null
+          canonical_url?: string | null
           category_id?: string | null
           city_id?: string | null
           content?: string | null
           created_at?: string
           excerpt?: string | null
+          focus_keyword?: string | null
           id?: string
           image_url?: string | null
           is_featured?: boolean | null
           is_urgent?: boolean | null
+          meta_description?: string | null
+          meta_title?: string | null
+          og_image?: string | null
           published_at?: string | null
+          seo_score?: number | null
           slug: string
           title: string
+          twitter_card?: string | null
           updated_at?: string
         }
         Update: {
           author_id?: string | null
+          canonical_url?: string | null
           category_id?: string | null
           city_id?: string | null
           content?: string | null
           created_at?: string
           excerpt?: string | null
+          focus_keyword?: string | null
           id?: string
           image_url?: string | null
           is_featured?: boolean | null
           is_urgent?: boolean | null
+          meta_description?: string | null
+          meta_title?: string | null
+          og_image?: string | null
           published_at?: string | null
+          seo_score?: number | null
           slug?: string
           title?: string
+          twitter_card?: string | null
           updated_at?: string
         }
         Relationships: [
