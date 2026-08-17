@@ -153,14 +153,28 @@ function EditarNoticia() {
     setLoading(true);
     try {
       const updatePayload = {
-        ...formData,
+        title: formData.title,
+        slug: formData.slug,
+        excerpt: formData.excerpt || null,
+        content: formData.content || null,
+        category_id: formData.category_id || null,
+        city_id: formData.city_id || null,
+        author_id: formData.author_id || null,
+        image_url: formData.image_url || null,
+        is_featured: formData.is_featured || false,
+        is_urgent: formData.is_urgent || false,
+        meta_title: formData.meta_title || null,
+        meta_description: formData.meta_description || null,
+        canonical_url: formData.canonical_url || null,
+        robots_meta: formData.robots_meta || 'index, follow',
+        og_image_url: formData.og_image_url || null,
         published_at: status === 'published' ? (post?.published_at || new Date().toISOString()) : (status === 'draft' ? null : post?.published_at),
         updated_at: new Date().toISOString(),
       };
 
       const { error } = await supabase
         .from('posts')
-        .update(updatePayload as any)
+        .update(updatePayload)
         .eq('id', id);
 
       if (error) throw error;

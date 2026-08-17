@@ -153,8 +153,6 @@ function NovaNoticia() {
     
     setLoading(true);
     try {
-      // Enviar APENAS colunas que existem na tabela posts
-      // Não incluir source_link / source_name (não existem no schema)
       const payload = {
         title: formData.title,
         slug: formData.slug,
