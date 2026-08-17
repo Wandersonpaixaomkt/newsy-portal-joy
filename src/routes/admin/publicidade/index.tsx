@@ -74,6 +74,10 @@ function PublicidadeList() {
     if (!e.target.files || e.target.files.length === 0) return;
     setUploading(true);
     const file = e.target.files[0];
+    if (!file) {
+      setUploading(false);
+      return;
+    }
     try {
       const options = { maxSizeMB: 0.5, maxWidthOrHeight: 2560, useWebWorker: true };
       const compressedFile = await imageCompression(file, options);
