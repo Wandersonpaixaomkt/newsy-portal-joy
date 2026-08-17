@@ -19,31 +19,48 @@ export const Route = createFileRoute('/admin/')({
 });
 
 function AdminDashboard() {
-  const { data: stats, isLoading } = useQuery({
+  const { data: stats, isLoading, error } = useQuery({
     queryKey: ['admin-stats'],
     queryFn: async () => {
-      const basicStats = await getAdminStats();
-      
-      // Get real counts from analytics tables if they exist
-      const { count: todayViews } = await supabase
-        .from('analytics_events')
-        .select('*', { count: 'exact', head: true })
-        .eq('event_type', 'page_view')
-        .gte('created_at', new Date(new Date().setHours(0,0,0,0)).toISOString());
+      try {
+        const basicStats = await getAdminStats();
+        
+        // Get real counts from analytics tables if they exist
+        const { count: todayViews } = await supabase
+          .from('analytics_events')
+          .select('*', { count: 'exact', head: true })
+          .eq('event_type', 'page_view')
+          .gte('created_at', new Date(new Date().setHours(0,0,0,0)).toISOString());
 
-      const { count: onlineUsers } = await supabase
-        .from('analytics_sessions')
-        .select('visitor_id', { count: 'exact', head: true })
-        .is('ended_at', null)
-        .gte('started_at', new Date(Date.now() - 5 * 60 * 1000).toISOString());
+        const { count: onlineUsers } = await supabase
+          .from('analytics_sessions')
+          .select('visitor_id', { count: 'exact', head: true })
+          .is('ended_at', null)
+          .gte('started_at', new Date(Date.now() - 5 * 60 * 1000).toISOString());
 
-      return {
-        ...basicStats,
-        todayViews: todayViews || 0,
-        onlineUsers: onlineUsers || 0,
-        seoIssues: 0,
-      };
+        return {
+          published: basicStats?.published || 0,
+          drafts: basicStats?.drafts || 0,
+          categories: basicStats?.categories || 0,
+          authors: basicStats?.authors || 0,
+          todayViews: todayViews || 0,
+          onlineUsers: onlineUsers || 0,
+          seoIssues: 0,
+        };
+      } catch (err) {
+        console.error('Error in AdminDashboard stats:', err);
+        return {
+          published: 0,
+          drafts: 0,
+          categories: 0,
+          authors: 0,
+          todayViews: 0,
+          onlineUsers: 0,
+          seoIssues: 0,
+        };
+      }
     },
+    retry: 1,
   });
 
   if (isLoading) return (
