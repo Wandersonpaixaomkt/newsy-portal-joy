@@ -86,7 +86,7 @@ function AnalyticsDashboard() {
       // Daily Views
       const dailyMap: Record<string, number> = {};
       events?.filter(e => e.event_type === 'page_view').forEach(e => {
-        const date = new Date(e.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+        const date = new Date(e.created_at || new Date()).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
         dailyMap[date] = (dailyMap[date] || 0) + 1;
       });
       const dailyData = Object.entries(dailyMap).map(([date, views]) => ({ date, views }));
@@ -108,7 +108,7 @@ function AnalyticsDashboard() {
       // Hourly peak
       const hourlyMap: Record<number, number> = {};
       events?.filter(e => e.event_type === 'page_view').forEach(e => {
-        const hour = new Date(e.created_at).getHours();
+        const hour = new Date(e.created_at || new Date()).getHours();
         hourlyMap[hour] = (hourlyMap[hour] || 0) + 1;
       });
       const hourlyData = Array.from({ length: 24 }, (_, i) => ({
