@@ -62,8 +62,7 @@ export const fetchFeaturedPost = async (): Promise<Post | null> => {
     .select(`
       *,
       category:categories(name, slug),
-      city:cities(name, slug),
-      author:authors(name, slug)
+      city:cities(name, slug)
     `)
     .eq("is_featured", true)
     .order("published_at", { ascending: false })
