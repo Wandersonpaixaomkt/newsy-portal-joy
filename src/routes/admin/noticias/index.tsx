@@ -20,9 +20,10 @@ function NoticiasList() {
       const { data, error } = await supabase
         .from('posts')
         .select(`
-          *,
-          category:categories(name),
-          city:cities(name)
+          id,
+          title,
+          published_at,
+          category:categories(name)
         `)
         .order('created_at', { ascending: false })
         .limit(100);
