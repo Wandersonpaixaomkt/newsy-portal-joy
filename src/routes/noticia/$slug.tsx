@@ -1,10 +1,10 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { fetchPostBySlug, fetchRelatedPosts } from "@/lib/news";
+import { fetchPostBySlug } from "@/lib/news";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MapPin, Calendar, Clock, Share2, ArrowLeft, ExternalLink } from "lucide-react";
+import { MapPin, Calendar, Clock, ArrowLeft } from "lucide-react";
 import { TopBar } from "@/components/layout/TopBar";
 import { MainHeader } from "@/components/layout/MainHeader";
 import { Footer } from "@/components/layout/Footer";
@@ -35,11 +35,16 @@ function PostPage() {
         const winHeight = window.innerHeight;
         const docHeight = document.documentElement.scrollHeight;
         const scrollTop = window.scrollY;
+        
+        // Prevent division by zero
+        if (docHeight <= winHeight) return;
+        
         const scrollPercent = Math.round((scrollTop / (docHeight - winHeight)) * 100);
         
         if (scrollPercent > maxScroll) {
           maxScroll = scrollPercent;
-          if (maxScroll % 25 === 0) { // Track at 25, 50, 75, 100
+          // Track at 25, 50, 75, 100
+          if (maxScroll >= 25 && maxScroll % 25 === 0) {
              analytics.trackScroll(maxScroll, article.id);
           }
         }
@@ -66,7 +71,6 @@ function PostPage() {
       };
     }
   }, [article]);
-
 
   if (isLoading) return <div className="min-h-screen bg-brand-black p-10"><Skeleton className="h-96 w-full" /></div>;
   if (error || !article) return <div className="min-h-screen bg-brand-black p-10 text-white text-center">Notícia não encontrada.</div>;
@@ -103,7 +107,7 @@ function PostPage() {
             className="w-full rounded-3xl object-cover aspect-video"
           />
 
-          <div className="prose prose-invert prose-lg max-w-none text-white/90">
+          <div ref={contentRef} className="prose prose-invert prose-lg max-w-none text-white/90">
              {article.content ? (
                 <div dangerouslySetInnerHTML={{ __html: article.content }} />
              ) : (
