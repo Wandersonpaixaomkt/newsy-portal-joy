@@ -83,7 +83,7 @@ function AdminDashboard() {
         <StatCard 
           title="Visualizações Hoje" 
           value={stats?.todayViews || 0} 
-          icon={Eye}
+          icon={TrendingUp}
           color="text-red-500" 
           description="Total de pageviews desde 00:00"
         />
@@ -110,14 +110,27 @@ function AdminDashboard() {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="bg-neutral-800 border-neutral-700">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-lg font-bold">Conteúdo Recente</CardTitle>
-            <TrendingUp className="w-4 h-4 text-neutral-500" />
-          </CardHeader>
-          <CardContent>
-             <div className="text-center py-10 text-neutral-500 italic text-sm">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="bg-neutral-800 p-8 rounded-lg border border-neutral-700">
+          <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-red-500" />
+            Performance da Semana
+          </h3>
+          <div className="h-64 flex items-center justify-center text-neutral-500 italic border border-neutral-700 rounded-lg">
+            Coletando dados suficientes para gerar o gráfico...
+          </div>
+        </div>
+
+        <div className="bg-neutral-800 p-8 rounded-lg border border-neutral-700">
+          <h3 className="text-xl font-bold mb-6">Ações Rápidas</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <QuickAction icon={<FileText />} label="Nova Notícia" color="bg-red-600" />
+            <QuickAction icon={<Users />} label="Novo Autor" color="bg-neutral-700" />
+            <QuickAction icon={<Eye />} label="Ver Site" color="bg-neutral-700" />
+            <QuickAction icon={<TrendingUp />} label="Relatórios" color="bg-neutral-700" />
+          </div>
+        </div>
+      </div>
               Nenhuma atividade recente registrada.
             </div>
           </CardContent>
