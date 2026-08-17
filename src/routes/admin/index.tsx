@@ -19,31 +19,48 @@ export const Route = createFileRoute('/admin/')({
 });
 
 function AdminDashboard() {
-  const { data: stats, isLoading } = useQuery({
+  const { data: stats, isLoading, error } = useQuery({
     queryKey: ['admin-stats'],
     queryFn: async () => {
-      const basicStats = await getAdminStats();
-      
-      // Get real counts from analytics tables if they exist
-      const { count: todayViews } = await supabase
-        .from('analytics_events')
-        .select('*', { count: 'exact', head: true })
-        .eq('event_type', 'page_view')
-        .gte('created_at', new Date(new Date().setHours(0,0,0,0)).toISOString());
+      try {
+        const basicStats = await getAdminStats();
+        
+        // Get real counts from analytics tables if they exist
+        const { count: todayViews } = await supabase
+          .from('analytics_events')
+          .select('*', { count: 'exact', head: true })
+          .eq('event_type', 'page_view')
+          .gte('created_at', new Date(new Date().setHours(0,0,0,0)).toISOString());
 
-      const { count: onlineUsers } = await supabase
-        .from('analytics_sessions')
-        .select('visitor_id', { count: 'exact', head: true })
-        .is('ended_at', null)
-        .gte('started_at', new Date(Date.now() - 5 * 60 * 1000).toISOString());
+        const { count: onlineUsers } = await supabase
+          .from('analytics_sessions')
+          .select('visitor_id', { count: 'exact', head: true })
+          .is('ended_at', null)
+          .gte('started_at', new Date(Date.now() - 5 * 60 * 1000).toISOString());
 
-      return {
-        ...basicStats,
-        todayViews: todayViews || 0,
-        onlineUsers: onlineUsers || 0,
-        seoIssues: 0,
-      };
+        return {
+          published: basicStats?.published || 0,
+          drafts: basicStats?.drafts || 0,
+          categories: basicStats?.categories || 0,
+          authors: basicStats?.authors || 0,
+          todayViews: todayViews || 0,
+          onlineUsers: onlineUsers || 0,
+          seoIssues: 0,
+        };
+      } catch (err) {
+        console.error('Error in AdminDashboard stats:', err);
+        return {
+          published: 0,
+          drafts: 0,
+          categories: 0,
+          authors: 0,
+          todayViews: 0,
+          onlineUsers: 0,
+          seoIssues: 0,
+        };
+      }
     },
+    retry: 1,
   });
 
   if (isLoading) return (
@@ -66,7 +83,7 @@ function AdminDashboard() {
         <StatCard 
           title="Visualizações Hoje" 
           value={stats?.todayViews || 0} 
-          icon={Eye}
+          icon={TrendingUp}
           color="text-red-500" 
           description="Total de pageviews desde 00:00"
         />
@@ -93,30 +110,17 @@ function AdminDashboard() {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="bg-neutral-800 border-neutral-700">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-lg font-bold">Conteúdo Recente</CardTitle>
-            <TrendingUp className="w-4 h-4 text-neutral-500" />
-          </CardHeader>
-          <CardContent>
-             <div className="text-center py-10 text-neutral-500 italic text-sm">
-              Nenhuma atividade recente registrada.
-            </div>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="bg-neutral-800 p-8 rounded-lg border border-neutral-700">
+          <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-red-500" />
+            Performance da Semana
+          </h3>
+          <div className="h-64 flex items-center justify-center text-neutral-500 italic border border-neutral-700 rounded-lg">
+            Coletando dados suficientes para gerar o gráfico...
+          </div>
+        </div>
 
-        <Card className="bg-neutral-800 border-neutral-700">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-lg font-bold">Principais Termos de Busca</CardTitle>
-            <Search className="w-4 h-4 text-neutral-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-center py-10 text-neutral-500 italic text-sm">
-              Ainda não há dados suficientes de pesquisa.
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
       <div className="bg-red-950/10 border border-red-900/30 p-6 rounded-lg flex items-start gap-4">
@@ -150,5 +154,16 @@ function StatCard({ title, value, color, icon: Icon, description }: {
         {description && <p className="text-[10px] text-neutral-500 mt-1 uppercase tracking-wider">{description}</p>}
       </CardContent>
     </Card>
+  );
+}
+
+function QuickAction({ icon: Icon, label, color }: { icon: any, label: string, color: string }) {
+  return (
+    <button className={`${color} p-6 rounded-lg text-white font-bold hover:opacity-90 transition-opacity flex flex-col items-center justify-center gap-2 group`}>
+      <div className="p-3 bg-white/10 rounded-full group-hover:scale-110 transition-transform">
+        {Icon}
+      </div>
+      <span className="text-sm">{label}</span>
+    </button>
   );
 }

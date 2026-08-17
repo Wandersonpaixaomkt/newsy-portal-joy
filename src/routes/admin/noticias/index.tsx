@@ -20,9 +20,10 @@ function NoticiasList() {
       const { data, error } = await supabase
         .from('posts')
         .select(`
-          *,
-          category:categories(name),
-          city:cities(name)
+          id,
+          title,
+          published_at,
+          category:categories(name)
         `)
         .order('created_at', { ascending: false })
         .limit(100);
@@ -41,19 +42,22 @@ function NoticiasList() {
 
   if (isLoading) return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div className="h-8 bg-neutral-800 w-1/4 rounded animate-pulse"></div>
-        <div className="h-10 bg-neutral-800 w-32 rounded animate-pulse"></div>
+      <div className="flex items-center justify-between mb-8">
+        <div className="h-10 w-48 bg-neutral-800 rounded animate-pulse" />
+        <div className="h-10 w-32 bg-neutral-800 rounded animate-pulse" />
       </div>
-      <div className="bg-neutral-800 rounded-lg border border-neutral-700 h-96 animate-pulse"></div>
+      <div className="bg-neutral-800 rounded-lg border border-neutral-700 p-8 text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4" />
+        <p className="text-neutral-400">Carregando notícias...</p>
+      </div>
     </div>
   );
 
   if (error) return (
-    <div className="bg-red-950/20 border border-red-500/50 p-6 rounded-lg text-center">
-      <div className="text-red-500 font-bold mb-2">ERRO AO CARREGAR NOTÍCIAS</div>
-      <p className="text-neutral-400 mb-4">{(error as any).message || 'Houve um problema na comunicação com o banco de dados.'}</p>
-      <Button onClick={() => window.location.reload()} variant="outline" className="border-red-500/50 text-red-500 hover:bg-red-500/10">
+    <div className="bg-red-900/20 border border-red-900/50 p-12 rounded-lg text-center">
+      <h3 className="text-xl font-bold text-red-500 mb-2">Erro de Conexão</h3>
+      <p className="text-neutral-400 mb-6">Não foi possível carregar a lista de notícias. Verifique sua permissão ou conexão com o banco.</p>
+      <Button onClick={() => window.location.reload()} className="bg-red-600 hover:bg-red-700">
         Tentar Novamente
       </Button>
     </div>
