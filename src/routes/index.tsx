@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { TopBar } from "@/components/layout/TopBar";
 import { MainHeader } from "@/components/layout/MainHeader";
 import { CategoryMenu } from "@/components/layout/CategoryMenu";
