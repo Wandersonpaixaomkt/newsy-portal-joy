@@ -7,7 +7,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { Save, ArrowLeft, Image as ImageIcon, Search, Globe, Share2, AlertTriangle, FileText } from 'lucide-react';
+import { Save, ArrowLeft, Image as ImageIcon, Search, Globe, Share2, AlertTriangle, FileText, Type } from 'lucide-react';
+import { RichTextEditor } from '@/components/admin/RichTextEditor';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
@@ -156,7 +157,10 @@ function NovaNoticia() {
                 </div>
                 <div className="space-y-2">
                   <Label>Conteúdo</Label>
-                  <Textarea value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} className="bg-neutral-900 border-neutral-700 h-[400px]" />
+                  <RichTextEditor 
+                    content={formData.content} 
+                    onChange={content => setFormData({...formData, content})} 
+                  />
                 </div>
               </div>
             </div>

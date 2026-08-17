@@ -8,6 +8,7 @@ import { MapPin, Calendar, Clock, ArrowLeft } from "lucide-react";
 import { TopBar } from "@/components/layout/TopBar";
 import { MainHeader } from "@/components/layout/MainHeader";
 import { Footer } from "@/components/layout/Footer";
+import { ShareButtons } from "@/components/layout/ShareButtons";
 import { useEffect, useRef, useState } from "react";
 import { analytics } from "@/lib/analytics";
 import { ENV } from "@/lib/env";
@@ -106,16 +107,16 @@ function PostPage() {
     };
   }, [article]);
 
-  if (isLoading) return <div className="min-h-screen bg-brand-black p-10"><Skeleton className="h-96 w-full" /></div>;
-  if (error || !article) return <div className="min-h-screen bg-brand-black p-10 text-white text-center">Notícia não encontrada.</div>;
+  if (isLoading) return <div className="min-h-screen bg-neutral-50 p-10"><Skeleton className="h-96 w-full" /></div>;
+  if (error || !article) return <div className="min-h-screen bg-neutral-50 p-10 text-brand-dark text-center">Notícia não encontrada.</div>;
 
   return (
-    <div className="min-h-screen bg-brand-black font-sans text-white">
+    <div className="min-h-screen bg-neutral-50 font-sans text-brand-dark">
       <TopBar />
       <MainHeader />
       
       <main className="container mx-auto px-6 py-10 max-w-4xl">
-        <Link to="/" className="inline-flex items-center gap-2 text-primary hover:text-white transition-colors mb-8 font-bold">
+        <Link to="/" className="inline-flex items-center gap-2 text-primary hover:text-brand-dark transition-colors mb-8 font-bold">
           <ArrowLeft size={18} /> Voltar ao Início
         </Link>
         
@@ -127,9 +128,9 @@ function PostPage() {
           </div>
           
           <h1 className="text-4xl md:text-6xl font-black tracking-tighter leading-tight">{article.title}</h1>
-          <p className="text-xl text-white/70 font-medium tracking-tight">{article.excerpt}</p>
+          <p className="text-xl text-brand-dark/70 font-medium tracking-tight">{article.excerpt}</p>
           
-          <div className="flex flex-wrap items-center gap-6 text-sm text-white/50 border-y border-white/10 py-6">
+          <div className="flex flex-wrap items-center gap-6 text-sm text-brand-dark/50 border-y border-neutral-200 py-6">
              <span className="flex items-center gap-2"><MapPin size={16} /> {article.city?.name || "Sudeste do Pará"}</span>
              <span className="flex items-center gap-2"><Calendar size={16} /> {format(new Date(article.published_at || new Date()), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}</span>
              <span className="flex items-center gap-2"><Clock size={16} /> {article.author?.name || "Redação"}</span>
@@ -144,18 +145,20 @@ function PostPage() {
               style={{ WebkitTouchCallout: 'none' }}
             />
             {ENV.IMAGE_WATERMARK_ENABLED && (
-              <div className="absolute bottom-4 right-4 bg-black/50 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 pointer-events-none select-none">
+              <div className="absolute bottom-4 right-4 bg-brand-dark/50 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 pointer-events-none select-none">
                 <span className="text-[10px] font-black uppercase tracking-widest text-white/70">Norte em Foco</span>
               </div>
             )}
           </div>
 
-          <div ref={contentRef} className="prose prose-invert prose-lg max-w-none text-white/90">
+          <ShareButtons url={window.location.href} title={article.title} />
+
+          <div ref={contentRef} className="prose prose-neutral prose-lg max-w-none text-brand-dark/90">
              {article.content ? (
                 <div dangerouslySetInnerHTML={{ __html: article.content }} />
              ) : (
-                <div className="p-10 border border-dashed border-white/20 rounded-3xl bg-white/5">
-                   <p className="text-white/60 text-center italic">Conteúdo demonstrativo. A reportagem completa será publicada em breve.</p>
+                <div className="p-10 border border-dashed border-neutral-200 rounded-3xl bg-neutral-100/50">
+                   <p className="text-brand-dark/60 text-center italic">Conteúdo demonstrativo. A reportagem completa será publicada em breve.</p>
                 </div>
              )}
           </div>

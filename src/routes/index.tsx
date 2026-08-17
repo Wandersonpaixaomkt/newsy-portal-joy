@@ -52,9 +52,23 @@ function Index() {
   const policeNews = articles.filter(a => a.category?.slug === "policia").slice(0, 4).map(mapToView);
   const sportsNews = articles.filter(a => a.category?.slug === "esportes").slice(0, 4).map(mapToView);
 
-  const AdBanner = ({ className = "" }: { className?: string }) => (
-    <div className={`w-full max-w-[1140px] mx-auto h-[150px] md:h-[250px] bg-gray-100 flex items-center justify-center border border-gray-200 rounded-lg overflow-hidden my-12 ${className}`}>
-      <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.5em]">Publicidade</span>
+  const AdBanner = ({ className = "", width = 1140, height = 250, label = "Publicidade" }: { className?: string, width?: number, height?: number, label?: string }) => (
+    <div 
+      className={`w-full mx-auto bg-gray-100 flex items-center justify-center border border-gray-200 rounded-lg overflow-hidden my-12 ${className}`}
+      style={{ maxWidth: `${width}px`, height: `${height}px` }}
+    >
+      <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.5em]">{label}</span>
+    </div>
+  );
+
+  const SidebarAds = () => (
+    <div className="hidden lg:flex flex-col gap-8 w-[300px] shrink-0 sticky top-24 h-fit">
+      <div className="w-full aspect-square bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center">
+        <span className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">Publicidade 1:1</span>
+      </div>
+      <div className="w-full aspect-[3/4] bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center">
+        <span className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">Publicidade 3:4</span>
+      </div>
     </div>
   );
 
@@ -63,7 +77,10 @@ function Index() {
       <MainHeader />
       
       <main className="container mx-auto px-6">
-        <AdBanner />
+        <AdBanner width={1500} height={230} className="md:h-[230px]" />
+        
+        <div className="flex flex-col lg:flex-row gap-12">
+          <div className="flex-grow">
 
         {/* 3. Área de destaque principal */}
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16 items-start">
@@ -119,16 +136,18 @@ function Index() {
         {/* 4. Linha de notícias secundárias */}
         <NewsGrid items={secondaryGrid} />
 
-        <AdBanner />
+            <AdBanner width={2560} height={533} className="md:h-[533px]" />
 
-        {/* 6. Blocos por editoria (3 colunas) */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
-          <EditorialBlock title="Região" news={regionNews} />
-          <EditorialBlock title="Política" news={politicsNews} />
-          <EditorialBlock title="Brasil" news={brazilNews} />
-        </section>
+            {/* 6. Blocos por editoria (3 colunas) */}
+            <section className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
+              <EditorialBlock title="Região" news={regionNews} />
+              <EditorialBlock title="Política" news={politicsNews} />
+              <EditorialBlock title="Brasil" news={brazilNews} />
+            </section>
+          </div>
 
-        <AdBanner />
+          <SidebarAds />
+        </div>
       </main>
 
       {/* 8. Seção especial fundo escuro (Polícia) */}
