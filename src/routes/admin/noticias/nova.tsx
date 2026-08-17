@@ -26,7 +26,6 @@ function NovaNoticia() {
     content: '',
     category_id: '',
     city_id: '',
-    author_id: '',
     image_url: '',
     is_featured: false,
     is_urgent: false,
@@ -37,6 +36,7 @@ function NovaNoticia() {
     og_image_url: '',
     source_link: '',
     source_name: '',
+    author_id: null as string | null,
   });
 
   useEffect(() => {
