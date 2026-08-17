@@ -106,14 +106,13 @@ function NovaNoticia() {
     const file = e.target.files[0];
     
     try {
-      // Compressão
       const options = {
         maxSizeMB: 0.8,
         maxWidthOrHeight: 1200,
         useWebWorker: true
       };
       
-      const compressedFile = await imageCompression(file!, options);
+      const compressedFile = await imageCompression(file, options);
       
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random()}.${fileExt}`;
