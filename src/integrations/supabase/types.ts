@@ -468,6 +468,7 @@ export type Database = {
           created_at: string | null
           from_path: string | null
           id: string
+          post_id: string | null
           sequence_order: number
           session_id: string | null
           to_path: string
@@ -476,6 +477,7 @@ export type Database = {
           created_at?: string | null
           from_path?: string | null
           id?: string
+          post_id?: string | null
           sequence_order: number
           session_id?: string | null
           to_path: string
@@ -484,11 +486,19 @@ export type Database = {
           created_at?: string | null
           from_path?: string | null
           id?: string
+          post_id?: string | null
           sequence_order?: number
           session_id?: string | null
           to_path?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "navigation_journeys_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "navigation_journeys_session_id_fkey"
             columns: ["session_id"]
@@ -545,11 +555,15 @@ export type Database = {
           meta_description: string | null
           meta_title: string | null
           og_image: string | null
+          og_image_url: string | null
           published_at: string | null
+          robots_meta: string | null
+          schema_data: Json | null
           seo_score: number | null
           slug: string
           title: string
           twitter_card: string | null
+          twitter_card_type: string | null
           updated_at: string
         }
         Insert: {
@@ -568,11 +582,15 @@ export type Database = {
           meta_description?: string | null
           meta_title?: string | null
           og_image?: string | null
+          og_image_url?: string | null
           published_at?: string | null
+          robots_meta?: string | null
+          schema_data?: Json | null
           seo_score?: number | null
           slug: string
           title: string
           twitter_card?: string | null
+          twitter_card_type?: string | null
           updated_at?: string
         }
         Update: {
@@ -591,11 +609,15 @@ export type Database = {
           meta_description?: string | null
           meta_title?: string | null
           og_image?: string | null
+          og_image_url?: string | null
           published_at?: string | null
+          robots_meta?: string | null
+          schema_data?: Json | null
           seo_score?: number | null
           slug?: string
           title?: string
           twitter_card?: string | null
+          twitter_card_type?: string | null
           updated_at?: string
         }
         Relationships: [
