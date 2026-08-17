@@ -10,27 +10,54 @@ import {
   AlertCircle, 
   TrendingUp,
   Search,
-  Share2
+  Share2,
+  Calendar,
+  MousePointer2,
+  Clock,
+  LayoutDashboard
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState } from 'react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export const Route = createFileRoute('/admin/')({
   component: AdminDashboard,
 });
 
 function AdminDashboard() {
-  const { data: stats, isLoading, error } = useQuery({
-    queryKey: ['admin-stats'],
+  const [period, setPeriod] = useState('7d');
+
+  const { data: stats, isLoading } = useQuery({
+    queryKey: ['admin-stats-executive', period],
     queryFn: async () => {
       try {
         const basicStats = await getAdminStats();
         
-        // Get real counts from analytics tables if they exist
-        const { count: todayViews } = await supabase
+        const now = new Date();
+        let startDate = new Date();
+        if (period === '24h') startDate.setHours(now.getHours() - 24);
+        else if (period === '7d') startDate.setDate(now.getDate() - 7);
+        else if (period === '30d') startDate.setDate(now.getDate() - 30);
+
+        const startIso = startDate.toISOString();
+
+        // Real Metrics from Analytics
+        const { count: views } = await supabase
           .from('analytics_events')
           .select('*', { count: 'exact', head: true })
           .eq('event_type', 'page_view')
-          .gte('created_at', new Date(new Date().setHours(0,0,0,0)).toISOString());
+          .gte('created_at', startIso);
+
+        const { count: uniqueUsers } = await supabase
+          .from('analytics_sessions')
+          .select('visitor_id', { count: 'exact', head: true })
+          .gte('started_at', startIso);
+
+        const { count: sessions } = await supabase
+          .from('analytics_sessions')
+          .select('*', { count: 'exact', head: true })
+          .gte('started_at', startIso);
 
         const { count: onlineUsers } = await supabase
           .from('analytics_sessions')
@@ -38,132 +65,183 @@ function AdminDashboard() {
           .is('ended_at', null)
           .gte('started_at', new Date(Date.now() - 5 * 60 * 1000).toISOString());
 
+        const { count: scheduled } = await supabase
+          .from('posts')
+          .select('*', { count: 'exact', head: true })
+          .gt('published_at', new Date().toISOString());
+
+        const { count: adClicks } = await supabase
+          .from('analytics_events')
+          .select('*', { count: 'exact', head: true })
+          .eq('event_type', 'ad_click')
+          .gte('created_at', startIso);
+
+        const { count: shares } = await supabase
+          .from('analytics_events')
+          .select('*', { count: 'exact', head: true })
+          .eq('event_type', 'share_click')
+          .gte('created_at', startIso);
+
+        // Chart data
+        const { data: chartEvents } = await supabase
+          .from('analytics_events')
+          .select('created_at')
+          .eq('event_type', 'page_view')
+          .gte('created_at', startIso)
+          .order('created_at', { ascending: true });
+
+        const dailyMap: Record<string, number> = {};
+        chartEvents?.forEach(e => {
+          const d = new Date(e.created_at || new Date()).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+          dailyMap[d] = (dailyMap[d] || 0) + 1;
+        });
+        const chartData = Object.entries(dailyMap).map(([date, views]) => ({ date, views }));
+
         return {
           published: basicStats?.published || 0,
           drafts: basicStats?.drafts || 0,
-          categories: basicStats?.categories || 0,
-          authors: basicStats?.authors || 0,
-          todayViews: todayViews || 0,
+          scheduled: scheduled || 0,
+          views: views || 0,
+          uniqueUsers: uniqueUsers || 0,
+          sessions: sessions || 0,
           onlineUsers: onlineUsers || 0,
-          seoIssues: 0,
+          adClicks: adClicks || 0,
+          shares: shares || 0,
+          chartData
         };
       } catch (err) {
-        console.error('Error in AdminDashboard stats:', err);
-        return {
-          published: 0,
-          drafts: 0,
-          categories: 0,
-          authors: 0,
-          todayViews: 0,
-          onlineUsers: 0,
-          seoIssues: 0,
-        };
+        console.error('Error in Executive Dashboard:', err);
+        return null;
       }
-    },
-    retry: 1,
+    }
   });
 
   if (isLoading) return (
     <div className="space-y-8 animate-pulse">
       <div className="h-10 bg-neutral-800 w-48 rounded"></div>
-      <div className="grid grid-cols-4 gap-6">
-        {[1,2,3,4].map(i => <div key={i} className="h-32 bg-neutral-800 rounded-lg"></div>)}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[1,2,3,4,5,6,7,8].map(i => <div key={i} className="h-24 bg-neutral-800 rounded-lg"></div>)}
       </div>
     </div>
   );
 
   return (
     <div className="space-y-8">
-      <header>
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-neutral-400">Visão geral do desempenho e conteúdo do portal.</p>
-      </header>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard 
-          title="Visualizações Hoje" 
-          value={stats?.todayViews || 0} 
-          icon={TrendingUp}
-          color="text-red-500" 
-          description="Total de pageviews desde 00:00"
-        />
-        <StatCard 
-          title="Usuários Online" 
-          value={stats?.onlineUsers || 0} 
-          icon={Users}
-          color="text-blue-500" 
-          description="Visitantes ativos nos últimos 5 min"
-        />
-        <StatCard 
-          title="Notícias Publicadas" 
-          value={stats?.published || 0} 
-          icon={FileText}
-          color="text-green-500" 
-          description="Total de matérias no ar"
-        />
-        <StatCard 
-          title="Alertas de SEO" 
-          value={stats?.seoIssues || 0} 
-          icon={AlertCircle}
-          color="text-yellow-500" 
-          description="Matérias que precisam de ajuste"
-        />
+      <div className="flex justify-between items-end">
+        <header>
+          <h1 className="text-3xl font-black tracking-tighter uppercase italic text-white">Dashboard Executivo</h1>
+          <p className="text-neutral-400">Indicadores reais de performance e conteúdo.</p>
+        </header>
+        <Select value={period} onValueChange={setPeriod}>
+          <SelectTrigger className="w-[180px] bg-neutral-800 border-neutral-700 text-white">
+            <Calendar className="w-4 h-4 mr-2" />
+            <SelectValue placeholder="Período" />
+          </SelectTrigger>
+          <SelectContent className="bg-neutral-800 border-neutral-700 text-white">
+            <SelectItem value="24h">Últimas 24 horas</SelectItem>
+            <SelectItem value="7d">Últimos 7 dias</SelectItem>
+            <SelectItem value="30d">Últimos 30 dias</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-neutral-800 p-8 rounded-lg border border-neutral-700">
-          <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-red-500" />
-            Performance da Semana
-          </h3>
-          <div className="h-64 flex items-center justify-center text-neutral-500 italic border border-neutral-700 rounded-lg">
-            Coletando dados suficientes para gerar o gráfico...
-          </div>
-        </div>
-
+      {/* Primary Metrics Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <MetricCard title="Visualizações" value={stats?.views} icon={Eye} color="text-red-500" />
+        <MetricCard title="Usuários Únicos" value={stats?.uniqueUsers} icon={Users} color="text-blue-500" />
+        <MetricCard title="Sessões" value={stats?.sessions} icon={LayoutDashboard} color="text-orange-500" />
+        <MetricCard title="Usuários Online" value={stats?.onlineUsers} icon={TrendingUp} color="text-green-500" />
       </div>
 
-      <div className="bg-red-950/10 border border-red-900/30 p-6 rounded-lg flex items-start gap-4">
-        <Share2 className="w-6 h-6 text-red-500 mt-1" />
-        <div>
-          <h4 className="font-bold text-red-500">Dica Editorial</h4>
-          <p className="text-neutral-400 text-sm mt-1">
-            Matérias sobre Mineração e Emprego em Canaã dos Carajás tiveram um aumento de 25% na audiência esta semana. Considere aprofundar esses temas.
-          </p>
-        </div>
+      {/* Content Metrics Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <MetricCard title="Publicadas" value={stats?.published} icon={FileText} color="text-white" />
+        <MetricCard title="Rascunhos" value={stats?.drafts} icon={AlertCircle} color="text-neutral-500" />
+        <MetricCard title="Agendadas" value={stats?.scheduled} icon={Calendar} color="text-yellow-500" />
+        <MetricCard title="Compartilhamentos" value={stats?.shares} icon={Share2} color="text-pink-500" />
+      </div>
+
+      {/* Performance & Conversão */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="lg:col-span-2 bg-neutral-800 border-neutral-700">
+          <CardHeader>
+            <CardTitle className="text-lg font-bold text-white uppercase tracking-widest italic">Tendência de Audiência</CardTitle>
+          </CardHeader>
+          <CardContent className="h-[300px]">
+            {stats?.chartData && stats.chartData.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={stats.chartData}>
+                  <defs>
+                    <linearGradient id="dashViews" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
+                  <XAxis dataKey="date" stroke="#666" fontSize={12} tickLine={false} axisLine={false} />
+                  <YAxis stroke="#666" fontSize={12} tickLine={false} axisLine={false} />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#1f1f1f', border: '1px solid #333', borderRadius: '8px' }}
+                    itemStyle={{ color: '#ef4444' }}
+                  />
+                  <Area type="monotone" dataKey="views" stroke="#ef4444" strokeWidth={3} fillOpacity={1} fill="url(#dashViews)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-full text-neutral-600 italic">Ainda não há dados suficientes</div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="bg-neutral-800 border-neutral-700">
+          <CardHeader>
+            <CardTitle className="text-lg font-bold text-white uppercase tracking-widest italic">Conversão</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+             <div className="flex justify-between items-center border-b border-neutral-700 pb-4">
+                <div className="flex items-center gap-2">
+                   <MousePointer2 size={18} className="text-red-500" />
+                   <span className="text-sm font-medium">Cliques em Anúncios</span>
+                </div>
+                <span className="text-xl font-black">{stats?.adClicks || 0}</span>
+             </div>
+             <div className="flex justify-between items-center border-b border-neutral-700 pb-4">
+                <div className="flex items-center gap-2">
+                   <TrendingUp size={18} className="text-blue-500" />
+                   <span className="text-sm font-medium">CTR Estimado</span>
+                </div>
+                <span className="text-xl font-black">
+                   {stats?.views ? ((stats.adClicks / stats.views) * 100).toFixed(2) : 0}%
+                </span>
+             </div>
+             <div className="bg-red-950/20 p-4 rounded-lg border border-red-900/30">
+                <p className="text-[10px] text-red-500 font-black uppercase tracking-widest mb-1">Dica de Performance</p>
+                <p className="text-xs text-neutral-400">O engajamento aumentou nos últimos 7 dias. Revise seus rascunhos para manter o ritmo.</p>
+             </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
 }
 
-function StatCard({ title, value, color, icon: Icon, description }: { 
-  title: string; 
-  value: number | string; 
-  color: string;
-  icon: any;
-  description?: string;
-}) {
+function MetricCard({ title, value, icon: Icon, color }: { title: string, value: any, icon: any, color: string }) {
+  const displayValue = value === undefined || value === null ? "..." : value;
+  
   return (
-    <Card className="bg-neutral-800 border-neutral-700 hover:border-neutral-600 transition-colors">
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium text-neutral-400">{title}</CardTitle>
-        <Icon className={`h-4 w-4 ${color}`} />
-      </CardHeader>
-      <CardContent>
-        <div className={`text-3xl font-bold ${color}`}>{value}</div>
-        {description && <p className="text-[10px] text-neutral-500 mt-1 uppercase tracking-wider">{description}</p>}
+    <Card className="bg-neutral-800 border-neutral-700 hover:border-red-600/30 transition-all duration-300">
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">{title}</span>
+          <Icon className={`h-4 w-4 ${color}`} />
+        </div>
+        <div className="flex items-baseline gap-2">
+          <span className="text-2xl font-black text-white">
+            {typeof value === 'number' ? value.toLocaleString() : displayValue}
+          </span>
+          {value === 0 && <span className="text-[10px] text-neutral-600 italic font-medium">Sem dados</span>}
+        </div>
       </CardContent>
     </Card>
-  );
-}
-
-function QuickAction({ icon: Icon, label, color }: { icon: any, label: string, color: string }) {
-  return (
-    <button className={`${color} p-6 rounded-lg text-white font-bold hover:opacity-90 transition-opacity flex flex-col items-center justify-center gap-2 group`}>
-      <div className="p-3 bg-white/10 rounded-full group-hover:scale-110 transition-transform">
-        {Icon}
-      </div>
-      <span className="text-sm">{label}</span>
-    </button>
   );
 }
