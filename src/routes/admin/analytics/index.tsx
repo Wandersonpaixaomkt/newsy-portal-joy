@@ -4,13 +4,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, Users, Clock, Calendar, AlertCircle, MapPin, Globe, Share2, Navigation, MousePointer2 } from 'lucide-react';
+import { useState } from 'react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from '@/components/ui/skeleton';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
   AreaChart, Area, PieChart, Pie, Cell 
 } from 'recharts';
-import { useState } from 'react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Route = createFileRoute('/admin/analytics/')({
   component: AnalyticsDashboard,
@@ -30,30 +31,39 @@ function AnalyticsDashboard() {
       
       const startIso = startDate.toISOString();
 
-      // Metrics
-      const { count: totalViews } = await supabase.from('analytics_events').select('*', { count: 'exact', head: true }).eq('event_type', 'page_view').gte('created_at', startIso);
-      const { count: uniqueVisitors } = await supabase.from('analytics_sessions').select('visitor_id', { count: 'exact', head: true }).gte('started_at', startIso);
+      try {
+        // Parallel fetching with pagination limits for performance
+        const [viewsRes, sessionsRes, journeysRes, clicksRes] = await Promise.all([
+          supabase.from('analytics_events').select('*', { count: 'exact', head: true }).eq('event_type', 'page_view').gte('created_at', startIso),
+          supabase.from('analytics_sessions').select('visitor_id', { count: 'exact', head: true }).gte('started_at', startIso),
+          supabase.from('navigation_journeys').select('*').gte('created_at', startIso).order('sequence_order').limit(100),
+          supabase.from('analytics_events').select('element_id, page_path').eq('event_type', 'click').gte('created_at', startIso).limit(200)
+        ]);
 
-      // Journeys
-      const { data: journeys } = await supabase.from('navigation_journeys').select('*').gte('created_at', startIso).order('sequence_order');
-      
-      const journeyMap: Record<string, number> = {};
-      journeys?.forEach(j => {
-        const key = `${j.from_path || 'Entrada'} → ${j.to_path}`;
-        journeyMap[key] = (journeyMap[key] || 0) + 1;
-      });
-      const topJourneys = Object.entries(journeyMap).map(([path, count]) => ({ path, count })).sort((a,b) => b.count - a.count).slice(0, 5);
+        const totalViews = viewsRes.count || 0;
+        const uniqueVisitors = sessionsRes.count || 0;
+        const journeys = journeysRes.data || [];
+        const clicks = clicksRes.data || [];
 
-      // Clicks
-      const { data: clicks } = await supabase.from('analytics_events').select('element_id, page_path').eq('event_type', 'click').gte('created_at', startIso);
-      const clickMap: Record<string, number> = {};
-      clicks?.forEach(c => {
-        const key = c.element_id || 'unknown';
-        clickMap[key] = (clickMap[key] || 0) + 1;
-      });
-      const topClicks = Object.entries(clickMap).map(([id, count]) => ({ id, count })).sort((a,b) => b.count - a.count).slice(0, 5);
+        const journeyMap: Record<string, number> = {};
+        journeys.forEach(j => {
+          const key = `${j.from_path || 'Entrada'} → ${j.to_path}`;
+          journeyMap[key] = (journeyMap[key] || 0) + 1;
+        });
+        const topJourneys = Object.entries(journeyMap).map(([path, count]) => ({ path, count })).sort((a,b) => b.count - a.count).slice(0, 5);
 
-      return { totalViews: totalViews || 0, uniqueVisitors: uniqueVisitors || 0, topJourneys, topClicks };
+        const clickMap: Record<string, number> = {};
+        clicks.forEach(c => {
+          const key = c.element_id || 'unknown';
+          clickMap[key] = (clickMap[key] || 0) + 1;
+        });
+        const topClicks = Object.entries(clickMap).map(([id, count]) => ({ id, count })).sort((a,b) => b.count - a.count).slice(0, 5);
+
+        return { totalViews, uniqueVisitors, topJourneys, topClicks };
+      } catch (err) {
+        console.error('Analytics fetch error:', err);
+        return { totalViews: 0, uniqueVisitors: 0, topJourneys: [], topClicks: [] };
+      }
     },
   });
 

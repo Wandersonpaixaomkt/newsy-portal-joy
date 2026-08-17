@@ -110,9 +110,13 @@ function AdminLayout() {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
         <header className="h-16 border-b border-neutral-800 bg-[#0f0f0f]/80 backdrop-blur-xl flex items-center justify-between px-6 sticky top-0 z-10">
-          {!ENV.ADMIN_AUTH_ENABLED && (
-            <div className="flex items-center gap-2 text-yellow-500 text-[10px] uppercase tracking-widest font-bold">
-              <AlertTriangle size={14} /> Modo administrativo temporariamente sem autenticação
+          {!ENV.ADMIN_AUTH_ENABLED ? (
+            <div className="flex items-center gap-2 bg-yellow-500/10 border border-yellow-500/20 px-3 py-1.5 rounded-full text-yellow-500 text-[10px] uppercase tracking-widest font-bold">
+              <AlertTriangle size={14} /> <span>Atenção: Painel em modo aberto (Sem Login)</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 bg-green-500/10 border border-green-500/20 px-3 py-1.5 rounded-full text-green-500 text-[10px] uppercase tracking-widest font-bold">
+              <span>Autenticação Ativa</span>
             </div>
           )}
           <h1 className="hidden lg:block text-lg font-black text-red-600 uppercase italic">Norte em Foco</h1>
