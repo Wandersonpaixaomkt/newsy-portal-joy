@@ -113,7 +113,7 @@ function NovaNoticia() {
         useWebWorker: true
       };
       
-      const compressedFile = await imageCompression(file, options);
+      const compressedFile = await imageCompression(file!, options);
       
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random()}.${fileExt}`;
