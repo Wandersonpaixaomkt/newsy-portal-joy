@@ -40,24 +40,30 @@ function AnalyticsDashboard() {
           supabase.from('analytics_events').select('element_id, page_path').eq('event_type', 'click').gte('created_at', startIso).limit(200)
         ]);
 
-      
-      const journeyMap: Record<string, number> = {};
-      journeys?.forEach(j => {
-        const key = `${j.from_path || 'Entrada'} → ${j.to_path}`;
-        journeyMap[key] = (journeyMap[key] || 0) + 1;
-      });
-      const topJourneys = Object.entries(journeyMap).map(([path, count]) => ({ path, count })).sort((a,b) => b.count - a.count).slice(0, 5);
+        const totalViews = viewsRes.count || 0;
+        const uniqueVisitors = sessionsRes.count || 0;
+        const journeys = journeysRes.data || [];
+        const clicks = clicksRes.data || [];
 
-      // Clicks
-      const { data: clicks } = await supabase.from('analytics_events').select('element_id, page_path').eq('event_type', 'click').gte('created_at', startIso);
-      const clickMap: Record<string, number> = {};
-      clicks?.forEach(c => {
-        const key = c.element_id || 'unknown';
-        clickMap[key] = (clickMap[key] || 0) + 1;
-      });
-      const topClicks = Object.entries(clickMap).map(([id, count]) => ({ id, count })).sort((a,b) => b.count - a.count).slice(0, 5);
+        const journeyMap: Record<string, number> = {};
+        journeys.forEach(j => {
+          const key = `${j.from_path || 'Entrada'} → ${j.to_path}`;
+          journeyMap[key] = (journeyMap[key] || 0) + 1;
+        });
+        const topJourneys = Object.entries(journeyMap).map(([path, count]) => ({ path, count })).sort((a,b) => b.count - a.count).slice(0, 5);
 
-      return { totalViews: totalViews || 0, uniqueVisitors: uniqueVisitors || 0, topJourneys, topClicks };
+        const clickMap: Record<string, number> = {};
+        clicks.forEach(c => {
+          const key = c.element_id || 'unknown';
+          clickMap[key] = (clickMap[key] || 0) + 1;
+        });
+        const topClicks = Object.entries(clickMap).map(([id, count]) => ({ id, count })).sort((a,b) => b.count - a.count).slice(0, 5);
+
+        return { totalViews, uniqueVisitors, topJourneys, topClicks };
+      } catch (err) {
+        console.error('Analytics fetch error:', err);
+        return { totalViews: 0, uniqueVisitors: 0, topJourneys: [], topClicks: [] };
+      }
     },
   });
 
