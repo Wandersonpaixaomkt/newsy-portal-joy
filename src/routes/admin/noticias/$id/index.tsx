@@ -152,7 +152,7 @@ function EditarNoticia() {
   const handleUpdate = async (status: 'draft' | 'published') => {
     setLoading(true);
     try {
-      const updatePayload = {
+      const updatePayload: any = {
         title: formData.title,
         slug: formData.slug,
         excerpt: formData.excerpt || null,

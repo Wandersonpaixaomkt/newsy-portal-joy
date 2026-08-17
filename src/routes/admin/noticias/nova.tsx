@@ -153,7 +153,7 @@ function NovaNoticia() {
     
     setLoading(true);
     try {
-      const payload = {
+      const payload: any = {
         title: formData.title,
         slug: formData.slug,
         excerpt: formData.excerpt || null,
