@@ -4,13 +4,27 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, Users, Clock, Calendar, AlertCircle, MapPin, Globe, Share2, Navigation, MousePointer2 } from 'lucide-react';
+import { useState, lazy, Suspense } from 'react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from '@/components/ui/skeleton';
+
+// Lazy loading Recharts components for better performance
+const RechartsComponents = lazy(() => import('recharts').then(mod => ({
+  default: () => null, // Placeholder if needed, but we destructure below
+  ...mod
+})));
+
+// Helper to destructure lazy components if needed, 
+// but it's simpler to just import what we need normally for now 
+// and use code-splitting on the whole page or sub-sections.
+// For now, let's keep normal imports for types but wrap the render in Suspense if we were doing a full split.
+// Actually, I'll split the charts into a separate component.
+
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
   AreaChart, Area, PieChart, Pie, Cell 
 } from 'recharts';
-import { useState } from 'react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Route = createFileRoute('/admin/analytics/')({
   component: AnalyticsDashboard,
