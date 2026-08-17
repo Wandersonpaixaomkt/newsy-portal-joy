@@ -62,7 +62,6 @@ function NoticiasList() {
       </Button>
     </div>
   );
-  );
 
   return (
     <div className="space-y-6">
