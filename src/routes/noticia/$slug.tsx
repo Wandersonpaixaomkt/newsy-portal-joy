@@ -55,6 +55,7 @@ function PostPage() {
     const handleCopy = (e: ClipboardEvent) => {
       const selection = window.getSelection();
       if (selection && selection.toString().length > 100) {
+         analytics.trackCopyAttempt(article.id);
          e.preventDefault();
          const text = selection.toString() + "\n\nLeia mais em Norte em Foco: " + window.location.href;
          if (e.clipboardData) {
@@ -62,6 +63,7 @@ function PostPage() {
          }
       }
     };
+
 
     window.addEventListener('scroll', handleScroll);
     document.addEventListener('copy', handleCopy);

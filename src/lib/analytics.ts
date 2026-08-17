@@ -1,7 +1,30 @@
 import { supabase } from "@/integrations/supabase/client";
 
+export type DetailedEventType = 
+  | 'page_view' 
+  | 'article_view' 
+  | 'article_read_start' 
+  | 'article_read_25' 
+  | 'article_read_50' 
+  | 'article_read_75' 
+  | 'article_read_complete'
+  | 'scroll_depth' 
+  | 'search' 
+  | 'category_click' 
+  | 'city_click'
+  | 'article_card_click'
+  | 'related_article_click'
+  | 'share_click' 
+  | 'source_link_click'
+  | 'ad_impression'
+  | 'ad_click' 
+  | 'newsletter_submit'
+  | 'pauta_click'
+  | 'navigation_click'
+  | 'copy_attempt';
+
 export interface AnalyticsEvent {
-  event_type: string;
+  event_type: DetailedEventType | string;
   page_path: string;
   post_id?: string | null;
   element_id?: string | null;
@@ -18,6 +41,7 @@ class AnalyticsService {
   private sessionId: string;
   private visitorId: string;
   private isInitialized = false;
+  private activeStartTime: number = Date.now();
 
   constructor() {
     this.sessionId = this.getOrCreateId('nfe_session_id', true);
@@ -38,8 +62,34 @@ class AnalyticsService {
     return id;
   }
 
+  private getBrowserInfo() {
+    if (typeof window === 'undefined') return { name: 'unknown', version: 'unknown' };
+    const ua = navigator.userAgent;
+    let name = "Other";
+    if (ua.includes("Firefox")) name = "Firefox";
+    else if (ua.includes("SamsungBrowser")) name = "Samsung Browser";
+    else if (ua.includes("Opera") || ua.includes("OPR")) name = "Opera";
+    else if (ua.includes("Trident")) name = "Internet Explorer";
+    else if (ua.includes("Edge")) name = "Edge";
+    else if (ua.includes("Chrome")) name = "Chrome";
+    else if (ua.includes("Safari")) name = "Safari";
+    return { name };
+  }
+
+  private getRegionInfo() {
+    if (typeof window === 'undefined') return 'unknown';
+    try {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    } catch (e) {
+      return 'unknown';
+    }
+  }
+
   async initSession() {
     if (this.isInitialized || typeof window === 'undefined') return;
+
+    const browser = this.getBrowserInfo();
+    const region = this.getRegionInfo();
 
     try {
       const { data: session } = await supabase
@@ -51,7 +101,9 @@ class AnalyticsService {
           device_info: {
             userAgent: navigator.userAgent,
             language: navigator.language,
-            screenSize: `${window.innerWidth}x${window.innerHeight}`
+            screenSize: `${window.innerWidth}x${window.innerHeight}`,
+            browser: browser.name,
+            region: region
           }
         })
         .select()
@@ -62,6 +114,20 @@ class AnalyticsService {
         
         window.addEventListener('beforeunload', () => {
           this.endSession();
+        });
+
+        // Track active time
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'hidden') {
+            const duration = Math.round((Date.now() - this.activeStartTime) / 1000);
+            this.trackEvent({
+              event_type: 'engagement_heartbeat',
+              page_path: window.location.pathname,
+              engagement_time: duration
+            });
+          } else {
+            this.activeStartTime = Date.now();
+          }
         });
       }
     } catch (error) {
@@ -118,10 +184,11 @@ class AnalyticsService {
     }
   }
 
-  async trackInteraction(elementId: string, type: string) {
+  async trackInteraction(elementId: string, type: DetailedEventType | string, metadata?: any) {
     if (typeof window === 'undefined') return;
     
     try {
+      // Log to both tables for redundancy and historical reasons if needed
       await supabase
         .from('interaction_logs')
         .insert({
@@ -130,6 +197,13 @@ class AnalyticsService {
           element_type: type,
           page_path: window.location.pathname
         });
+
+      await this.trackEvent({
+        event_type: type,
+        page_path: window.location.pathname,
+        element_id: elementId,
+        metadata: metadata
+      });
     } catch (e) {
       console.error('Interaction logging failed', e);
     }
@@ -141,25 +215,57 @@ class AnalyticsService {
       page_path: window.location.pathname,
       post_id: postId || null
     });
+    if (postId) {
+      this.trackEvent({
+        event_type: 'article_view',
+        page_path: window.location.pathname,
+        post_id: postId
+      });
+    }
   }
 
   trackClick(elementId: string, metadata?: Record<string, any> | null) {
-    this.trackInteraction(elementId, 'click');
-    this.trackEvent({
-      event_type: 'click',
-      page_path: window.location.pathname,
-      element_id: elementId,
-      metadata: metadata || null
-    });
+    this.trackInteraction(elementId, 'click', metadata);
   }
 
   trackScroll(depth: number, postId?: string | null) {
+    let eventType: DetailedEventType = 'scroll_depth';
+    if (depth >= 25) eventType = 'article_read_25';
+    if (depth >= 50) eventType = 'article_read_50';
+    if (depth >= 75) eventType = 'article_read_75';
+    if (depth >= 100) eventType = 'article_read_complete';
+
     this.trackEvent({
-      event_type: 'scroll',
+      event_type: eventType,
       page_path: window.location.pathname,
       post_id: postId || null,
       scroll_depth: depth,
       metadata: { depth }
+    });
+  }
+
+  trackSearch(query: string) {
+    this.trackEvent({
+      event_type: 'search',
+      page_path: window.location.pathname,
+      metadata: { query }
+    });
+  }
+
+  trackCopyAttempt(postId?: string | null) {
+    this.trackEvent({
+      event_type: 'copy_attempt',
+      page_path: window.location.pathname,
+      post_id: postId || null
+    });
+  }
+
+  trackShare(platform: string, postId?: string | null) {
+    this.trackEvent({
+      event_type: 'share_click',
+      page_path: window.location.pathname,
+      post_id: postId || null,
+      metadata: { platform }
     });
   }
 }
