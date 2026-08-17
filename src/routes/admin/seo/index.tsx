@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle2, AlertCircle, Search, Globe, FileWarning, Link as LinkIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import { AdminCard } from '@/components/admin/AdminCard';
 
 export const Route = createFileRoute('/admin/seo/')({
   component: SEODashboard,
@@ -62,7 +63,7 @@ function SEODashboard() {
 
   const stats = getSEOStats();
 
-  if (isLoading) return <div className="p-8 animate-pulse bg-neutral-800 rounded-lg h-96"></div>;
+  if (isLoading) return <div className="p-8 animate-pulse bg-brand-dark border border-white/5 rounded-2xl h-96 shadow-premium"></div>;
 
   return (
     <div className="space-y-8">
@@ -72,48 +73,39 @@ function SEODashboard() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="bg-neutral-800 border-neutral-700">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xs text-neutral-500 uppercase">Nota Geral de Saúde</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className={`text-4xl font-black ${stats.score > 70 ? 'text-green-500' : 'text-red-500'}`}>{stats.score}%</div>
-            <Progress value={stats.score} className="h-2 mt-4 bg-neutral-900" />
-          </CardContent>
-        </Card>
+        <AdminCard title="Nota Geral de Saúde">
+          <div>
+            <div className={`text-4xl font-black ${stats.score > 70 ? 'text-green-500' : 'text-primary'}`}>{stats.score}%</div>
+            <Progress value={stats.score} className="h-2 mt-4 bg-white/5 [&>div]:bg-primary" />
+          </div>
+        </AdminCard>
 
-        <Card className="bg-neutral-800 border-neutral-700">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xs text-neutral-500 uppercase">Alertas Críticos</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-black text-yellow-500">{stats.critical}</div>
-            <p className="text-[10px] text-neutral-500 mt-2 uppercase">Notícias com dados ausentes</p>
-          </CardContent>
-        </Card>
+        <AdminCard title="Alertas Críticos">
+          <div>
+            <div className="text-4xl font-black text-primary">{stats.critical}</div>
+            <p className="text-[10px] text-neutral-500 mt-2 uppercase tracking-widest">Notícias com dados ausentes</p>
+          </div>
+        </AdminCard>
 
-        <Card className="bg-neutral-800 border-neutral-700">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xs text-neutral-500 uppercase">Estrutura Técnica</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="flex items-center gap-2 text-[10px] text-green-500 font-bold uppercase">
+        <AdminCard title="Estrutura Técnica">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-[10px] text-green-500 font-bold uppercase tracking-widest">
               <Globe className="w-3 h-3" /> Sitemap Ativo
             </div>
-            <div className="flex items-center gap-2 text-[10px] text-green-500 font-bold uppercase">
+            <div className="flex items-center gap-2 text-[10px] text-green-500 font-bold uppercase tracking-widest">
               <LinkIcon className="w-3 h-3" /> Robots.txt OK
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </AdminCard>
       </div>
 
-      <div className="bg-neutral-800 rounded-lg border border-neutral-700 overflow-hidden">
-        <div className="p-6 border-b border-neutral-700 flex justify-between items-center bg-neutral-800/50">
+      <div className="bg-brand-dark rounded-2xl border border-white/5 overflow-hidden shadow-premium">
+        <div className="p-6 border-b border-white/5 flex justify-between items-center bg-white/5">
           <h3 className="font-bold">Checklist de Otimização</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="text-[10px] uppercase text-neutral-500 bg-neutral-900/50">
+            <thead className="text-[10px] uppercase text-neutral-500 bg-white/5">
               <tr>
                 <th className="p-4">Matéria</th>
                 <th className="p-4">Problemas Detectados</th>
@@ -121,11 +113,11 @@ function SEODashboard() {
                 <th className="p-4 text-right">Ação</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-700">
+            <tbody className="divide-y divide-white/5">
               {posts?.map(post => {
                 const issues = analyzeSEO(post);
                 return (
-                  <tr key={post.id} className="hover:bg-neutral-900/30 transition-colors">
+                  <tr key={post.id} className="hover:bg-white/5 transition-colors">
                     <td className="p-4 max-w-xs">
                       <div className="truncate font-medium text-white">{post.title}</div>
                       <div className="text-[10px] text-neutral-500 truncate">/{post.slug}</div>
@@ -134,7 +126,7 @@ function SEODashboard() {
                       {issues.length > 0 ? (
                         <div className="flex flex-wrap gap-1">
                           {issues.map((issue, i) => (
-                            <span key={i} className="text-[8px] bg-red-500/10 text-red-500 px-1.5 py-0.5 rounded border border-red-500/20">
+                            <span key={i} className="text-[8px] bg-primary/10 text-primary px-1.5 py-0.5 rounded border border-primary/20">
                               {issue}
                             </span>
                           ))}
