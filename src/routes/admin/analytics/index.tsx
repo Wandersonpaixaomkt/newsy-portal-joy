@@ -181,7 +181,7 @@ function AnalyticsDashboard() {
              <ResponsiveContainer width="100%" height={200}>
               <PieChart>
                 <Pie
-                  data={stats?.deviceData}
+                  data={stats?.deviceData || []}
                   cx="50%"
                   cy="50%"
                   innerRadius={60}
