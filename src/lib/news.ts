@@ -120,3 +120,45 @@ export const fetchNewsByCategory = async (categorySlug: string): Promise<Post[]>
 
   return mapPostData(data);
 };
+
+export const fetchPostBySlug = async (slug: string): Promise<Post | null> => {
+  const { data, error } = await supabase
+    .from("posts")
+    .select(`
+      *,
+      category:categories(name, slug),
+      city:cities(name, slug),
+      author:authors(name, slug)
+    `)
+    .eq("slug", slug)
+    .maybeSingle();
+
+  if (error) {
+    console.error(`Error fetching post by slug \${slug}:`, error);
+    throw new Error("Erro ao carregar notícia.");
+  }
+
+  return data ? (mapPostData([data])[0] || null) : null;
+};
+
+export const fetchRelatedPosts = async (postId: string, categoryId: string): Promise<Post[]> => {
+  const { data, error } = await supabase
+    .from("posts")
+    .select(`
+      *,
+      category:categories(name, slug),
+      city:cities(name, slug),
+      author:authors(name, slug)
+    `)
+    .eq("category_id", categoryId)
+    .neq("id", postId)
+    .order("published_at", { ascending: false })
+    .limit(3);
+
+  if (error) {
+    console.error("Error fetching related posts:", error);
+    return [];
+  }
+
+  return mapPostData(data);
+};

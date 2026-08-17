@@ -15,14 +15,19 @@ import {
   LogOut,
   ExternalLink,
   ChevronLeft,
-  Menu
+  Menu,
+  AlertTriangle
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { ENV } from '@/lib/env';
 
 export const Route = createFileRoute('/admin')({
   beforeLoad: async ({ location }) => {
+    if (!ENV.ADMIN_AUTH_ENABLED) {
+      return;
+    }
     const { data: { session } } = await supabase.auth.getSession();
     if (!session && location.pathname !== '/admin/login') {
       throw redirect({
@@ -100,9 +105,14 @@ function AdminLayout() {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-16 border-b border-neutral-800 bg-[#0f0f0f]/80 backdrop-blur-xl flex items-center justify-between px-6 sticky top-0 z-10 lg:hidden">
-          <h1 className="text-lg font-black text-red-600 uppercase italic">Norte em Foco</h1>
-          <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+        <header className="h-16 border-b border-neutral-800 bg-[#0f0f0f]/80 backdrop-blur-xl flex items-center justify-between px-6 sticky top-0 z-10">
+          {!ENV.ADMIN_AUTH_ENABLED && (
+            <div className="flex items-center gap-2 text-yellow-500 text-[10px] uppercase tracking-widest font-bold">
+              <AlertTriangle size={14} /> Modo administrativo temporariamente sem autenticação
+            </div>
+          )}
+          <h1 className="hidden lg:block text-lg font-black text-red-600 uppercase italic">Norte em Foco</h1>
+          <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="lg:hidden">
             <Menu className="w-6 h-6" />
           </Button>
         </header>
