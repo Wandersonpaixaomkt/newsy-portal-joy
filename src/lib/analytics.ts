@@ -88,13 +88,13 @@ class AnalyticsService {
 
     const urlParams = new URLSearchParams(window.location.search);
     
-    const eventData = {
+    const eventData: any = {
       session_id: this.sessionId,
       event_type: event.event_type,
       page_path: event.page_path || window.location.pathname,
       post_id: event.post_id || null,
       element_id: event.element_id || null,
-      metadata: (event.metadata as any) || {},
+      metadata: event.metadata || {},
       user_agent: navigator.userAgent,
       device_type: window.innerWidth < 768 ? 'mobile' : 'desktop',
       referrer: event.referrer || document.referrer || null,
@@ -118,7 +118,7 @@ class AnalyticsService {
     this.trackEvent({
       event_type: 'page_view',
       page_path: window.location.pathname,
-      post_id: postId
+      post_id: postId || null
     });
   }
 
@@ -127,7 +127,7 @@ class AnalyticsService {
       event_type: 'click',
       page_path: window.location.pathname,
       element_id: elementId,
-      metadata
+      metadata: metadata || null
     });
   }
 
@@ -135,7 +135,7 @@ class AnalyticsService {
     this.trackEvent({
       event_type: 'scroll',
       page_path: window.location.pathname,
-      post_id: postId,
+      post_id: postId || null,
       metadata: { depth }
     });
   }
