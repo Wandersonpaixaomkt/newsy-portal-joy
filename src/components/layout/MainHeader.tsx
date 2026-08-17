@@ -32,12 +32,12 @@ export function MainHeader() {
     { name: "Parauapebas", slug: "parauapebas" },
     { name: "Canaã dos Carajás", slug: "canaa-dos-carajas" },
     { name: "Curionópolis", slug: "curionopolis" },
-    { name: "Eldorado do Carajás", slug: "eldorado" },
     { name: "Marabá", slug: "maraba" },
     { name: "Pará", slug: "para" },
     { name: "Política", slug: "politica" },
     { name: "Esportes", slug: "esportes" },
-    { name: "Polícia", slug: "policia" }
+    { name: "Brasil", slug: "brasil" },
+    { name: "Tech & Business", slug: "tech-business" }
   ];
 
   return (
