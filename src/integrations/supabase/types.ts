@@ -463,6 +463,41 @@ export type Database = {
           },
         ]
       }
+      navigation_journeys: {
+        Row: {
+          created_at: string | null
+          from_path: string | null
+          id: string
+          sequence_order: number
+          session_id: string | null
+          to_path: string
+        }
+        Insert: {
+          created_at?: string | null
+          from_path?: string | null
+          id?: string
+          sequence_order: number
+          session_id?: string | null
+          to_path: string
+        }
+        Update: {
+          created_at?: string | null
+          from_path?: string | null
+          id?: string
+          sequence_order?: number
+          session_id?: string | null
+          to_path?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "navigation_journeys_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "analytics_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       post_tags: {
         Row: {
           post_id: string
