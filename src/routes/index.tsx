@@ -133,7 +133,7 @@ function Index() {
         {/* Hero Section - Video Channel Style */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-10 mb-16 md:mb-24">
           {/* Main Hero Card */}
-          <div className="lg:col-span-8 group cursor-pointer relative">
+          <Link to={"/noticia/$slug" as any} params={{ slug: displayFeatured?.slug || displayFeatured?.id }} className="lg:col-span-8 group cursor-pointer relative">
             {isLoadingFeatured || isLoadingNews ? (
               <Skeleton className="aspect-video w-full rounded-3xl bg-white/5" />
             ) : displayFeatured ? (
@@ -185,7 +185,7 @@ function Index() {
                 <span className="text-white/20 font-bold tracking-widest">Nenhum destaque disponível</span>
               </div>
             )}
-          </div>
+          </Link>
 
           {/* Secondary Headlines - Vertical List */}
           <div className="lg:col-span-4 flex flex-col gap-6">
@@ -196,7 +196,7 @@ function Index() {
               Array(3).fill(0).map((_, i) => <Skeleton key={i} className="h-24 w-full rounded-2xl bg-white/5" />)
             ) : secondaryNews.length > 0 ? (
               secondaryNews.slice(0, 3).map((post, idx) => (
-                <div key={idx} className="group cursor-pointer flex gap-4 p-3 rounded-3xl hover:bg-white/10 transition-all duration-300 border border-transparent hover:border-white/10 hover:shadow-premium">
+                <Link key={idx} to={"/noticia/$slug" as any} params={{ slug: post.slug || post.id }} className="group cursor-pointer flex gap-4 p-3 rounded-3xl hover:bg-white/10 transition-all duration-300 border border-transparent hover:border-white/10 hover:shadow-premium">
                     <div className="w-28 md:w-36 aspect-video shrink-0 overflow-hidden rounded-2xl relative bg-white/5">
                         <img src={post.img} alt={post.title} loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                         <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
@@ -210,7 +210,7 @@ function Index() {
                         </h3>
                         <span className="text-[8px] font-black text-white/30 uppercase tracking-widest mt-1">{post.time}</span>
                     </div>
-                </div>
+                </Link>
               ))
             ) : (
               <div className="p-8 text-center bg-white/5 rounded-3xl border border-dashed border-white/10">
