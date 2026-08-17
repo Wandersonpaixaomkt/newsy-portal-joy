@@ -23,6 +23,7 @@ import {
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { Toaster } from '@/components/ui/sonner';
 import { ENV } from '@/lib/env';
 
 export const Route = createFileRoute('/admin')({
@@ -69,6 +70,7 @@ function AdminLayout() {
 
   return (
     <div className="min-h-screen bg-brand-dark text-neutral-200 flex overflow-hidden">
+      <Toaster position="top-right" richColors closeButton />
       {/* Sidebar para Desktop */}
       <aside className={`hidden lg:flex flex-col border-r border-white/5 transition-all duration-300 ${isSidebarCollapsed ? 'w-20' : 'w-64'}`}>
         <div className="p-6 flex items-center justify-between">

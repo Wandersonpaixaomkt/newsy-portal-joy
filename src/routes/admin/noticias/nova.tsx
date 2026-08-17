@@ -146,20 +146,43 @@ function NovaNoticia() {
       toast.error('Título é obrigatório');
       return;
     }
+    if (!formData.slug) {
+      toast.error('Slug é obrigatório');
+      return;
+    }
     
     setLoading(true);
     try {
-      const { error } = await supabase.from('posts').insert([{
-        ...formData,
+      // Enviar APENAS colunas que existem na tabela posts
+      // Não incluir source_link / source_name (não existem no schema)
+      const payload = {
+        title: formData.title,
+        slug: formData.slug,
+        excerpt: formData.excerpt || null,
+        content: formData.content || null,
+        category_id: formData.category_id || null,
+        city_id: formData.city_id || null,
+        author_id: formData.author_id || null,
+        image_url: formData.image_url || null,
+        is_featured: formData.is_featured || false,
+        is_urgent: formData.is_urgent || false,
+        meta_title: formData.meta_title || null,
+        meta_description: formData.meta_description || null,
+        canonical_url: formData.canonical_url || null,
+        robots_meta: formData.robots_meta || 'index, follow',
+        og_image_url: formData.og_image_url || null,
         published_at: status === 'published' ? new Date().toISOString() : null,
         updated_at: new Date().toISOString(),
-      } as any]);
+      };
+
+      const { error } = await supabase.from('posts').insert([payload]);
       
       if (error) throw error;
       toast.success(status === 'published' ? 'Notícia publicada!' : 'Rascunho salvo!');
       navigate({ to: '/admin/noticias' });
     } catch (error: any) {
-      toast.error(error.message);
+      console.error('Erro ao salvar notícia:', error);
+      toast.error(error.message || 'Erro ao salvar notícia');
     } finally {
       setLoading(false);
     }
