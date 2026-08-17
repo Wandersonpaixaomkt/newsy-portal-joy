@@ -37,6 +37,11 @@ const AdminRouteRoute = AdminRouteRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRouteRoute = AdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -134,8 +139,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/noticia/$slug': typeof NoticiaSlugRoute
   '/admin': typeof AdminIndexRoute
+  '/noticia/$slug': typeof NoticiaSlugRoute
   '/admin/noticias/nova': typeof AdminNoticiasNovaRoute
   '/admin/analytics': typeof AdminAnalyticsIndexRoute
   '/admin/autores': typeof AdminAutoresIndexRoute
@@ -193,8 +198,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/noticia/$slug'
     | '/admin'
+    | '/noticia/$slug'
     | '/admin/noticias/nova'
     | '/admin/analytics'
     | '/admin/autores'
@@ -231,6 +236,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRouteRoute: typeof AdminRouteRoute
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
   NoticiaSlugRoute: typeof NoticiaSlugRoute
 }
@@ -242,6 +248,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -399,6 +412,7 @@ const AdminRouteRouteWithChildren = AdminRouteRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRouteRoute: AdminRouteRoute,
   AdminRouteRoute: AdminRouteRouteWithChildren,
   NoticiaSlugRoute: NoticiaSlugRoute,
 }
