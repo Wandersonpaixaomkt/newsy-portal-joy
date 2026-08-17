@@ -4,23 +4,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, Users, Clock, Calendar, AlertCircle, MapPin, Globe, Share2, Navigation, MousePointer2 } from 'lucide-react';
-import { useState, lazy, Suspense } from 'react';
+import { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from '@/components/ui/skeleton';
-
-// Lazy loading Recharts components for better performance
-const RechartsComponents = lazy(() => import('recharts').then(mod => ({
-  default: () => null, // Placeholder if needed, but we destructure below
-  ...mod
-})));
-
-// Helper to destructure lazy components if needed, 
-// but it's simpler to just import what we need normally for now 
-// and use code-splitting on the whole page or sub-sections.
-// For now, let's keep normal imports for types but wrap the render in Suspense if we were doing a full split.
-// Actually, I'll split the charts into a separate component.
-
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
   AreaChart, Area, PieChart, Pie, Cell 
@@ -44,12 +31,15 @@ function AnalyticsDashboard() {
       
       const startIso = startDate.toISOString();
 
-      // Metrics
-      const { count: totalViews } = await supabase.from('analytics_events').select('*', { count: 'exact', head: true }).eq('event_type', 'page_view').gte('created_at', startIso);
-      const { count: uniqueVisitors } = await supabase.from('analytics_sessions').select('visitor_id', { count: 'exact', head: true }).gte('started_at', startIso);
+      try {
+        // Parallel fetching with pagination limits for performance
+        const [viewsRes, sessionsRes, journeysRes, clicksRes] = await Promise.all([
+          supabase.from('analytics_events').select('*', { count: 'exact', head: true }).eq('event_type', 'page_view').gte('created_at', startIso),
+          supabase.from('analytics_sessions').select('visitor_id', { count: 'exact', head: true }).gte('started_at', startIso),
+          supabase.from('navigation_journeys').select('*').gte('created_at', startIso).order('sequence_order').limit(100),
+          supabase.from('analytics_events').select('element_id, page_path').eq('event_type', 'click').gte('created_at', startIso).limit(200)
+        ]);
 
-      // Journeys
-      const { data: journeys } = await supabase.from('navigation_journeys').select('*').gte('created_at', startIso).order('sequence_order');
       
       const journeyMap: Record<string, number> = {};
       journeys?.forEach(j => {
