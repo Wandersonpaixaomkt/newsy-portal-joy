@@ -150,12 +150,14 @@ export type Database = {
           created_at: string | null
           device_type: string | null
           element_id: string | null
+          engagement_time: number | null
           event_type: string
           id: string
           metadata: Json | null
           page_path: string
           post_id: string | null
           referrer: string | null
+          scroll_depth: number | null
           session_id: string
           user_agent: string | null
           utm_campaign: string | null
@@ -166,12 +168,14 @@ export type Database = {
           created_at?: string | null
           device_type?: string | null
           element_id?: string | null
+          engagement_time?: number | null
           event_type: string
           id?: string
           metadata?: Json | null
           page_path: string
           post_id?: string | null
           referrer?: string | null
+          scroll_depth?: number | null
           session_id: string
           user_agent?: string | null
           utm_campaign?: string | null
@@ -182,12 +186,14 @@ export type Database = {
           created_at?: string | null
           device_type?: string | null
           element_id?: string | null
+          engagement_time?: number | null
           event_type?: string
           id?: string
           metadata?: Json | null
           page_path?: string
           post_id?: string | null
           referrer?: string | null
+          scroll_depth?: number | null
           session_id?: string
           user_agent?: string | null
           utm_campaign?: string | null
@@ -421,6 +427,41 @@ export type Database = {
           status?: string | null
         }
         Relationships: []
+      }
+      interaction_logs: {
+        Row: {
+          created_at: string | null
+          element_id: string
+          element_type: string | null
+          id: string
+          page_path: string
+          session_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          element_id: string
+          element_type?: string | null
+          id?: string
+          page_path: string
+          session_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          element_id?: string
+          element_type?: string | null
+          id?: string
+          page_path?: string
+          session_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interaction_logs_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "analytics_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       post_tags: {
         Row: {
