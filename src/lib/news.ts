@@ -44,8 +44,7 @@ export const fetchNews = async (): Promise<Post[]> => {
     .select(`
       *,
       category:categories(name, slug),
-      city:cities(name, slug),
-      author:authors(name, slug)
+      city:cities(name, slug)
     `)
     .order("published_at", { ascending: false });
 
