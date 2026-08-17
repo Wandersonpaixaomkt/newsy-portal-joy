@@ -1,14 +1,15 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { Save, ArrowLeft, Image as ImageIcon, Search, Globe, Share2 } from 'lucide-react';
+import { Save, ArrowLeft, Image as ImageIcon, Search, Globe, Share2, AlertTriangle, FileText } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export const Route = createFileRoute('/admin/noticias/nova')({
   component: NovaNoticia,
@@ -16,6 +17,7 @@ export const Route = createFileRoute('/admin/noticias/nova')({
 
 function NovaNoticia() {
   const navigate = useNavigate();
+  const search = useSearch({ from: '/admin/noticias/nova' }) as any;
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
@@ -33,7 +35,26 @@ function NovaNoticia() {
     canonical_url: '',
     robots_meta: 'index, follow',
     og_image_url: '',
+    source_link: '',
+    source_name: '',
   });
+
+  useEffect(() => {
+    if (search.import_title) {
+      setFormData(prev => ({
+        ...prev,
+        title: search.import_title,
+        excerpt: search.import_summary || '',
+        image_url: search.import_image || '',
+        source_link: search.import_link || '',
+        source_name: search.import_source || '',
+        slug: search.import_title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-').replace(/[^\w-]/g, ''),
+        meta_title: search.import_title,
+        meta_description: search.import_summary || '',
+      }));
+      toast.info('Dados importados do radar! Lembre-se de revisar o conteúdo antes de publicar.');
+    }
+  }, [search]);
 
   const { data: categories } = useQuery({
     queryKey: ['admin-categories'],
@@ -101,12 +122,29 @@ function NovaNoticia() {
         </TabsList>
 
         <TabsContent value="conteudo">
+          {formData.source_link && (
+            <Alert className="mb-6 bg-yellow-500/10 border-yellow-500/20 text-yellow-500">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle className="font-bold">Aviso de Atribuição</AlertTitle>
+              <AlertDescription>
+                Esta notícia está sendo criada com base em uma fonte externa: <strong>{formData.source_name}</strong>. 
+                A publicação automática está desativada. É obrigatório revisar o texto e garantir a atribuição correta.
+              </AlertDescription>
+            </Alert>
+          )}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-6">
               <div className="bg-neutral-800 p-6 rounded-lg border border-neutral-700 space-y-4">
                 <div className="space-y-2">
-                  <Label>Título da Manchete</Label>
-                  <Input value={formData.title} onChange={e => setFormData({...formData, title: e.target.value, slug: e.target.value.toLowerCase().replace(/\s+/g, '-')})} className="bg-neutral-900 border-neutral-700 font-bold" />
+                  <div className="flex justify-between items-center">
+                    <Label>Título da Manchete</Label>
+                    {formData.source_link && (
+                      <Button variant="ghost" size="sm" className="h-7 text-[10px] gap-1 text-blue-400" onClick={() => toast.success('Gerando texto original via IA...')}>
+                        <FileText className="w-3 h-3" /> Gerar texto original opcional
+                      </Button>
+                    )}
+                  </div>
+                  <Input value={formData.title} onChange={e => setFormData({...formData, title: e.target.value, slug: e.target.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-').replace(/[^\w-]/g, '')})} className="bg-neutral-900 border-neutral-700 font-bold" />
                 </div>
                 <div className="space-y-2">
                   <Label>Slug (URL)</Label>
