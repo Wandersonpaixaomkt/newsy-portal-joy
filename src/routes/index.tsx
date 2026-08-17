@@ -61,6 +61,8 @@ function Index() {
   };
 
   const mapToView = (post: Post) => ({
+    id: post.id,
+    slug: post.slug || post.id,
     title: post.title,
     cat: post.category?.name || "GERAL",
     img: post.image_url || IMAGE_PLACEHOLDER,
@@ -133,10 +135,16 @@ function Index() {
         {/* Hero Section - Video Channel Style */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-10 mb-16 md:mb-24">
           {/* Main Hero Card */}
-          <Link to={"/noticia/$slug" as any} params={{ slug: displayFeatured?.slug || displayFeatured?.id }} className="lg:col-span-8 group cursor-pointer relative">
-            {isLoadingFeatured || isLoadingNews ? (
-              <Skeleton className="aspect-video w-full rounded-3xl bg-white/5" />
-            ) : displayFeatured ? (
+          {isLoadingFeatured || isLoadingNews ? (
+             <div className="lg:col-span-8">
+               <Skeleton className="aspect-video w-full rounded-3xl bg-white/5" />
+             </div>
+          ) : displayFeatured ? (
+            <Link 
+              to="/noticia/$slug"
+              params={{ slug: displayFeatured.slug || displayFeatured.id || "" }}
+              className="lg:col-span-8 group cursor-pointer relative"
+            >
               <motion.div 
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -180,12 +188,12 @@ function Index() {
                   </p>
                 </div>
               </motion.div>
-            ) : (
-              <div className="aspect-video w-full rounded-3xl bg-white/5 flex items-center justify-center border border-dashed border-white/10">
-                <span className="text-white/20 font-bold tracking-widest">Nenhum destaque disponível</span>
-              </div>
-            )}
-          </Link>
+            </Link>
+          ) : (
+            <div className="lg:col-span-8 aspect-video w-full rounded-3xl bg-white/5 flex items-center justify-center border border-dashed border-white/10">
+              <span className="text-white/20 font-bold tracking-widest">Nenhum destaque disponível</span>
+            </div>
+          )}
 
           {/* Secondary Headlines - Vertical List */}
           <div className="lg:col-span-4 flex flex-col gap-6">
@@ -196,7 +204,12 @@ function Index() {
               Array(3).fill(0).map((_, i) => <Skeleton key={i} className="h-24 w-full rounded-2xl bg-white/5" />)
             ) : secondaryNews.length > 0 ? (
               secondaryNews.slice(0, 3).map((post, idx) => (
-                <Link key={idx} to={"/noticia/$slug" as any} params={{ slug: post.slug || post.id }} className="group cursor-pointer flex gap-4 p-3 rounded-3xl hover:bg-white/10 transition-all duration-300 border border-transparent hover:border-white/10 hover:shadow-premium">
+                <Link 
+                  key={idx} 
+                  to="/noticia/$slug"
+                  params={{ slug: post.slug || post.id || "" }}
+                  className="group cursor-pointer flex gap-4 p-3 rounded-3xl hover:bg-white/10 transition-all duration-300 border border-transparent hover:border-white/10 hover:shadow-premium"
+                >
                     <div className="w-28 md:w-36 aspect-video shrink-0 overflow-hidden rounded-2xl relative bg-white/5">
                         <img src={post.img} alt={post.title} loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                         <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
@@ -269,4 +282,3 @@ function displayArticleExcerpt(article: Post) {
   if (article.content) return article.content.substring(0, 150) + "...";
   return "Confira os detalhes desta notícia exclusiva no portal Norte em Foco.";
 }
-
