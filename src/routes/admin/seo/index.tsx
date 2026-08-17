@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle2, AlertCircle, Search, Eye, Globe } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Search, Globe, FileWarning, Link as LinkIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 
@@ -12,11 +12,11 @@ export const Route = createFileRoute('/admin/seo/')({
 
 function SEODashboard() {
   const { data: posts, isLoading } = useQuery({
-    queryKey: ['admin-seo-posts'],
+    queryKey: ['admin-seo-posts-advanced'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('posts')
-        .select('id, title, meta_title, meta_description, slug, created_at')
+        .select('id, title, meta_title, meta_description, slug, canonical_url, schema_data, content, image_url')
         .order('created_at', { ascending: false });
       
       if (error) throw error;
@@ -24,14 +24,39 @@ function SEODashboard() {
     },
   });
 
+  const analyzeSEO = (post: any) => {
+    const issues = [];
+    if (!post.meta_title) issues.push('Meta title ausente');
+    else if (post.meta_title.length < 30) issues.push('Meta title curto');
+    
+    if (!post.meta_description) issues.push('Meta description ausente');
+    else if (post.meta_description.length < 120) issues.push('Meta description curta');
+    
+    if (!post.canonical_url) issues.push('Canonical URL ausente');
+    if (!post.image_url) issues.push('Imagem social ausente');
+    if (post.content && post.content.length < 300) issues.push('Conteúdo muito curto');
+
+    return issues;
+  };
+
   const getSEOStats = () => {
-    if (!posts) return { total: 0, healthy: 0, issues: 0 };
-    const healthy = posts.filter(p => p.meta_title && p.meta_description).length;
+    if (!posts) return { score: 0, healthy: 0, critical: 0, total: 0 };
+    let totalScore = 0;
+    let healthy = 0;
+    let critical = 0;
+
+    posts.forEach(p => {
+      const issues = analyzeSEO(p);
+      if (issues.length === 0) healthy++;
+      if (issues.some(i => i.includes('ausente'))) critical++;
+      totalScore += Math.max(0, 100 - (issues.length * 20));
+    });
+
     return {
       total: posts.length,
       healthy,
-      issues: posts.length - healthy,
-      score: posts.length > 0 ? Math.round((healthy / posts.length) * 100) : 0
+      critical,
+      score: posts.length > 0 ? Math.round(totalScore / posts.length) : 0
     };
   };
 
@@ -43,105 +68,90 @@ function SEODashboard() {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold">SEO Avançado</h1>
-        <p className="text-neutral-400">Gerencie a visibilidade do seu portal nos motores de busca.</p>
+        <p className="text-neutral-400">Auditoria completa de saúde e visibilidade orgânica.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="bg-neutral-800 border-neutral-700">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-neutral-400 uppercase tracking-wider">Score Global</CardTitle>
+            <CardTitle className="text-xs text-neutral-500 uppercase">Nota Geral de Saúde</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-black text-red-500">{stats.score}%</div>
+            <div className={`text-4xl font-black ${stats.score > 70 ? 'text-green-500' : 'text-red-500'}`}>{stats.score}%</div>
             <Progress value={stats.score} className="h-2 mt-4 bg-neutral-900" />
           </CardContent>
         </Card>
 
         <Card className="bg-neutral-800 border-neutral-700">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-neutral-400 uppercase tracking-wider">Saúde do Conteúdo</CardTitle>
+            <CardTitle className="text-xs text-neutral-500 uppercase">Alertas Críticos</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-neutral-400">Otimizados</span>
-              <span className="text-green-500 font-bold">{stats.healthy}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-neutral-400">Com Alertas</span>
-              <span className="text-yellow-500 font-bold">{stats.issues}</span>
-            </div>
+          <CardContent>
+            <div className="text-4xl font-black text-yellow-500">{stats.critical}</div>
+            <p className="text-[10px] text-neutral-500 mt-2 uppercase">Notícias com dados ausentes</p>
           </CardContent>
         </Card>
 
         <Card className="bg-neutral-800 border-neutral-700">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-neutral-400 uppercase tracking-wider">Indexação</CardTitle>
+            <CardTitle className="text-xs text-neutral-500 uppercase">Estrutura Técnica</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2 text-green-500">
-              <Globe className="w-4 h-4" />
-              <span className="font-bold">Sitemap.xml Ativo</span>
+          <CardContent className="space-y-2">
+            <div className="flex items-center gap-2 text-[10px] text-green-500 font-bold uppercase">
+              <Globe className="w-3 h-3" /> Sitemap Ativo
             </div>
-            <p className="text-[10px] text-neutral-500 mt-2">Última leitura pelo Google: Há 4 horas</p>
+            <div className="flex items-center gap-2 text-[10px] text-green-500 font-bold uppercase">
+              <LinkIcon className="w-3 h-3" /> Robots.txt OK
+            </div>
           </CardContent>
         </Card>
       </div>
 
       <div className="bg-neutral-800 rounded-lg border border-neutral-700 overflow-hidden">
-        <div className="p-6 border-b border-neutral-700 bg-neutral-800/50 flex justify-between items-center">
-          <h3 className="font-bold">Auditoria de Matérias</h3>
-          <Button size="sm" variant="outline" className="border-neutral-700 hover:bg-neutral-700">
-            Exportar Relatório
-          </Button>
+        <div className="p-6 border-b border-neutral-700 flex justify-between items-center bg-neutral-800/50">
+          <h3 className="font-bold">Checklist de Otimização</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="text-[10px] uppercase tracking-widest text-neutral-500 bg-neutral-900/50">
+            <thead className="text-[10px] uppercase text-neutral-500 bg-neutral-900/50">
               <tr>
                 <th className="p-4">Matéria</th>
-                <th className="p-4">Meta Title</th>
-                <th className="p-4">Meta Desc</th>
+                <th className="p-4">Problemas Detectados</th>
                 <th className="p-4">Status</th>
-                <th className="p-4 text-right">Ações</th>
+                <th className="p-4 text-right">Ação</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-700">
-              {posts?.map(post => (
-                <tr key={post.id} className="hover:bg-neutral-800/50 transition-colors">
-                  <td className="p-4 max-w-xs">
-                    <div className="truncate font-medium text-white">{post.title}</div>
-                    <div className="text-[10px] text-neutral-500 truncate">/{post.slug}</div>
-                  </td>
-                  <td className="p-4">
-                    {post.meta_title ? (
-                      <CheckCircle2 className="w-4 h-4 text-green-500" />
-                    ) : (
-                      <AlertCircle className="w-4 h-4 text-yellow-500" />
-                    )}
-                  </td>
-                  <td className="p-4">
-                    {post.meta_description ? (
-                      <CheckCircle2 className="w-4 h-4 text-green-500" />
-                    ) : (
-                      <AlertCircle className="w-4 h-4 text-yellow-500" />
-                    )}
-                  </td>
-                  <td className="p-4">
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${
-                      post.meta_title && post.meta_description 
-                      ? 'bg-green-500/10 text-green-500' 
-                      : 'bg-yellow-500/10 text-yellow-500'
-                    }`}>
-                      {post.meta_title && post.meta_description ? 'Otimizado' : 'Incompleto'}
-                    </span>
-                  </td>
-                  <td className="p-4 text-right">
-                    <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
-                      <Search className="w-4 h-4" />
-                    </Button>
-                  </td>
-                </tr>
-              ))}
+              {posts?.map(post => {
+                const issues = analyzeSEO(post);
+                return (
+                  <tr key={post.id} className="hover:bg-neutral-900/30 transition-colors">
+                    <td className="p-4 max-w-xs">
+                      <div className="truncate font-medium text-white">{post.title}</div>
+                      <div className="text-[10px] text-neutral-500 truncate">/{post.slug}</div>
+                    </td>
+                    <td className="p-4">
+                      {issues.length > 0 ? (
+                        <div className="flex flex-wrap gap-1">
+                          {issues.map((issue, i) => (
+                            <span key={i} className="text-[8px] bg-red-500/10 text-red-500 px-1.5 py-0.5 rounded border border-red-500/20">
+                              {issue}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-[10px] text-green-500 font-bold uppercase">100% Otimizada</span>
+                      )}
+                    </td>
+                    <td className="p-4">
+                      {issues.length === 0 ? <CheckCircle2 className="w-4 h-4 text-green-500" /> : <FileWarning className="w-4 h-4 text-yellow-500" />}
+                    </td>
+                    <td className="p-4 text-right">
+                      <Button size="sm" variant="ghost">Corrigir</Button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
