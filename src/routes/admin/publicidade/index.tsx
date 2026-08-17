@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { Plus, Megaphone, Calendar, Tag, Trash2, Edit } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { AdminCard } from '@/components/admin/AdminCard';
 
 export const Route = createFileRoute('/admin/publicidade/')({
   component: PublicidadeList,
@@ -44,21 +45,17 @@ function PublicidadeList() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-neutral-800 p-6 rounded-lg border border-neutral-700">
-          <div className="flex items-center gap-3 text-red-500 mb-2">
-            <Megaphone className="w-5 h-5" />
-            <span className="text-xs font-bold uppercase tracking-widest">Ativas</span>
-          </div>
-          <div className="text-3xl font-black">
+        <AdminCard title="Ativas" icon={Megaphone}>
+          <div className="text-3xl font-black text-primary">
             {ads?.filter(a => a.status === 'active').length || 0}
           </div>
-        </div>
+        </AdminCard>
         {/* Ad stats cards could go here */}
       </div>
 
-      <div className="bg-neutral-800 rounded-lg border border-neutral-700 overflow-hidden">
+      <div className="bg-brand-dark rounded-2xl border border-white/5 overflow-hidden shadow-premium">
         <table className="w-full text-left">
-          <thead className="bg-neutral-900 border-b border-neutral-700">
+          <thead className="bg-white/5 border-b border-white/5">
             <tr>
               <th className="px-6 py-4 text-sm font-semibold text-neutral-400">Campanha</th>
               <th className="px-6 py-4 text-sm font-semibold text-neutral-400">Anunciante</th>
@@ -67,9 +64,9 @@ function PublicidadeList() {
               <th className="px-6 py-4 text-sm font-semibold text-neutral-400 text-right">Ações</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-neutral-700">
+          <tbody className="divide-y divide-white/5">
             {ads?.map(ad => (
-              <tr key={ad.id} className="hover:bg-neutral-800/50">
+              <tr key={ad.id} className="hover:bg-white/5">
                 <td className="px-6 py-4">
                   <div className="font-medium">{ad.name}</div>
                   <div className="text-xs text-neutral-500">{ad.creatives?.length || 0} criativos</div>
@@ -84,7 +81,7 @@ function PublicidadeList() {
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <Badge variant={ad.status === 'active' ? 'default' : 'secondary'} className={ad.status === 'active' ? 'bg-green-600' : ''}>
+                  <Badge variant={ad.status === 'active' ? 'default' : 'secondary'} className={ad.status === 'active' ? 'bg-primary' : 'bg-white/5 text-neutral-400 border-transparent'}>
                     {ad.status === 'active' ? 'Ativa' : 'Pausada'}
                   </Badge>
                 </td>
