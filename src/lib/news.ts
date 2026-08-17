@@ -123,8 +123,7 @@ export const fetchPostBySlug = async (slug: string): Promise<Post | null> => {
     .select(`
       *,
       category:categories(name, slug),
-      city:cities(name, slug),
-      author:authors(name, slug)
+      city:cities(name, slug)
     `)
     .eq("slug", slug)
     .maybeSingle();
