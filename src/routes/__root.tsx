@@ -120,6 +120,15 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Analytics initialization
+    analytics.initSession();
+    
+    // Page view tracking
+    analytics.trackPageView();
+  }, [location.pathname]);
 
   return (
     <QueryClientProvider client={queryClient}>
