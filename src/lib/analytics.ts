@@ -95,6 +95,32 @@ class AnalyticsService {
     } catch (e) { console.warn(e); }
   }
 
+  trackPageView(postId?: string | null) {
+    this.trackEvent({
+      event_type: 'page_view',
+      page_path: window.location.pathname,
+      post_id: postId || null
+    });
+    this.trackNavigation();
+  }
+
+  trackScroll(depth: number, postId?: string | null) {
+    this.trackEvent({
+      event_type: 'scroll_depth',
+      page_path: window.location.pathname,
+      post_id: postId || null,
+      scroll_depth: depth
+    });
+  }
+
+  trackCopyAttempt(postId?: string | null) {
+    this.trackEvent({
+      event_type: 'copy_attempt',
+      page_path: window.location.pathname,
+      post_id: postId || null
+    });
+  }
+
   trackClick(elementId: string, metadata?: any) {
     this.trackEvent({ event_type: 'click', page_path: window.location.pathname, element_id: elementId, metadata });
   }
