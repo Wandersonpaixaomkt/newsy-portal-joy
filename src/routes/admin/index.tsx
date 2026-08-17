@@ -121,32 +121,6 @@ function AdminDashboard() {
           </div>
         </div>
 
-        <div className="bg-neutral-800 p-8 rounded-lg border border-neutral-700">
-          <h3 className="text-xl font-bold mb-6">Ações Rápidas</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <QuickAction icon={<FileText />} label="Nova Notícia" color="bg-red-600" />
-            <QuickAction icon={<Users />} label="Novo Autor" color="bg-neutral-700" />
-            <QuickAction icon={<Eye />} label="Ver Site" color="bg-neutral-700" />
-            <QuickAction icon={<TrendingUp />} label="Relatórios" color="bg-neutral-700" />
-          </div>
-        </div>
-      </div>
-              Nenhuma atividade recente registrada.
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-neutral-800 border-neutral-700">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-lg font-bold">Principais Termos de Busca</CardTitle>
-            <Search className="w-4 h-4 text-neutral-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-center py-10 text-neutral-500 italic text-sm">
-              Ainda não há dados suficientes de pesquisa.
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
       <div className="bg-red-950/10 border border-red-900/30 p-6 rounded-lg flex items-start gap-4">
