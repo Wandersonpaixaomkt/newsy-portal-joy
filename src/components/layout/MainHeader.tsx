@@ -1,4 +1,4 @@
-import { Search, Menu, Instagram, Facebook, Youtube, X, Send } from "lucide-react";
+import { Search, Menu, Send } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 export function MainHeader() {
