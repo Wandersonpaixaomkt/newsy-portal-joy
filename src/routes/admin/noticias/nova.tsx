@@ -37,6 +37,7 @@ function NovaNoticia() {
     og_image_url: '',
     source_link: '',
     source_name: '',
+    author_id: null,
   });
 
   useEffect(() => {

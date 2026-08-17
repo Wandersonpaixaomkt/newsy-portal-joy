@@ -131,7 +131,21 @@ function NoticiasList() {
                       <Edit2 className="w-4 h-4" />
                     </Link>
                   </Button>
-                  <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-400 hover:bg-red-500/10">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="text-red-500 hover:text-red-400 hover:bg-red-500/10"
+                    onClick={async () => {
+                      if (confirm('Tem certeza que deseja excluir esta notícia?')) {
+                        const { error } = await supabase.from('posts').delete().eq('id', noticia.id);
+                        if (error) toast.error('Erro ao excluir: ' + error.message);
+                        else {
+                          toast.success('Notícia excluída!');
+                          window.location.reload();
+                        }
+                      }
+                    }}
+                  >
                     <Trash2 className="w-4 h-4" />
                   </Button>
                 </td>

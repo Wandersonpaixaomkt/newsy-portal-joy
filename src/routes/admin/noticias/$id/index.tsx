@@ -88,20 +88,26 @@ function EditarNoticia() {
   const handleUpdate = async (status: 'draft' | 'published') => {
     setLoading(true);
     try {
+      // Remover campos que não pertencem à tabela posts se necessário ou garantir tipagem
+      const { data: updateData } = await supabase.rpc('get_current_time'); // Apenas para teste de conexão se necessário
+      
+      const updatePayload = {
+        ...formData,
+        published_at: status === 'published' ? (post?.published_at || new Date().toISOString()) : (status === 'draft' ? null : post?.published_at),
+        updated_at: new Date().toISOString(),
+      };
+
       const { error } = await supabase
         .from('posts')
-        .update({
-          ...formData,
-          published_at: status === 'published' ? new Date().toISOString() : (post?.published_at || null),
-          updated_at: new Date().toISOString(),
-        } as any)
+        .update(updatePayload as any)
         .eq('id', id);
 
       if (error) throw error;
-      toast.success('Notícia atualizada!');
+      toast.success(status === 'published' ? 'Notícia publicada com sucesso!' : 'Notícia atualizada!');
       navigate({ to: '/admin/noticias' });
     } catch (error: any) {
-      toast.error(error.message);
+      console.error('Update error:', error);
+      toast.error(error.message || 'Erro ao atualizar notícia');
     } finally {
       setLoading(false);
     }
@@ -151,6 +157,66 @@ function EditarNoticia() {
                 <div className="space-y-2">
                   <Label>Conteúdo</Label>
                   <Textarea value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} className="bg-neutral-900 border-neutral-700 h-[400px]" />
+                </div>
+              </div>
+            </div>
+            
+            <div className="space-y-6">
+              <div className="bg-neutral-800 p-6 rounded-lg border border-neutral-700 space-y-6">
+                <div className="space-y-2">
+                  <Label>Categoria</Label>
+                  <select 
+                    className="w-full bg-neutral-900 border border-neutral-700 rounded-md p-2 text-white" 
+                    value={formData.category_id} 
+                    onChange={e => setFormData({...formData, category_id: e.target.value})}
+                  >
+                    <option value="">Selecionar Categoria</option>
+                    {categories?.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Cidade</Label>
+                  <select 
+                    className="w-full bg-neutral-900 border border-neutral-700 rounded-md p-2 text-white" 
+                    value={formData.city_id} 
+                    onChange={e => setFormData({...formData, city_id: e.target.value})}
+                  >
+                    <option value="">Selecionar Cidade</option>
+                    {cities?.map(city => <option key={city.id} value={city.id}>{city.name}</option>)}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Imagem Destacada (URL)</Label>
+                  <Input 
+                    value={formData.image_url} 
+                    onChange={e => setFormData({...formData, image_url: e.target.value})} 
+                    className="bg-neutral-900 border-neutral-700" 
+                  />
+                  {formData.image_url && (
+                    <img src={formData.image_url} alt="Preview" className="mt-2 w-full aspect-video object-cover rounded border border-neutral-700" />
+                  )}
+                </div>
+                
+                <div className="flex items-center gap-2 py-2">
+                  <input 
+                    type="checkbox" 
+                    id="is_featured" 
+                    checked={formData.is_featured} 
+                    onChange={e => setFormData({...formData, is_featured: e.target.checked})}
+                    className="w-4 h-4 rounded border-neutral-700 bg-neutral-900 text-red-600"
+                  />
+                  <Label htmlFor="is_featured" className="cursor-pointer">Notícia em Destaque</Label>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <input 
+                    type="checkbox" 
+                    id="is_urgent" 
+                    checked={formData.is_urgent} 
+                    onChange={e => setFormData({...formData, is_urgent: e.target.checked})}
+                    className="w-4 h-4 rounded border-neutral-700 bg-neutral-900 text-red-600"
+                  />
+                  <Label htmlFor="is_urgent" className="cursor-pointer text-red-500 font-bold">Plantão Urgente</Label>
                 </div>
               </div>
             </div>
