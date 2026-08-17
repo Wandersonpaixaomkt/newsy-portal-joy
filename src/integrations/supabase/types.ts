@@ -330,6 +330,33 @@ export type Database = {
         }
         Relationships: []
       }
+      competitor_alerts: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          message: string
+          relevance: string
+          type: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message: string
+          relevance: string
+          type: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          relevance?: string
+          type?: string
+        }
+        Relationships: []
+      }
       competitor_articles: {
         Row: {
           category: string | null
@@ -504,6 +531,68 @@ export type Database = {
             columns: ["session_id"]
             isOneToOne: false
             referencedRelation: "analytics_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pautas_central: {
+        Row: {
+          category: string | null
+          city: string | null
+          discovered_at: string | null
+          duplicate_post_id: string | null
+          headline: string
+          id: string
+          image_url: string | null
+          is_analyzed: boolean | null
+          is_ignored: boolean | null
+          is_new: boolean | null
+          is_saved: boolean | null
+          keywords: string[] | null
+          original_link: string | null
+          source_portal: string
+          summary: string | null
+        }
+        Insert: {
+          category?: string | null
+          city?: string | null
+          discovered_at?: string | null
+          duplicate_post_id?: string | null
+          headline: string
+          id?: string
+          image_url?: string | null
+          is_analyzed?: boolean | null
+          is_ignored?: boolean | null
+          is_new?: boolean | null
+          is_saved?: boolean | null
+          keywords?: string[] | null
+          original_link?: string | null
+          source_portal: string
+          summary?: string | null
+        }
+        Update: {
+          category?: string | null
+          city?: string | null
+          discovered_at?: string | null
+          duplicate_post_id?: string | null
+          headline?: string
+          id?: string
+          image_url?: string | null
+          is_analyzed?: boolean | null
+          is_ignored?: boolean | null
+          is_new?: boolean | null
+          is_saved?: boolean | null
+          keywords?: string[] | null
+          original_link?: string | null
+          source_portal?: string
+          summary?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pautas_central_duplicate_post_id_fkey"
+            columns: ["duplicate_post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
             referencedColumns: ["id"]
           },
         ]
