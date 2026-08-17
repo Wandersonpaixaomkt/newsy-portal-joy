@@ -86,8 +86,9 @@
   /* Brand colors: Norte em Foco */
   --color-brand-red: oklch(0.55 0.22 25);
   --color-brand-black: oklch(0.12 0 0);
-  --color-brand-dark: oklch(0.08 0 0);
+  --color-brand-dark: oklch(0.2 0.05 250); /* Dark Blue */
 }
+
 
 :root {
   --radius: 1rem;

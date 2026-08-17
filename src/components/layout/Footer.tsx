@@ -1,7 +1,7 @@
 import { Mail, Phone, MapPin, Send } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
-// Ícones personalizados SVG para redes sociais para garantir compatibilidade e leveza
+// Ícones personalizados SVG para redes sociais
 const InstagramIcon = ({ size = 20 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
@@ -28,84 +28,66 @@ const XIcon = ({ size = 20 }: { size?: number }) => (
 
 export function Footer() {
   const socialLinks = [
-    { name: "Facebook", icon: FacebookIcon, href: "https://facebook.com/norteemfoco", color: "hover:bg-blue-600" },
-    { name: "Instagram", icon: InstagramIcon, href: "https://instagram.com/norteemfoco", color: "hover:bg-pink-600" },
-    { name: "X", icon: XIcon, href: "https://x.com/norteemfoco", color: "hover:bg-zinc-800" },
-    { name: "YouTube", icon: YoutubeIcon, href: "https://youtube.com/@norteemfoco", color: "hover:bg-red-600" }
+    { name: "Facebook", icon: FacebookIcon, href: "#", color: "hover:text-primary" },
+    { name: "Instagram", icon: InstagramIcon, href: "#", color: "hover:text-primary" },
+    { name: "X", icon: XIcon, href: "#", color: "hover:text-primary" },
+    { name: "YouTube", icon: YoutubeIcon, href: "#", color: "hover:text-primary" }
   ];
 
   return (
-    <footer className="bg-brand-dark text-white pt-24 pb-12 border-t border-white/5 mt-24">
+    <footer className="bg-brand-dark text-white pt-20 border-t-4 border-primary mt-12">
       <div className="container mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
-          <div className="lg:col-span-1">
-            <div className="flex flex-col mb-6">
-              <span className="text-2xl font-black tracking-tighter text-white leading-none">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
+          <div className="md:col-span-4 lg:col-span-5">
+            <div className="flex flex-col mb-8">
+              <span className="text-3xl font-black tracking-tighter text-white leading-none">
                 Norte<span className="text-primary">em</span>Foco
               </span>
-              <span className="text-[8px] font-bold tracking-[0.3em] text-white/40 uppercase leading-none mt-1">
+              <span className="text-[10px] font-bold tracking-[0.3em] text-white/40 uppercase leading-none mt-2">
                 Portal de Notícias
               </span>
             </div>
-            <p className="text-white/40 text-sm font-medium leading-relaxed mb-6">
-              A região em pauta. A notícia em movimento. O portal de notícias que mais cresce no norte do Brasil.
+            <p className="text-white/60 text-sm font-medium leading-relaxed mb-8 max-w-sm">
+              Informação com credibilidade sobre o Sudeste do Pará. A região em pauta. A notícia em movimento.
             </p>
             <div className="flex gap-4">
               {socialLinks.map((social) => (
                 <a 
                   key={social.name}
                   href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  className={`text-white/40 transition-all duration-300 ${social.color}`}
                   aria-label={social.name}
-                  className={`w-12 h-12 rounded-full bg-white/5 flex items-center justify-center transition-all duration-300 border border-white/10 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 ${social.color}`}
                 >
-                  <social.icon size={20} />
+                  <social.icon size={24} />
                 </a>
               ))}
             </div>
           </div>
           
-          <div>
-            <h5 className="font-black text-xs uppercase tracking-[0.2em] text-primary mb-6">Cidades</h5>
-            <ul className="flex flex-col gap-3 text-white/40 font-bold text-xs uppercase tracking-widest">
-              <li><Link to="/" className="hover:text-white transition-colors">Parauapebas</Link></li>
-              <li><Link to="/" className="hover:text-white transition-colors">Canaã dos Carajás</Link></li>
-              <li><Link to="/" className="hover:text-white transition-colors">Marabá</Link></li>
-              <li><Link to="/" className="hover:text-white transition-colors">Curionópolis</Link></li>
-              <li><Link to="/" className="hover:text-white transition-colors">Eldorado</Link></li>
-              <li><Link to="/" className="hover:text-white transition-colors">Belém / Pará</Link></li>
+          <div className="md:col-span-4 lg:col-span-3">
+            <h5 className="font-black text-xs uppercase tracking-[0.2em] text-white mb-8 border-l-4 border-primary pl-4">Institucional</h5>
+            <ul className="flex flex-col gap-4 text-white/40 font-bold text-[11px] uppercase tracking-widest">
+              <li><Link to="/" className="hover:text-primary transition-colors">Expediente</Link></li>
+              <li><Link to="/" className="hover:text-primary transition-colors">Termos de Uso</Link></li>
+              <li><Link to="/" className="hover:text-primary transition-colors">Anuncie</Link></li>
+              <li><Link to="/" className="hover:text-primary transition-colors">Fale Conosco</Link></li>
             </ul>
           </div>
 
-          <div>
-            <h5 className="font-black text-xs uppercase tracking-[0.2em] text-primary mb-6">Editorias</h5>
-            <ul className="flex flex-col gap-3 text-white/40 font-bold text-xs uppercase tracking-widest">
-              <li><Link to="/" className="hover:text-white transition-colors">Política</Link></li>
-              <li><Link to="/" className="hover:text-white transition-colors">Mineração</Link></li>
-              <li><Link to="/" className="hover:text-white transition-colors">Polícia</Link></li>
-              <li><Link to="/" className="hover:text-white transition-colors">Emprego</Link></li>
-              <li><Link to="/" className="hover:text-white transition-colors">Utilidade Pública</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h5 className="font-black text-xs uppercase tracking-[0.2em] text-primary mb-6">Contato</h5>
-            <ul className="flex flex-col gap-4 text-white/40 font-bold text-xs uppercase tracking-widest">
-              <li className="flex items-center gap-2"><Send size={14} className="text-primary" /> (94) 99999-9999</li>
-              <li className="flex items-center gap-2"><Send size={14} className="text-primary" /> contato@norteemfoco.com.br</li>
-              <li className="flex items-center gap-2"><Send size={14} className="text-primary" /> Parauapebas - PA</li>
+          <div className="md:col-span-4 lg:col-span-4">
+            <h5 className="font-black text-xs uppercase tracking-[0.2em] text-white mb-8 border-l-4 border-primary pl-4">Contato & Endereço</h5>
+            <ul className="flex flex-col gap-5 text-white/40 font-bold text-[11px] uppercase tracking-widest">
+              <li className="flex items-start gap-3"><MapPin size={16} className="text-primary shrink-0" /> <div>Parauapebas, Pará - Brasil<br/>CNPJ: 00.000.000/0000-00</div></li>
+              <li className="flex items-center gap-3"><Phone size={16} className="text-primary" /> (94) 99999-9999</li>
+              <li className="flex items-center gap-3"><Mail size={16} className="text-primary" /> contato@norteemfoco.com.br</li>
             </ul>
           </div>
         </div>
         
-        <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">
-          <p>© 2026 Norte em Foco. Todos os direitos reservados.</p>
-          <div className="flex gap-6">
-            <Link to="/" className="hover:text-white transition-colors">Sobre</Link>
-            <Link to="/" className="hover:text-white transition-colors">Anuncie</Link>
-            <Link to="/" className="hover:text-white transition-colors">Privacidade</Link>
-          </div>
+        <div className="py-8 border-t border-white/10 text-center md:text-left">
+          <p className="text-[10px] font-black text-white/20 uppercase tracking-[0.2em]">
+            © 2026 Norte em Foco. Todos os direitos reservados.
+          </p>
         </div>
       </div>
     </footer>

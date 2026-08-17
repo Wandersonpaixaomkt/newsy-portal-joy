@@ -1,5 +1,4 @@
 import { MapPin, ChevronRight, Play } from "lucide-react";
-import { motion } from "framer-motion";
 import { Link } from "@tanstack/react-router";
 
 interface NewsItem {
@@ -8,63 +7,57 @@ interface NewsItem {
   title: string;
   cat: string;
   img: string;
-  location: string;
-  time: string;
+  location?: string;
+  time?: string;
 }
 
-export function NewsGrid({ title, items }: { title?: string, items: NewsItem[] }) {
+export function NewsGrid({ title, items, columns = 4, dark = false }: { title?: string, items: NewsItem[], columns?: number, dark?: boolean }) {
   if (items.length === 0) return null;
 
   return (
-    <section>
+    <section className={dark ? "bg-brand-dark py-12 -mx-6 px-6" : "py-8"}>
       {title && (
-        <div className="flex items-center justify-between mb-6 md:mb-10 pb-4 border-b border-white/10">
-          <h3 className="text-2xl md:text-4xl font-black uppercase tracking-tighter text-white">{title}</h3>
-          <Link to="/" className="text-[10px] font-black text-primary hover:text-white transition-all duration-300 flex items-center gap-2 uppercase tracking-[0.2em] group/all px-4 py-2 rounded-full hover:bg-white/5">
-            Ver Tudo <ChevronRight size={16} className="group-hover/all:translate-x-1 transition-transform" />
+        <div className={`flex items-center justify-between mb-8 pb-3 border-b-2 ${dark ? "border-white/10" : "border-brand-dark/10"}`}>
+          <div className="flex items-center gap-3">
+            <span className="w-1.5 h-6 bg-primary"></span>
+            <h3 className={`text-xl md:text-2xl font-black uppercase tracking-tight ${dark ? "text-white" : "text-brand-dark"}`}>
+              {title}
+            </h3>
+          </div>
+          <Link to="/" className="text-[10px] font-black text-primary hover:text-primary/80 transition-all uppercase tracking-widest flex items-center gap-1">
+            Ver Mais <ChevronRight size={14} />
           </Link>
         </div>
       )}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-${columns} gap-6`}>
         {items.map((post, idx) => (
           <Link
             key={idx} 
             to="/noticia/$slug"
             params={{ slug: post.slug || post.id || "" }}
-            className="group cursor-pointer flex flex-col bg-white/5 rounded-3xl overflow-hidden border border-white/5 hover:border-primary/40 hover:bg-white/10 transition-all duration-500 hover:shadow-premium shadow-2xl"
+            className="group flex flex-col"
           >
-            <div className="aspect-video overflow-hidden relative bg-white/5">
+            <div className="aspect-[16/10] overflow-hidden relative rounded-xl bg-white/5 mb-3">
               <img 
                 src={post.img} 
                 alt={post.title} 
                 loading="lazy"
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=2070&auto=format&fit=crop";
-                }}
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-black/10 group-hover:bg-black/30 transition-colors flex items-center justify-center">
-                 <div className="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transform scale-75 group-hover:scale-100 transition-all duration-500 shadow-xl">
-                    <Play size={20} fill="currentColor" />
-                 </div>
-              </div>
-              <div className="absolute top-4 left-4">
-                <span className="bg-primary text-white px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest shadow-lg">
-                  {post.cat}
-                </span>
+              <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <Play size={32} fill="white" className="text-white" />
               </div>
             </div>
-            <div className="p-5 flex flex-col gap-3">
-                <div className="flex items-center gap-2 text-[9px] font-black text-white/40 uppercase tracking-widest">
-                    <span className="flex items-center gap-1"><MapPin size={12} className="text-primary" /> {post.location}</span>
-                    <span>•</span>
-                    <span>{post.time}</span>
-                </div>
-              <h4 className="text-lg font-bold leading-snug group-hover:text-primary transition-colors line-clamp-2 text-white/90 tracking-tight normal-case">
-                {post.title}
-              </h4>
-            </div>
+            
+            <div className="w-full h-1 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform origin-left mb-2"></div>
+            
+            <span className="text-[10px] font-black text-primary uppercase tracking-widest mb-1.5">
+              {post.cat}
+            </span>
+            
+            <h4 className={`text-sm md:text-base font-bold leading-tight group-hover:text-primary transition-colors line-clamp-3 ${dark ? "text-white" : "text-brand-dark"}`}>
+              {post.title}
+            </h4>
           </Link>
         ))}
       </div>
