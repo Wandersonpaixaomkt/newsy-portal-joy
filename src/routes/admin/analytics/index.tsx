@@ -251,15 +251,17 @@ function TopPostsTable() {
       const counts: Record<string, { count: number, title: string, slug: string }> = {};
       if (events) {
         events.forEach((e: any) => {
-          if (!e.post_id || !e.posts || Array.isArray(e.posts)) return;
-          if (!counts[e.post_id]) {
-            counts[e.post_id] = { 
+          const postId = e.post_id;
+          if (!postId || !e.posts || Array.isArray(e.posts)) return;
+          if (!counts[postId]) {
+            counts[postId] = { 
               count: 0, 
               title: e.posts.title || 'Notícia sem título', 
               slug: e.posts.slug || '' 
             };
           }
-          counts[e.post_id].count++;
+          const current = counts[postId];
+          if (current) current.count++;
         });
       }
 
