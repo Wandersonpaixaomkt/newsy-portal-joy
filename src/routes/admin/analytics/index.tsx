@@ -250,7 +250,7 @@ function TopPostsTable() {
 
       const counts: Record<string, { count: number, title: string, slug: string }> = {};
       events?.forEach((e: any) => {
-        if (!e.post_id || !e.posts) return;
+        if (!e.post_id || !e.posts || Array.isArray(e.posts)) return;
         if (!counts[e.post_id]) {
           counts[e.post_id] = { 
             count: 0, 
