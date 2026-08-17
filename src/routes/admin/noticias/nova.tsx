@@ -104,6 +104,10 @@ function NovaNoticia() {
     
     setUploading(true);
     const file = e.target.files[0];
+    if (!file) {
+      setUploading(false);
+      return;
+    }
     
     try {
       const options = {
