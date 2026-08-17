@@ -3,26 +3,63 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BarChart3, TrendingUp, Users, MousePointer2 } from 'lucide-react';
+import { BarChart3, TrendingUp, Users, MousePointer2, Clock, Calendar } from 'lucide-react';
+import { 
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
+  LineChart, Line, AreaChart, Area, PieChart, Pie, Cell 
+} from 'recharts';
+import { useState } from 'react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export const Route = createFileRoute('/admin/analytics/')({
   component: AnalyticsDashboard,
 });
 
 function AnalyticsDashboard() {
-  const { data: stats } = useQuery({
-    queryKey: ['admin-analytics-summary'],
+  const [period, setPeriod] = useState('7d');
+
+  const { data: stats, isLoading } = useQuery({
+    queryKey: ['admin-analytics-summary', period],
     queryFn: async () => {
-      // In a real app, this would query a views table or integration
-      const { count: postsCount } = await supabase.from('posts').select('*', { count: 'exact', head: true });
+      // Get real counts from Supabase
+      const { count: totalViews } = await supabase
+        .from('analytics_events')
+        .select('*', { count: 'exact', head: true })
+        .eq('event_type', 'page_view');
+        
+      const { count: uniqueVisitors } = await supabase
+        .from('analytics_sessions')
+        .select('visitor_id', { count: 'exact', head: true });
+
+      // Daily views chart data
+      const { data: dailyViews } = await supabase
+        .from('analytics_events')
+        .select('created_at')
+        .eq('event_type', 'page_view')
+        .order('created_at', { ascending: true });
+
+      const processDailyData = (data: any[]) => {
+        const counts: Record<string, number> = {};
+        data?.forEach(item => {
+          const date = new Date(item.created_at).toLocaleDateString();
+          counts[date] = (counts[date] || 0) + 1;
+        });
+        return Object.entries(counts).map(([date, count]) => ({ date, views: count }));
+      };
+
       return {
-        totalViews: 125430,
-        uniqueVisitors: 45200,
-        avgTime: '3m 45s',
-        postsCount: postsCount || 0
+        totalViews: totalViews || 0,
+        uniqueVisitors: uniqueVisitors || 0,
+        avgTime: '0m 0s',
+        dailyData: processDailyData(dailyViews || []),
+        deviceData: [
+          { name: 'Desktop', value: 65, color: '#3b82f6' },
+          { name: 'Mobile', value: 35, color: '#ef4444' },
+        ]
       };
     },
   });
+
 
   return (
     <div className="space-y-8">
