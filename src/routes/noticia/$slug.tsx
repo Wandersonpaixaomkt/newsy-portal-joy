@@ -26,50 +26,50 @@ function PostPage() {
 
   // Analytics and Protection
   useEffect(() => {
-    if (article) {
-      analytics.trackPageView(article.id);
-      
-      // Tracking scroll depth
-      let maxScroll = 0;
-      const handleScroll = () => {
-        const winHeight = window.innerHeight;
-        const docHeight = document.documentElement.scrollHeight;
-        const scrollTop = window.scrollY;
-        
-        // Prevent division by zero
-        if (docHeight <= winHeight) return;
-        
-        const scrollPercent = Math.round((scrollTop / (docHeight - winHeight)) * 100);
-        
-        if (scrollPercent > maxScroll) {
-          maxScroll = scrollPercent;
-          // Track at 25, 50, 75, 100
-          if (maxScroll >= 25 && maxScroll % 25 === 0) {
-             analytics.trackScroll(maxScroll, article.id);
-          }
-        }
-      };
+    if (!article) return;
 
-      // Protection against copying
-      const handleCopy = (e: ClipboardEvent) => {
-        const selection = window.getSelection();
-        if (selection && selection.toString().length > 100) {
-           e.preventDefault();
-           const text = selection.toString() + "\n\nLeia mais em Norte em Foco: " + window.location.href;
-           if (e.clipboardData) {
-              e.clipboardData.setData('text/plain', text);
-           }
-        }
-      };
-
-      window.addEventListener('scroll', handleScroll);
-      document.addEventListener('copy', handleCopy);
+    analytics.trackPageView(article.id);
+    
+    // Tracking scroll depth
+    let maxScroll = 0;
+    const handleScroll = () => {
+      const winHeight = window.innerHeight;
+      const docHeight = document.documentElement.scrollHeight;
+      const scrollTop = window.scrollY;
       
-      return () => {
-        window.removeEventListener('scroll', handleScroll);
-        document.removeEventListener('copy', handleCopy);
-      };
-    }
+      // Prevent division by zero
+      if (docHeight <= winHeight) return;
+      
+      const scrollPercent = Math.round((scrollTop / (docHeight - winHeight)) * 100);
+      
+      if (scrollPercent > maxScroll) {
+        maxScroll = scrollPercent;
+        // Track at 25, 50, 75, 100
+        if (maxScroll >= 25 && maxScroll % 25 === 0) {
+           analytics.trackScroll(maxScroll, article.id);
+        }
+      }
+    };
+
+    // Protection against copying
+    const handleCopy = (e: ClipboardEvent) => {
+      const selection = window.getSelection();
+      if (selection && selection.toString().length > 100) {
+         e.preventDefault();
+         const text = selection.toString() + "\n\nLeia mais em Norte em Foco: " + window.location.href;
+         if (e.clipboardData) {
+            e.clipboardData.setData('text/plain', text);
+         }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    document.addEventListener('copy', handleCopy);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      document.removeEventListener('copy', handleCopy);
+    };
   }, [article]);
 
   if (isLoading) return <div className="min-h-screen bg-brand-black p-10"><Skeleton className="h-96 w-full" /></div>;
