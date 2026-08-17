@@ -13,24 +13,51 @@ export const Route = createFileRoute('/admin/noticias/')({
 });
 
 function NoticiasList() {
-  const { data: noticias, isLoading } = useQuery({
+  const { data: noticias, isLoading, error } = useQuery({
     queryKey: ['admin-noticias'],
     queryFn: async () => {
+      // First check if categories and authors exist to avoid join errors
       const { data, error } = await supabase
         .from('posts')
-        .select('*, category:categories(name), author:authors(name)')
-        .returns<any>()
-        .order('created_at', { ascending: false });
+        .select(`
+          *,
+          category:categories(name),
+          city:cities(name)
+        `)
+        .order('created_at', { ascending: false })
+        .limit(100);
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching noticias:', error);
+        throw error;
+      }
       return data;
     },
+    retry: 1,
+    meta: {
+      errorMessage: 'Não foi possível carregar as notícias. Verifique se as tabelas existem no banco de dados.'
+    }
   });
 
-  if (isLoading) return <div className="animate-pulse space-y-4">
-    <div className="h-8 bg-neutral-800 w-1/4 rounded"></div>
-    <div className="h-64 bg-neutral-800 w-full rounded"></div>
-  </div>;
+  if (isLoading) return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div className="h-8 bg-neutral-800 w-1/4 rounded animate-pulse"></div>
+        <div className="h-10 bg-neutral-800 w-32 rounded animate-pulse"></div>
+      </div>
+      <div className="bg-neutral-800 rounded-lg border border-neutral-700 h-96 animate-pulse"></div>
+    </div>
+  );
+
+  if (error) return (
+    <div className="bg-red-950/20 border border-red-500/50 p-6 rounded-lg text-center">
+      <div className="text-red-500 font-bold mb-2">ERRO AO CARREGAR NOTÍCIAS</div>
+      <p className="text-neutral-400 mb-4">{(error as any).message || 'Houve um problema na comunicação com o banco de dados.'}</p>
+      <Button onClick={() => window.location.reload()} variant="outline" className="border-red-500/50 text-red-500 hover:bg-red-500/10">
+        Tentar Novamente
+      </Button>
+    </div>
+  );
 
   return (
     <div className="space-y-6">
