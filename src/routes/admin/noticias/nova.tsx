@@ -7,7 +7,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { Save, ArrowLeft, Image as ImageIcon } from 'lucide-react';
+import { Save, ArrowLeft, Image as ImageIcon, Search, Globe, Share2 } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Route = createFileRoute('/admin/noticias/nova')({
   component: NovaNoticia,
@@ -27,6 +28,11 @@ function NovaNoticia() {
     image_url: '',
     is_featured: false,
     is_urgent: false,
+    meta_title: '',
+    meta_description: '',
+    canonical_url: '',
+    robots_meta: 'index, follow',
+    og_image_url: '',
   });
 
   const { data: categories } = useQuery({
@@ -63,9 +69,7 @@ function NovaNoticia() {
         ...formData,
         published_at: status === 'published' ? new Date().toISOString() : null,
       } as any]);
-
       if (error) throw error;
-
       toast.success(status === 'published' ? 'Notícia publicada!' : 'Rascunho salvo!');
       navigate({ to: '/admin/noticias' });
     } catch (error: any) {
@@ -85,139 +89,98 @@ function NovaNoticia() {
           <h1 className="text-3xl font-bold">Nova Notícia</h1>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" onClick={() => handleSave('draft')} disabled={loading}>
-            Salvar Rascunho
-          </Button>
-          <Button className="bg-red-600 hover:bg-red-700" onClick={() => handleSave('published')} disabled={loading}>
-            Publicar Agora
-          </Button>
+          <Button variant="outline" onClick={() => handleSave('draft')} disabled={loading}>Salvar Rascunho</Button>
+          <Button className="bg-red-600 hover:bg-red-700" onClick={() => handleSave('published')} disabled={loading}>Publicar Agora</Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-6">
-          <div className="bg-neutral-800 p-6 rounded-lg border border-neutral-700 space-y-4">
-            <div className="space-y-2">
-              <Label>Título da Manchete</Label>
-              <Input 
-                value={formData.title} 
-                onChange={e => {
-                  setFormData({...formData, title: e.target.value, slug: e.target.value.toLowerCase().replace(/\s+/g, '-')});
-                }}
-                className="bg-neutral-900 border-neutral-700 text-lg font-bold"
-                placeholder="Ex: Novo investimento mineral em Parauapebas..."
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label>Slug (URL)</Label>
-              <Input 
-                value={formData.slug} 
-                onChange={e => setFormData({...formData, slug: e.target.value})}
-                className="bg-neutral-900 border-neutral-700 text-neutral-400 text-xs"
-              />
-            </div>
+      <Tabs defaultValue="conteudo" className="space-y-6">
+        <TabsList className="bg-neutral-800 border-neutral-700">
+          <TabsTrigger value="conteudo">Conteúdo Editorial</TabsTrigger>
+          <TabsTrigger value="seo">SEO e Metadados</TabsTrigger>
+        </TabsList>
 
-            <div className="space-y-2">
-              <Label>Resumo / Gravata</Label>
-              <Textarea 
-                value={formData.excerpt} 
-                onChange={e => setFormData({...formData, excerpt: e.target.value})}
-                className="bg-neutral-900 border-neutral-700 h-24"
-                placeholder="Um breve resumo da notícia para os cards..."
-              />
+        <TabsContent value="conteudo">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-6">
+              <div className="bg-neutral-800 p-6 rounded-lg border border-neutral-700 space-y-4">
+                <div className="space-y-2">
+                  <Label>Título da Manchete</Label>
+                  <Input value={formData.title} onChange={e => setFormData({...formData, title: e.target.value, slug: e.target.value.toLowerCase().replace(/\s+/g, '-')})} className="bg-neutral-900 border-neutral-700 font-bold" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Slug (URL)</Label>
+                  <Input value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} className="bg-neutral-900 border-neutral-700 text-xs" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Resumo</Label>
+                  <Textarea value={formData.excerpt} onChange={e => setFormData({...formData, excerpt: e.target.value})} className="bg-neutral-900 border-neutral-700 h-24" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Conteúdo</Label>
+                  <Textarea value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} className="bg-neutral-900 border-neutral-700 h-[400px]" />
+                </div>
+              </div>
             </div>
-
-            <div className="space-y-2">
-              <Label>Conteúdo da Notícia</Label>
-              <Textarea 
-                value={formData.content} 
-                onChange={e => setFormData({...formData, content: e.target.value})}
-                className="bg-neutral-900 border-neutral-700 h-[400px]"
-                placeholder="Escreva o corpo da notícia aqui..."
-              />
+            <div className="space-y-6">
+              <div className="bg-neutral-800 p-6 rounded-lg border border-neutral-700 space-y-6">
+                <div className="space-y-2">
+                  <Label>Categoria</Label>
+                  <select className="w-full bg-neutral-900 border border-neutral-700 rounded-md p-2" value={formData.category_id} onChange={e => setFormData({...formData, category_id: e.target.value})}>
+                    <option value="">Selecionar Categoria</option>
+                    {categories?.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Cidade</Label>
+                  <select className="w-full bg-neutral-900 border border-neutral-700 rounded-md p-2" value={formData.city_id} onChange={e => setFormData({...formData, city_id: e.target.value})}>
+                    <option value="">Selecionar Cidade</option>
+                    {cities?.map(city => <option key={city.id} value={city.id}>{city.name}</option>)}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Imagem Destacada</Label>
+                  <Input value={formData.image_url} onChange={e => setFormData({...formData, image_url: e.target.value})} className="bg-neutral-900 border-neutral-700" />
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        </TabsContent>
 
-        <div className="space-y-6">
-          <div className="bg-neutral-800 p-6 rounded-lg border border-neutral-700 space-y-6">
-            <h3 className="font-semibold text-neutral-400 uppercase text-xs tracking-wider">Configurações de Publicação</h3>
-            
-            <div className="space-y-2">
-              <Label>Categoria</Label>
-              <select 
-                className="w-full bg-neutral-900 border border-neutral-700 rounded-md p-2"
-                value={formData.category_id}
-                onChange={e => setFormData({...formData, category_id: e.target.value})}
-              >
-                <option value="">Selecionar Categoria</option>
-                {categories?.map(cat => (
-                  <option key={cat.id} value={cat.id}>{cat.name}</option>
-                ))}
-              </select>
+        <TabsContent value="seo">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="bg-neutral-800 p-6 rounded-lg border border-neutral-700 space-y-4">
+              <h3 className="font-bold flex items-center gap-2 text-red-500"><Search className="w-4 h-4" /> Otimização para Google</h3>
+              <div className="space-y-2">
+                <Label>Meta Title (Max 60 caracteres)</Label>
+                <Input value={formData.meta_title} onChange={e => setFormData({...formData, meta_title: e.target.value})} className="bg-neutral-900 border-neutral-700" maxLength={60} />
+              </div>
+              <div className="space-y-2">
+                <Label>Meta Description (Max 160 caracteres)</Label>
+                <Textarea value={formData.meta_description} onChange={e => setFormData({...formData, meta_description: e.target.value})} className="bg-neutral-900 border-neutral-700" maxLength={160} />
+              </div>
+              <div className="space-y-2">
+                <Label>Canonical URL</Label>
+                <Input value={formData.canonical_url} onChange={e => setFormData({...formData, canonical_url: e.target.value})} className="bg-neutral-900 border-neutral-700" placeholder="https://seusite.com/noticia/exemplo" />
+              </div>
             </div>
-
-            <div className="space-y-2">
-              <Label>Cidade / Região</Label>
-              <select 
-                className="w-full bg-neutral-900 border border-neutral-700 rounded-md p-2"
-                value={formData.city_id}
-                onChange={e => setFormData({...formData, city_id: e.target.value})}
-              >
-                <option value="">Selecionar Cidade</option>
-                {cities?.map(city => (
-                  <option key={city.id} value={city.id}>{city.name}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Autor</Label>
-              <select 
-                className="w-full bg-neutral-900 border border-neutral-700 rounded-md p-2"
-                value={formData.author_id}
-                onChange={e => setFormData({...formData, author_id: e.target.value})}
-              >
-                <option value="">Selecionar Autor</option>
-                {authors?.map(author => (
-                  <option key={author.id} value={author.id}>{author.name}</option>
-                ))}
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <Label>URL da Imagem Destacada</Label>
-              <Input 
-                value={formData.image_url} 
-                onChange={e => setFormData({...formData, image_url: e.target.value})}
-                className="bg-neutral-900 border-neutral-700"
-                placeholder="https://exemplo.com/imagem.jpg"
-              />
-            </div>
-
-            <div className="flex items-center gap-2">
-              <input 
-                type="checkbox" 
-                id="is_featured"
-                checked={formData.is_featured}
-                onChange={e => setFormData({...formData, is_featured: e.target.checked})}
-              />
-              <Label htmlFor="is_featured">Destaque na Home</Label>
-            </div>
-
-            <div className="flex items-center gap-2 text-red-500">
-              <input 
-                type="checkbox" 
-                id="is_urgent"
-                checked={formData.is_urgent}
-                onChange={e => setFormData({...formData, is_urgent: e.target.checked})}
-              />
-              <Label htmlFor="is_urgent" className="text-red-500">Notícia Urgente (AO VIVO)</Label>
+            <div className="bg-neutral-800 p-6 rounded-lg border border-neutral-700 space-y-4">
+              <h3 className="font-bold flex items-center gap-2 text-blue-500"><Share2 className="w-4 h-4" /> Social Graph (Facebook/Twitter)</h3>
+              <div className="space-y-2">
+                <Label>Imagem de Compartilhamento (OG Image)</Label>
+                <Input value={formData.og_image_url} onChange={e => setFormData({...formData, og_image_url: e.target.value})} className="bg-neutral-900 border-neutral-700" />
+              </div>
+              <div className="space-y-2">
+                <Label>Robots Meta</Label>
+                <select className="w-full bg-neutral-900 border border-neutral-700 rounded-md p-2" value={formData.robots_meta} onChange={e => setFormData({...formData, robots_meta: e.target.value})}>
+                  <option value="index, follow">Index, Follow (Padrão)</option>
+                  <option value="noindex, nofollow">NoIndex, NoFollow</option>
+                </select>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
