@@ -66,6 +66,20 @@ function SettingsPage() {
             <Switch checked={!!settings?.allowComments} />
           </div>
         </div>
+        
+        <div className="bg-neutral-800 p-6 rounded-lg border border-neutral-700 space-y-4">
+          <h3 className="font-semibold text-red-500 uppercase text-xs tracking-widest">Sincronização</h3>
+          <p className="text-sm text-neutral-400 italic">
+            “Sincronize com o GitHub e publique as últimas alterações do repositório.”
+          </p>
+          <Button 
+            variant="outline" 
+            className="w-full border-neutral-700 hover:bg-neutral-900 text-neutral-300"
+            onClick={() => toast.info('Funcionalidade de sincronização gerenciada via Lovable Connector.')}
+          >
+            Configurar Repositório GitHub
+          </Button>
+        </div>
 
         <div className="flex justify-end">
           <Button className="bg-red-600 hover:bg-red-700" onClick={() => toast.success('Configurações salvas!')}>
