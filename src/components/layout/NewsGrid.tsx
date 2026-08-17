@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { Link } from "@tanstack/react-router";
 
 interface NewsItem {
+  id?: string;
+  slug?: string;
   title: string;
   cat: string;
   img: string;
@@ -25,12 +27,10 @@ export function NewsGrid({ title, items }: { title?: string, items: NewsItem[] }
       )}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {items.map((post, idx) => (
-          <motion.div 
+          <Link
             key={idx} 
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: idx * 0.05 }}
+            to={"/noticia/$slug" as any}
+            params={{ slug: post.slug || post.id }}
             className="group cursor-pointer flex flex-col bg-white/5 rounded-3xl overflow-hidden border border-white/5 hover:border-primary/40 hover:bg-white/10 transition-all duration-500 hover:shadow-premium shadow-2xl"
           >
             <div className="aspect-video overflow-hidden relative bg-white/5">
@@ -65,7 +65,7 @@ export function NewsGrid({ title, items }: { title?: string, items: NewsItem[] }
                 {post.title}
               </h4>
             </div>
-          </motion.div>
+          </Link>
         ))}
       </div>
     </section>
