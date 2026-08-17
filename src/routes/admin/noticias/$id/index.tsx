@@ -115,6 +115,7 @@ function EditarNoticia() {
     
     setUploading(true);
     const file = e.target.files[0];
+    if (!file) return;
     
     try {
       const options = {
