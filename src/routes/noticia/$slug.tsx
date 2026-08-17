@@ -8,8 +8,10 @@ import { MapPin, Calendar, Clock, ArrowLeft } from "lucide-react";
 import { TopBar } from "@/components/layout/TopBar";
 import { MainHeader } from "@/components/layout/MainHeader";
 import { Footer } from "@/components/layout/Footer";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { analytics } from "@/lib/analytics";
+import { ENV } from "@/lib/env";
+import { toast as sonnerToast } from "sonner";
 
 export const Route = createFileRoute("/noticia/$slug")({
   component: PostPage,
@@ -53,24 +55,54 @@ function PostPage() {
 
     // Protection against copying
     const handleCopy = (e: ClipboardEvent) => {
+      if (!ENV.PROTECTION_ENABLED) return;
+      
       const selection = window.getSelection();
-      if (selection && selection.toString().length > 100) {
-         analytics.trackCopyAttempt(article.id);
-         e.preventDefault();
-         const text = selection.toString() + "\n\nLeia mais em Norte em Foco: " + window.location.href;
-         if (e.clipboardData) {
-            e.clipboardData.setData('text/plain', text);
-         }
+      if (selection && selection.toString().length > 10) {
+          analytics.trackCopyAttempt(article.id);
+          
+          const title = article.title;
+          const canonical = window.location.origin + "/noticia/" + article.slug;
+          const protectionText = `Norte em Foco — ${title}\nLeia em: ${canonical}`;
+          
+          e.preventDefault();
+          if (e.clipboardData) {
+             e.clipboardData.setData('text/plain', protectionText);
+          }
+          
+          sonnerToast.info("Link da matéria copiado", {
+            description: "A autoria foi preservada no conteúdo copiado.",
+            duration: 2000,
+          });
       }
     };
 
+    const handleContextMenu = (e: MouseEvent) => {
+      if (!ENV.PROTECTION_ENABLED) return;
+      if ((e.target as HTMLElement).tagName === 'IMG') {
+        e.preventDefault();
+        analytics.trackInteraction('img_context_menu', article.id);
+      }
+    };
+
+    const handleDragStart = (e: DragEvent) => {
+      if (!ENV.PROTECTION_ENABLED) return;
+      if ((e.target as HTMLElement).tagName === 'IMG') {
+        e.preventDefault();
+        analytics.trackInteraction('img_drag_attempt', article.id);
+      }
+    };
 
     window.addEventListener('scroll', handleScroll);
     document.addEventListener('copy', handleCopy);
+    document.addEventListener('contextmenu', handleContextMenu);
+    document.addEventListener('dragstart', handleDragStart);
     
     return () => {
       window.removeEventListener('scroll', handleScroll);
       document.removeEventListener('copy', handleCopy);
+      document.removeEventListener('contextmenu', handleContextMenu);
+      document.removeEventListener('dragstart', handleDragStart);
     };
   }, [article]);
 
@@ -103,11 +135,20 @@ function PostPage() {
              <span className="flex items-center gap-2"><Clock size={16} /> {article.author?.name || "Redação"}</span>
           </div>
 
-          <img 
-            src={article.image_url || "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=2070&auto=format&fit=crop"} 
-            alt={article.title}
-            className="w-full rounded-3xl object-cover aspect-video"
-          />
+          <div className="relative group overflow-hidden rounded-3xl aspect-video">
+            <img 
+              src={article.image_url || "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=2070&auto=format&fit=crop"} 
+              alt={article.title}
+              draggable="false"
+              className="w-full h-full object-cover select-none transition-transform duration-700 group-hover:scale-105"
+              style={{ WebkitTouchCallout: 'none' }}
+            />
+            {ENV.IMAGE_WATERMARK_ENABLED && (
+              <div className="absolute bottom-4 right-4 bg-black/50 backdrop-blur-md px-3 py-1 rounded-full border border-white/10 pointer-events-none select-none">
+                <span className="text-[10px] font-black uppercase tracking-widest text-white/70">Norte em Foco</span>
+              </div>
+            )}
+          </div>
 
           <div ref={contentRef} className="prose prose-invert prose-lg max-w-none text-white/90">
              {article.content ? (

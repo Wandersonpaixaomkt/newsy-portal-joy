@@ -102,7 +102,9 @@ class AnalyticsService {
       });
 
       for (const [table, data] of Object.entries(byTable)) {
-        await supabase.from(table as any).insert(data as any);
+        if (data && data.length > 0) {
+          await supabase.from(table as any).insert(data as any);
+        }
       }
     } catch (e) {
       console.warn('Analytics flush error:', e);
