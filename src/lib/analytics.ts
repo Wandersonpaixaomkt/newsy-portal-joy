@@ -3,13 +3,13 @@ import { supabase } from "@/integrations/supabase/client";
 export interface AnalyticsEvent {
   event_type: string;
   page_path: string;
-  post_id?: string;
-  element_id?: string;
-  metadata?: Record<string, any>;
-  referrer?: string;
-  utm_source?: string;
-  utm_medium?: string;
-  utm_campaign?: string;
+  post_id?: string | null;
+  element_id?: string | null;
+  metadata?: Record<string, any> | null;
+  referrer?: string | null;
+  utm_source?: string | null;
+  utm_medium?: string | null;
+  utm_campaign?: string | null;
 }
 
 class AnalyticsService {
@@ -92,23 +92,21 @@ class AnalyticsService {
       session_id: this.sessionId,
       event_type: event.event_type,
       page_path: event.page_path || window.location.pathname,
-      post_id: event.post_id,
-      element_id: event.element_id,
-      metadata: event.metadata || {},
+      post_id: event.post_id || null,
+      element_id: event.element_id || null,
+      metadata: (event.metadata as any) || {},
       user_agent: navigator.userAgent,
       device_type: window.innerWidth < 768 ? 'mobile' : 'desktop',
-      referrer: event.referrer || document.referrer,
-      utm_source: event.utm_source || urlParams.get('utm_source'),
-      utm_medium: event.utm_medium || urlParams.get('utm_medium'),
-      utm_campaign: event.utm_campaign || urlParams.get('utm_campaign')
+      referrer: event.referrer || document.referrer || null,
+      utm_source: event.utm_source || urlParams.get('utm_source') || null,
+      utm_medium: event.utm_medium || urlParams.get('utm_medium') || null,
+      utm_campaign: event.utm_campaign || urlParams.get('utm_campaign') || null
     };
 
     try {
-      // Use sendBeacon for more reliability if available and simple enough
-      // But for simplicity with Supabase client:
       const { error } = await supabase
         .from('analytics_events')
-        .insert(eventData);
+        .insert([eventData]);
         
       if (error) throw error;
     } catch (error) {
@@ -116,7 +114,7 @@ class AnalyticsService {
     }
   }
 
-  trackPageView(postId?: string) {
+  trackPageView(postId?: string | null) {
     this.trackEvent({
       event_type: 'page_view',
       page_path: window.location.pathname,
@@ -124,7 +122,7 @@ class AnalyticsService {
     });
   }
 
-  trackClick(elementId: string, metadata?: Record<string, any>) {
+  trackClick(elementId: string, metadata?: Record<string, any> | null) {
     this.trackEvent({
       event_type: 'click',
       page_path: window.location.pathname,
@@ -133,9 +131,9 @@ class AnalyticsService {
     });
   }
 
-  trackScroll(depth: number, postId?: string) {
+  trackScroll(depth: number, postId?: string | null) {
     this.trackEvent({
-      event_type: `scroll_${depth}`,
+      event_type: 'scroll',
       page_path: window.location.pathname,
       post_id: postId,
       metadata: { depth }
