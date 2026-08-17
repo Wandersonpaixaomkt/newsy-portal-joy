@@ -117,14 +117,14 @@ function NovaNoticia() {
       </div>
 
       <Tabs defaultValue="conteudo" className="space-y-6">
-        <TabsList className="bg-neutral-800 border-neutral-700">
+        <TabsList className="bg-brand-dark border-white/5">
           <TabsTrigger value="conteudo">Conteúdo Editorial</TabsTrigger>
           <TabsTrigger value="seo">SEO e Metadados</TabsTrigger>
         </TabsList>
 
         <TabsContent value="conteudo">
           {formData.source_link && (
-            <Alert className="mb-6 bg-yellow-500/10 border-yellow-500/20 text-yellow-500">
+            <Alert className="mb-6 bg-yellow-500/10 border-yellow-500/20 text-yellow-500 rounded-2xl shadow-premium">
               <AlertTriangle className="h-4 w-4" />
               <AlertTitle className="font-bold">Aviso de Atribuição</AlertTitle>
               <AlertDescription>
@@ -135,7 +135,7 @@ function NovaNoticia() {
           )}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-6">
-              <div className="bg-neutral-800 p-6 rounded-lg border border-neutral-700 space-y-4">
+              <div className="bg-brand-dark p-6 rounded-2xl border border-white/5 space-y-4 shadow-premium">
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <Label>Título da Manchete</Label>
@@ -145,15 +145,15 @@ function NovaNoticia() {
                       </Button>
                     )}
                   </div>
-                  <Input value={formData.title} onChange={e => setFormData({...formData, title: e.target.value, slug: e.target.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-').replace(/[^\w-]/g, '')})} className="bg-neutral-900 border-neutral-700 font-bold" />
+                  <Input value={formData.title} onChange={e => setFormData({...formData, title: e.target.value, slug: e.target.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-').replace(/[^\w-]/g, '')})} className="bg-brand-dark border-white/10 font-bold focus:border-primary/50" />
                 </div>
                 <div className="space-y-2">
                   <Label>Slug (URL)</Label>
-                  <Input value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} className="bg-neutral-900 border-neutral-700 text-xs" />
+                  <Input value={formData.slug} onChange={e => setFormData({...formData, slug: e.target.value})} className="bg-brand-dark border-white/10 text-xs focus:border-primary/50" />
                 </div>
                 <div className="space-y-2">
                   <Label>Resumo</Label>
-                  <Textarea value={formData.excerpt} onChange={e => setFormData({...formData, excerpt: e.target.value})} className="bg-neutral-900 border-neutral-700 h-24" />
+                  <Textarea value={formData.excerpt} onChange={e => setFormData({...formData, excerpt: e.target.value})} className="bg-brand-dark border-white/10 h-24 focus:border-primary/50" />
                 </div>
                 <div className="space-y-2">
                   <Label>Conteúdo</Label>
@@ -165,24 +165,24 @@ function NovaNoticia() {
               </div>
             </div>
             <div className="space-y-6">
-              <div className="bg-neutral-800 p-6 rounded-lg border border-neutral-700 space-y-6">
+              <div className="bg-brand-dark p-6 rounded-2xl border border-white/5 space-y-6 shadow-premium">
                 <div className="space-y-2">
                   <Label>Categoria</Label>
-                  <select className="w-full bg-neutral-900 border border-neutral-700 rounded-md p-2" value={formData.category_id} onChange={e => setFormData({...formData, category_id: e.target.value})}>
+                  <select className="w-full bg-brand-dark border border-white/10 rounded-xl p-2 focus:border-primary/50" value={formData.category_id} onChange={e => setFormData({...formData, category_id: e.target.value})}>
                     <option value="">Selecionar Categoria</option>
                     {categories?.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                   </select>
                 </div>
                 <div className="space-y-2">
                   <Label>Cidade</Label>
-                  <select className="w-full bg-neutral-900 border border-neutral-700 rounded-md p-2" value={formData.city_id} onChange={e => setFormData({...formData, city_id: e.target.value})}>
+                  <select className="w-full bg-brand-dark border border-white/10 rounded-xl p-2 focus:border-primary/50" value={formData.city_id} onChange={e => setFormData({...formData, city_id: e.target.value})}>
                     <option value="">Selecionar Cidade</option>
                     {cities?.map(city => <option key={city.id} value={city.id}>{city.name}</option>)}
                   </select>
                 </div>
                 <div className="space-y-2">
                   <Label>Imagem Destacada</Label>
-                  <Input value={formData.image_url} onChange={e => setFormData({...formData, image_url: e.target.value})} className="bg-neutral-900 border-neutral-700" />
+                  <Input value={formData.image_url} onChange={e => setFormData({...formData, image_url: e.target.value})} className="bg-brand-dark border-white/10 focus:border-primary/50" />
                 </div>
               </div>
             </div>
@@ -191,30 +191,30 @@ function NovaNoticia() {
 
         <TabsContent value="seo">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="bg-neutral-800 p-6 rounded-lg border border-neutral-700 space-y-4">
+            <div className="bg-brand-dark p-6 rounded-2xl border border-white/5 space-y-4 shadow-premium">
               <h3 className="font-bold flex items-center gap-2 text-red-500"><Search className="w-4 h-4" /> Otimização para Google</h3>
               <div className="space-y-2">
                 <Label>Meta Title (Max 60 caracteres)</Label>
-                <Input value={formData.meta_title} onChange={e => setFormData({...formData, meta_title: e.target.value})} className="bg-neutral-900 border-neutral-700" maxLength={60} />
+                <Input value={formData.meta_title} onChange={e => setFormData({...formData, meta_title: e.target.value})} className="bg-brand-dark border-white/10 focus:border-primary/50" maxLength={60} />
               </div>
               <div className="space-y-2">
                 <Label>Meta Description (Max 160 caracteres)</Label>
-                <Textarea value={formData.meta_description} onChange={e => setFormData({...formData, meta_description: e.target.value})} className="bg-neutral-900 border-neutral-700" maxLength={160} />
+                <Textarea value={formData.meta_description} onChange={e => setFormData({...formData, meta_description: e.target.value})} className="bg-brand-dark border-white/10 focus:border-primary/50" maxLength={160} />
               </div>
               <div className="space-y-2">
                 <Label>Canonical URL</Label>
-                <Input value={formData.canonical_url} onChange={e => setFormData({...formData, canonical_url: e.target.value})} className="bg-neutral-900 border-neutral-700" placeholder="https://seusite.com/noticia/exemplo" />
+                <Input value={formData.canonical_url} onChange={e => setFormData({...formData, canonical_url: e.target.value})} className="bg-brand-dark border-white/10 focus:border-primary/50" placeholder="https://seusite.com/noticia/exemplo" />
               </div>
             </div>
-            <div className="bg-neutral-800 p-6 rounded-lg border border-neutral-700 space-y-4">
+            <div className="bg-brand-dark p-6 rounded-2xl border border-white/5 space-y-4 shadow-premium">
               <h3 className="font-bold flex items-center gap-2 text-blue-500"><Share2 className="w-4 h-4" /> Social Graph (Facebook/Twitter)</h3>
               <div className="space-y-2">
                 <Label>Imagem de Compartilhamento (OG Image)</Label>
-                <Input value={formData.og_image_url} onChange={e => setFormData({...formData, og_image_url: e.target.value})} className="bg-neutral-900 border-neutral-700" />
+                <Input value={formData.og_image_url} onChange={e => setFormData({...formData, og_image_url: e.target.value})} className="bg-brand-dark border-white/10 focus:border-primary/50" />
               </div>
               <div className="space-y-2">
                 <Label>Robots Meta</Label>
-                <select className="w-full bg-neutral-900 border border-neutral-700 rounded-md p-2" value={formData.robots_meta} onChange={e => setFormData({...formData, robots_meta: e.target.value})}>
+                <select className="w-full bg-brand-dark border border-white/10 rounded-xl p-2 focus:border-primary/50" value={formData.robots_meta} onChange={e => setFormData({...formData, robots_meta: e.target.value})}>
                   <option value="index, follow">Index, Follow (Padrão)</option>
                   <option value="noindex, nofollow">NoIndex, NoFollow</option>
                 </select>
