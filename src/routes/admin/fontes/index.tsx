@@ -6,7 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { 
   ExternalLink, RefreshCcw, TrendingUp, AlertCircle, 
   Link as LinkIcon, Globe, MapPin, Hash, Search, 
-  PenTool, CheckCircle, Trash2, Bookmark, Eye
+  PenTool, CheckCircle, Trash2, Bookmark, Eye,
+  Image as ImageIcon
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -153,7 +154,7 @@ function MonitoramentoDashboard() {
                         <div className="flex items-center gap-2">
                           <Badge variant="secondary" className="bg-red-500/10 text-red-500 border-red-500/20">{item.source_portal}</Badge>
                           <span className="text-[10px] text-neutral-500 uppercase font-bold">
-                            {format(new Date(item.discovered_at), "HH:mm '•' d 'de' MMMM", { locale: ptBR })}
+                            {format(new Date(item.discovered_at || new Date()), "HH:mm '•' d 'de' MMMM", { locale: ptBR })}
                           </span>
                           {item.is_new && <Badge className="bg-green-500 text-white animate-pulse">NOVO</Badge>}
                           {item.duplicate_post_id && <Badge variant="outline" className="text-yellow-500 border-yellow-500/30 gap-1"><AlertCircle className="w-3 h-3" /> Possível Duplicidade</Badge>}
@@ -175,12 +176,12 @@ function MonitoramentoDashboard() {
                     <div className="flex flex-wrap items-center gap-4 text-xs">
                       <div className="flex items-center gap-1 text-neutral-500"><Hash className="w-3 h-3" /> {item.category || 'Geral'}</div>
                       <div className="flex items-center gap-1 text-neutral-500"><MapPin className="w-3 h-3" /> {item.city || 'Região'}</div>
-                      <div className="flex items-center gap-1 text-neutral-500"><Eye className="w-3 h-3" /> Descoberto há {format(new Date(item.discovered_at), "mm")} min</div>
+                      <div className="flex items-center gap-1 text-neutral-500"><Eye className="w-3 h-3" /> Descoberto há {format(new Date(item.discovered_at || new Date()), "mm")} min</div>
                     </div>
 
                     <div className="flex flex-wrap gap-2 pt-2">
                       <Button size="sm" variant="outline" className="gap-2" asChild>
-                        <a href={item.original_link} target="_blank" rel="noopener noreferrer">
+                        <a href={item.original_link || '#'} target="_blank" rel="noopener noreferrer">
                           <ExternalLink className="w-3 h-3" /> Abrir Fonte
                         </a>
                       </Button>
