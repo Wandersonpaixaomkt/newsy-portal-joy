@@ -15,14 +15,19 @@ import {
   LogOut,
   ExternalLink,
   ChevronLeft,
-  Menu
+  Menu,
+  AlertTriangle
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { ENV } from '@/lib/env';
 
 export const Route = createFileRoute('/admin')({
   beforeLoad: async ({ location }) => {
+    if (!ENV.ADMIN_AUTH_ENABLED) {
+      return;
+    }
     const { data: { session } } = await supabase.auth.getSession();
     if (!session && location.pathname !== '/admin/login') {
       throw redirect({
