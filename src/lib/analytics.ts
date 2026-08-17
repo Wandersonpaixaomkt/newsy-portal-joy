@@ -42,6 +42,8 @@ class AnalyticsService {
   private visitorId: string;
   private isInitialized = false;
   private lastPath: string = '';
+  private eventBuffer: any[] = [];
+  private bufferTimeout: any = null;
 
   constructor() {
     this.sessionId = this.getOrCreateId('nfe_session_id', true);
@@ -61,13 +63,49 @@ class AnalyticsService {
     if (typeof window === 'undefined') return;
     const currentPath = window.location.pathname;
     if (currentPath !== this.lastPath) {
-      await supabase.from('navigation_journeys').insert({
+      this.bufferEvent('navigation_journey', {
         session_id: this.sessionId,
         from_path: this.lastPath,
         to_path: currentPath,
         sequence_order: Date.now()
       });
       this.lastPath = currentPath;
+    }
+  }
+
+  private bufferEvent(table: string, data: any) {
+    this.eventBuffer.push({ table, data });
+    
+    if (this.eventBuffer.length >= 5) {
+      this.flushEvents();
+    } else if (!this.bufferTimeout) {
+      this.bufferTimeout = setTimeout(() => this.flushEvents(), 5000);
+    }
+  }
+
+  private async flushEvents() {
+    if (this.eventBuffer.length === 0) return;
+    
+    const eventsToFlush = [...this.eventBuffer];
+    this.eventBuffer = [];
+    if (this.bufferTimeout) {
+      clearTimeout(this.bufferTimeout);
+      this.bufferTimeout = null;
+    }
+
+    try {
+      // Agrupar por tabela para inserção em lote
+      const byTable: Record<string, any[]> = {};
+      eventsToFlush.forEach(e => {
+        if (!byTable[e.table]) byTable[e.table] = [];
+        byTable[e.table].push(e.data);
+      });
+
+      for (const [table, data] of Object.entries(byTable)) {
+        await supabase.from(table as any).insert(data as any);
+      }
+    } catch (e) {
+      console.warn('Analytics flush error:', e);
     }
   }
 
@@ -86,13 +124,11 @@ class AnalyticsService {
 
   async trackEvent(event: AnalyticsEvent) {
     if (typeof window === 'undefined') return;
-    try {
-      await supabase.from('analytics_events').insert([{
-        session_id: this.sessionId,
-        ...event,
-        device_type: window.innerWidth < 768 ? 'mobile' : 'desktop'
-      }]);
-    } catch (e) { console.warn(e); }
+    this.bufferEvent('analytics_events', {
+      session_id: this.sessionId,
+      ...event,
+      device_type: window.innerWidth < 768 ? 'mobile' : 'desktop'
+    });
   }
 
   trackPageView(postId?: string | null) {
@@ -123,6 +159,15 @@ class AnalyticsService {
 
   trackClick(elementId: string, metadata?: any) {
     this.trackEvent({ event_type: 'click', page_path: window.location.pathname, element_id: elementId, metadata });
+  }
+
+  trackInteraction(type: string, postId: string | null = null, metadata: any = null) {
+    this.trackEvent({
+      event_type: type as any,
+      page_path: window.location.pathname,
+      post_id: postId,
+      metadata
+    });
   }
 }
 
