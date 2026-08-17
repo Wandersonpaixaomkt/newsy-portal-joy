@@ -10,6 +10,8 @@ export interface AnalyticsEvent {
   utm_source?: string | null;
   utm_medium?: string | null;
   utm_campaign?: string | null;
+  engagement_time?: number;
+  scroll_depth?: number;
 }
 
 class AnalyticsService {
@@ -100,7 +102,9 @@ class AnalyticsService {
       referrer: event.referrer || document.referrer || null,
       utm_source: event.utm_source || urlParams.get('utm_source') || null,
       utm_medium: event.utm_medium || urlParams.get('utm_medium') || null,
-      utm_campaign: event.utm_campaign || urlParams.get('utm_campaign') || null
+      utm_campaign: event.utm_campaign || urlParams.get('utm_campaign') || null,
+      engagement_time: event.engagement_time || 0,
+      scroll_depth: event.scroll_depth || 0
     };
 
     try {
@@ -114,6 +118,23 @@ class AnalyticsService {
     }
   }
 
+  async trackInteraction(elementId: string, type: string) {
+    if (typeof window === 'undefined') return;
+    
+    try {
+      await supabase
+        .from('interaction_logs')
+        .insert({
+          session_id: this.sessionId,
+          element_id: elementId,
+          element_type: type,
+          page_path: window.location.pathname
+        });
+    } catch (e) {
+      console.error('Interaction logging failed', e);
+    }
+  }
+
   trackPageView(postId?: string | null) {
     this.trackEvent({
       event_type: 'page_view',
@@ -123,6 +144,7 @@ class AnalyticsService {
   }
 
   trackClick(elementId: string, metadata?: Record<string, any> | null) {
+    this.trackInteraction(elementId, 'click');
     this.trackEvent({
       event_type: 'click',
       page_path: window.location.pathname,
@@ -136,6 +158,7 @@ class AnalyticsService {
       event_type: 'scroll',
       page_path: window.location.pathname,
       post_id: postId || null,
+      scroll_depth: depth,
       metadata: { depth }
     });
   }
