@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Plus, Play } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchNews, fetchFeaturedPost, Post } from "@/lib/news";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -80,8 +81,8 @@ function Index() {
     height?: number, 
     label?: string 
   }) => {
-    const ad = activeAds?.find(a => a.creatives?.some(c => c.slot?.name === slotName));
-    const creative = ad?.creatives?.find(c => c.slot?.name === slotName);
+    const ad = activeAds?.find((a: any) => a.creatives?.some((c: any) => c.slot?.name === slotName));
+    const creative = ad?.creatives?.find((c: any) => c.slot?.name === slotName);
 
     if (!creative) {
       return (
@@ -112,11 +113,11 @@ function Index() {
   };
 
   const SidebarAds = () => {
-    const ad1 = activeAds?.find(a => a.creatives?.some(c => c.slot?.name === "Banner lateral 1:1"));
-    const creative1 = ad1?.creatives?.find(c => c.slot?.name === "Banner lateral 1:1");
+    const ad1 = activeAds?.find((a: any) => a.creatives?.some((c: any) => c.slot?.name === "Banner lateral 1:1"));
+    const creative1 = ad1?.creatives?.find((c: any) => c.slot?.name === "Banner lateral 1:1");
     
-    const ad2 = activeAds?.find(a => a.creatives?.some(c => c.slot?.name === "Banner lateral 3:4"));
-    const creative2 = ad2?.creatives?.find(c => c.slot?.name === "Banner lateral 3:4");
+    const ad2 = activeAds?.find((a: any) => a.creatives?.some((c: any) => c.slot?.name === "Banner lateral 3:4"));
+    const creative2 = ad2?.creatives?.find((c: any) => c.slot?.name === "Banner lateral 3:4");
 
     return (
       <div className="hidden lg:flex flex-col gap-8 w-[300px] shrink-0 sticky top-24 h-fit">
@@ -148,7 +149,7 @@ function Index() {
       <MainHeader />
       
       <main className="container mx-auto px-6">
-        <AdBanner width={1500} height={230} className="md:h-[230px]" />
+        <AdBanner slotName="Banner topo" width={1500} height={230} className="md:h-[230px]" />
         
         <div className="flex flex-col lg:flex-row gap-12">
           <div className="flex-grow">
@@ -207,7 +208,7 @@ function Index() {
         {/* 4. Linha de notícias secundárias */}
         <NewsGrid items={secondaryGrid} />
 
-            <AdBanner width={2560} height={533} className="md:h-[533px]" />
+            <AdBanner slotName="Banner central" width={2560} height={533} className="md:h-[533px]" />
 
             {/* 6. Blocos por editoria (3 colunas) */}
             <section className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
