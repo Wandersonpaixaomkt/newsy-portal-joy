@@ -8,11 +8,13 @@ import {
   Bold, Italic, Underline as UnderlineIcon, 
   List, ListOrdered, AlignLeft, AlignCenter, 
   AlignRight, Image as ImageIcon, Link as LinkIcon,
-  Heading1, Heading2, Quote, Undo, Redo
+  Heading1, Heading2, Heading3, Quote, Undo, Redo
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Toggle } from '@/components/ui/toggle';
 import { useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 interface RichTextEditorProps {
   content: string;
@@ -23,11 +25,35 @@ interface RichTextEditorProps {
 const MenuBar = ({ editor }: { editor: any }) => {
   if (!editor) return null;
 
-  const addImage = () => {
-    const url = window.prompt('URL da imagem:');
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run();
-    }
+  const addImage = async () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = async (e: any) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `post-content/${fileName}`;
+
+      try {
+        const { error: uploadError } = await supabase.storage
+          .from('news-media-private')
+          .upload(filePath, file);
+
+        if (uploadError) throw uploadError;
+
+        const { data } = supabase.storage
+          .from('news-media-private')
+          .getPublicUrl(filePath);
+
+        editor.chain().focus().setImage({ src: data.publicUrl }).run();
+      } catch (error: any) {
+        toast.error('Erro ao subir imagem: ' + error.message);
+      }
+    };
+    input.click();
   };
 
   const setLink = () => {
@@ -62,6 +88,9 @@ const MenuBar = ({ editor }: { editor: any }) => {
       </Toggle>
       <Toggle size="sm" pressed={editor.isActive('heading', { level: 2 })} onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>
         <Heading2 className="w-4 h-4" />
+      </Toggle>
+      <Toggle size="sm" pressed={editor.isActive('heading', { level: 3 })} onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}>
+        <Heading3 className="w-4 h-4" />
       </Toggle>
       <Toggle size="sm" pressed={editor.isActive('blockquote')} onClick={() => editor.chain().focus().toggleBlockquote().run()}>
         <Quote className="w-4 h-4" />
@@ -112,7 +141,11 @@ const MenuBar = ({ editor }: { editor: any }) => {
 export function RichTextEditor({ content, onChange, placeholder }: RichTextEditorProps) {
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        heading: {
+          levels: [1, 2, 3]
+        }
+      }),
       Image.configure({
         HTMLAttributes: {
           class: 'rounded-xl max-w-full h-auto my-4 mx-auto block',
@@ -140,7 +173,6 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
     },
   });
 
-  // Update editor content when external content changes (e.g. from props or radar)
   useEffect(() => {
     if (editor && content !== editor.getHTML()) {
       editor.commands.setContent(content);
