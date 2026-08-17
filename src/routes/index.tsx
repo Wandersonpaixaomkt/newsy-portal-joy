@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Plus, Play } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchNews, fetchFeaturedPost, Post } from "@/lib/news";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -32,6 +33,21 @@ function Index() {
     queryFn: fetchFeaturedPost,
   });
 
+  const { data: activeAds } = useQuery({
+    queryKey: ["active-ads"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('ad_campaigns')
+        .select(`
+          *,
+          creatives:ad_creatives(*, slot:ad_slots(name))
+        `)
+        .eq('status', 'active');
+      if (error) throw error;
+      return data;
+    },
+  });
+
   const mapToView = (post: Post) => ({
     id: post.id,
     slug: post.slug || post.id,
@@ -52,32 +68,88 @@ function Index() {
   const policeNews = articles.filter(a => a.category?.slug === "policia").slice(0, 4).map(mapToView);
   const sportsNews = articles.filter(a => a.category?.slug === "esportes").slice(0, 4).map(mapToView);
 
-  const AdBanner = ({ className = "", width = 1140, height = 250, label = "Publicidade" }: { className?: string, width?: number, height?: number, label?: string }) => (
-    <div 
-      className={`w-full mx-auto bg-gray-100 flex items-center justify-center border border-gray-200 rounded-lg overflow-hidden my-12 ${className}`}
-      style={{ maxWidth: `${width}px`, height: `${height}px` }}
-    >
-      <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.5em]">{label}</span>
-    </div>
-  );
+  const AdBanner = ({ 
+    slotName, 
+    className = "", 
+    width = 1140, 
+    height = 250, 
+    label = "Publicidade" 
+  }: { 
+    slotName: string, 
+    className?: string, 
+    width?: number, 
+    height?: number, 
+    label?: string 
+  }) => {
+    const ad = activeAds?.find((a: any) => a.creatives?.some((c: any) => c.slot?.name === slotName));
+    const creative = ad?.creatives?.find((c: any) => c.slot?.name === slotName);
 
-  const SidebarAds = () => (
-    <div className="hidden lg:flex flex-col gap-8 w-[300px] shrink-0 sticky top-24 h-fit">
-      <div className="w-full aspect-square bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center">
-        <span className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">Publicidade 1:1</span>
+    if (!creative) {
+      return (
+        <div 
+          className={`w-full mx-auto bg-gray-100 flex items-center justify-center border border-gray-200 rounded-lg overflow-hidden my-12 ${className}`}
+          style={{ maxWidth: `${width}px`, height: `${height}px` }}
+        >
+          <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.5em]">{label} {slotName}</span>
+        </div>
+      );
+    }
+
+    return (
+      <a 
+        href={creative.target_url || "#"} 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className={`block w-full mx-auto overflow-hidden my-12 transition-opacity hover:opacity-95 rounded-lg border border-neutral-100 ${className}`}
+        style={{ maxWidth: `${width}px` }}
+      >
+        <img 
+          src={creative.image_url || ""} 
+          alt={creative.alt_text || "Publicidade"} 
+          className="w-full h-auto block"
+        />
+      </a>
+    );
+  };
+
+  const SidebarAds = () => {
+    const ad1 = activeAds?.find((a: any) => a.creatives?.some((c: any) => c.slot?.name === "Banner lateral 1:1"));
+    const creative1 = ad1?.creatives?.find((c: any) => c.slot?.name === "Banner lateral 1:1");
+    
+    const ad2 = activeAds?.find((a: any) => a.creatives?.some((c: any) => c.slot?.name === "Banner lateral 3:4"));
+    const creative2 = ad2?.creatives?.find((c: any) => c.slot?.name === "Banner lateral 3:4");
+
+    return (
+      <div className="hidden lg:flex flex-col gap-8 w-[300px] shrink-0 sticky top-24 h-fit">
+        {creative1 ? (
+          <a href={creative1.target_url || "#"} target="_blank" rel="noopener noreferrer" className="block w-full aspect-square rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+            <img src={creative1.image_url || ""} alt="" className="w-full h-full object-cover" />
+          </a>
+        ) : (
+          <div className="w-full aspect-square bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center">
+            <span className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">Publicidade 1:1</span>
+          </div>
+        )}
+
+        {creative2 ? (
+          <a href={creative2.target_url || "#"} target="_blank" rel="noopener noreferrer" className="block w-full aspect-[3/4] rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+            <img src={creative2.image_url || ""} alt="" className="w-full h-full object-cover" />
+          </a>
+        ) : (
+          <div className="w-full aspect-[3/4] bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center">
+            <span className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">Publicidade 3:4</span>
+          </div>
+        )}
       </div>
-      <div className="w-full aspect-[3/4] bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center">
-        <span className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">Publicidade 3:4</span>
-      </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="min-h-screen bg-white font-sans text-brand-dark">
       <MainHeader />
       
       <main className="container mx-auto px-6">
-        <AdBanner width={1500} height={230} className="md:h-[230px]" />
+        <AdBanner slotName="Banner topo" width={1500} height={230} className="md:h-[230px]" />
         
         <div className="flex flex-col lg:flex-row gap-12">
           <div className="flex-grow">
@@ -136,7 +208,7 @@ function Index() {
         {/* 4. Linha de notícias secundárias */}
         <NewsGrid items={secondaryGrid} />
 
-            <AdBanner width={2560} height={533} className="md:h-[533px]" />
+            <AdBanner slotName="Banner central" width={2560} height={533} className="md:h-[533px]" />
 
             {/* 6. Blocos por editoria (3 colunas) */}
             <section className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
