@@ -97,8 +97,9 @@ class AnalyticsService {
       // Agrupar por tabela para inserção em lote
       const byTable: Record<string, any[]> = {};
       eventsToFlush.forEach(e => {
-        if (!byTable[e.table]) byTable[e.table] = [];
-        byTable[e.table].push(e.data);
+        const tableName = e.table;
+        if (!byTable[tableName]) byTable[tableName] = [];
+        byTable[tableName].push(e.data);
       });
 
       for (const [table, data] of Object.entries(byTable)) {
