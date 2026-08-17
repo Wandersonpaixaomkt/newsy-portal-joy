@@ -104,8 +104,7 @@ export const fetchNewsByCategory = async (categorySlug: string): Promise<Post[]>
     .select(`
       *,
       category:categories!inner(name, slug),
-      city:cities(name, slug),
-      author:authors(name, slug)
+      city:cities(name, slug)
     `)
     .eq("categories.slug", categorySlug)
     .order("published_at", { ascending: false });
