@@ -83,8 +83,7 @@ export const fetchUrgentPost = async (): Promise<Post | null> => {
     .select(`
       *,
       category:categories(name, slug),
-      city:cities(name, slug),
-      author:authors(name, slug)
+      city:cities(name, slug)
     `)
     .eq("is_urgent", true)
     .order("published_at", { ascending: false })
