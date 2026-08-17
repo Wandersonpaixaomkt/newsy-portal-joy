@@ -212,14 +212,11 @@ function AdminDashboard() {
             ) : (
               <div className="flex items-center justify-center h-full text-neutral-600 italic">Ainda não há dados suficientes</div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </AdminCard>
 
-        <Card className="bg-neutral-800 border-neutral-700">
-          <CardHeader>
-            <CardTitle className="text-lg font-bold text-white uppercase tracking-widest italic">Conversão</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
+        <AdminCard title="Conversão">
+          <div className="space-y-6">
              <div className="flex justify-between items-center border-b border-neutral-700 pb-4">
                 <div className="flex items-center gap-2">
                    <MousePointer2 size={18} className="text-red-500" />
