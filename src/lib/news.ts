@@ -44,8 +44,7 @@ export const fetchNews = async (): Promise<Post[]> => {
     .select(`
       *,
       category:categories(name, slug),
-      city:cities(name, slug),
-      author:authors(name, slug)
+      city:cities(name, slug)
     `)
     .order("published_at", { ascending: false });
 
@@ -63,8 +62,7 @@ export const fetchFeaturedPost = async (): Promise<Post | null> => {
     .select(`
       *,
       category:categories(name, slug),
-      city:cities(name, slug),
-      author:authors(name, slug)
+      city:cities(name, slug)
     `)
     .eq("is_featured", true)
     .order("published_at", { ascending: false })
@@ -85,8 +83,7 @@ export const fetchUrgentPost = async (): Promise<Post | null> => {
     .select(`
       *,
       category:categories(name, slug),
-      city:cities(name, slug),
-      author:authors(name, slug)
+      city:cities(name, slug)
     `)
     .eq("is_urgent", true)
     .order("published_at", { ascending: false })
@@ -107,8 +104,7 @@ export const fetchNewsByCategory = async (categorySlug: string): Promise<Post[]>
     .select(`
       *,
       category:categories!inner(name, slug),
-      city:cities(name, slug),
-      author:authors(name, slug)
+      city:cities(name, slug)
     `)
     .eq("categories.slug", categorySlug)
     .order("published_at", { ascending: false });
@@ -127,8 +123,7 @@ export const fetchPostBySlug = async (slug: string): Promise<Post | null> => {
     .select(`
       *,
       category:categories(name, slug),
-      city:cities(name, slug),
-      author:authors(name, slug)
+      city:cities(name, slug)
     `)
     .eq("slug", slug)
     .maybeSingle();
@@ -147,8 +142,7 @@ export const fetchRelatedPosts = async (postId: string, categoryId: string): Pro
     .select(`
       *,
       category:categories(name, slug),
-      city:cities(name, slug),
-      author:authors(name, slug)
+      city:cities(name, slug)
     `)
     .eq("category_id", categoryId)
     .neq("id", postId)
