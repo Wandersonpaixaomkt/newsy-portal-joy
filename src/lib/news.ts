@@ -142,8 +142,7 @@ export const fetchRelatedPosts = async (postId: string, categoryId: string): Pro
     .select(`
       *,
       category:categories(name, slug),
-      city:cities(name, slug),
-      author:authors(name, slug)
+      city:cities(name, slug)
     `)
     .eq("category_id", categoryId)
     .neq("id", postId)
