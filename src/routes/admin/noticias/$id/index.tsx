@@ -7,11 +7,14 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { Save, ArrowLeft, Image as ImageIcon, Search, Share2, Type, Upload, Link as LinkIcon, Trash2, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Image as ImageIcon, Search, Share2, Upload, Link as LinkIcon, Trash2, CheckCircle2 } from 'lucide-react';
 import { RichTextEditor } from '@/components/admin/RichTextEditor';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import imageCompression from 'browser-image-compression';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ENV } from '@/lib/env';
+import { getLocalPostById, saveLocalPost } from '@/lib/local-posts';
+import type { Post } from '@/lib/news';
 
 export const Route = createFileRoute('/admin/noticias/$id/')({
   component: EditarNoticia,
@@ -45,6 +48,10 @@ function EditarNoticia() {
   const { data: post, isLoading: isPostLoading } = useQuery({
     queryKey: ['admin-post', id],
     queryFn: async () => {
+      // Prioridade para posts locais
+      const local = getLocalPostById(id);
+      if (local) return local;
+
       const { data, error } = await supabase.from('posts').select('*').eq('id', id).single();
       if (error) throw error;
       return data;
@@ -152,6 +159,12 @@ function EditarNoticia() {
   const handleUpdate = async (status: 'draft' | 'published') => {
     setLoading(true);
     try {
+      const now = new Date().toISOString();
+      const categoryName = categories?.find(c => c.id === formData.category_id)?.name || 'Geral';
+      const categorySlug = categories?.find(c => c.id === formData.category_id)?.slug || 'geral';
+      const cityName = cities?.find(c => c.id === formData.city_id)?.name || null;
+      const citySlug = cities?.find(c => c.id === formData.city_id)?.slug || null;
+
       const updatePayload: any = {
         title: formData.title,
         slug: formData.slug,
@@ -168,9 +181,35 @@ function EditarNoticia() {
         canonical_url: formData.canonical_url || null,
         robots_meta: formData.robots_meta || 'index, follow',
         og_image_url: formData.og_image_url || null,
-        published_at: status === 'published' ? (post?.published_at || new Date().toISOString()) : (status === 'draft' ? null : post?.published_at),
-        updated_at: new Date().toISOString(),
+        published_at: status === 'published' ? (post?.published_at || now) : (status === 'draft' ? null : post?.published_at),
+        updated_at: now,
       };
+
+      // === MOCK LOCAL ===
+      if (ENV.USE_LOCAL_ADMIN_MOCK || String(id).startsWith('local-')) {
+        const localPost: Post = {
+          ...(post as Post),
+          ...updatePayload,
+          id,
+          category: formData.category_id
+            ? { name: categoryName, slug: categorySlug }
+            : { name: 'Geral', slug: 'geral' },
+          city: formData.city_id && cityName
+            ? { name: cityName, slug: citySlug! }
+            : null,
+          author: { name: 'Redação', slug: 'redacao' },
+          tags: (post as any)?.tags || [],
+        };
+
+        saveLocalPost(localPost);
+        toast.success(
+          status === 'published'
+            ? 'Notícia publicada (modo local)!'
+            : 'Notícia atualizada (modo local)!'
+        );
+        navigate({ to: '/admin/noticias' });
+        return;
+      }
 
       const { error } = await supabase
         .from('posts')
@@ -189,6 +228,15 @@ function EditarNoticia() {
 
   if (isPostLoading) return <div className="p-8 text-neutral-400">Carregando notícia...</div>;
 
+  if (!post) {
+    return (
+      <div className="p-8 text-center">
+        <p className="text-neutral-400 mb-4">Notícia não encontrada.</p>
+        <Button onClick={() => navigate({ to: '/admin/noticias' })}>Voltar</Button>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
@@ -196,7 +244,12 @@ function EditarNoticia() {
           <Button variant="ghost" size="icon" onClick={() => navigate({ to: '/admin/noticias' })}>
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <h1 className="text-3xl font-bold">Editar Notícia</h1>
+          <div>
+            <h1 className="text-3xl font-bold">Editar Notícia</h1>
+            {(ENV.USE_LOCAL_ADMIN_MOCK || String(id).startsWith('local-')) && (
+              <p className="text-xs text-amber-500 mt-1">Modo local ativo</p>
+            )}
+          </div>
         </div>
         <div className="flex gap-3">
           <Button variant="outline" onClick={() => handleUpdate('draft')} disabled={loading}>Salvar Alterações</Button>
