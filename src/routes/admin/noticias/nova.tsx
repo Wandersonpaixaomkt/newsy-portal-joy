@@ -7,15 +7,19 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { ArrowLeft, Image as ImageIcon, Search, Share2, Upload, Link as LinkIcon, Trash2, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { 
+  ArrowLeft, Image as ImageIcon, Search, Share2, Upload, Link as LinkIcon, 
+  Trash2, CheckCircle2, AlertTriangle, Globe, Loader2, FileDown 
+} from 'lucide-react';
 import { RichTextEditor } from '@/components/admin/RichTextEditor';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import imageCompression from 'browser-image-compression';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { ENV } from '@/lib/env';
 import { generateLocalId, saveLocalPost } from '@/lib/local-posts';
 import type { Post } from '@/lib/news';
+import { extractNewsFromUrl, type ExtractedNews } from '@/lib/extract-from-url';
 
 export const Route = createFileRoute('/admin/noticias/nova')({
   component: NovaNoticia,
@@ -27,6 +31,13 @@ function NovaNoticia() {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [showMediaLibrary, setShowMediaLibrary] = useState(false);
+
+  // Importador de URL
+  const [showImportDialog, setShowImportDialog] = useState(false);
+  const [importUrl, setImportUrl] = useState('');
+  const [extracting, setExtracting] = useState(false);
+  const [extracted, setExtracted] = useState<ExtractedNews | null>(null);
+  const [selectedCover, setSelectedCover] = useState<string>('');
   
   const [formData, setFormData] = useState({
     title: '',
@@ -166,6 +177,73 @@ function NovaNoticia() {
     }
   };
 
+  const handleExtract = async () => {
+    if (!importUrl.trim()) {
+      toast.error('Cole um link válido');
+      return;
+    }
+    setExtracting(true);
+    setExtracted(null);
+    setSelectedCover('');
+    try {
+      const result = await extractNewsFromUrl(importUrl.trim());
+      setExtracted(result);
+      // Seleciona a primeira imagem como capa por padrão
+      if (result.images.length > 0) {
+        setSelectedCover(result.images[0]);
+      }
+      toast.success('Conteúdo extraído! Revise e aplique no formulário.');
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || 'Erro ao extrair notícia');
+    } finally {
+      setExtracting(false);
+    }
+  };
+
+  const handleApplyExtracted = () => {
+    if (!extracted) return;
+
+    const slug = extracted.title
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/[^\w-]/g, '')
+      .slice(0, 80);
+
+    setFormData(prev => ({
+      ...prev,
+      title: extracted.title,
+      slug,
+      excerpt: extracted.excerpt,
+      content: extracted.contentHtml,
+      image_url: selectedCover || prev.image_url,
+      og_image_url: selectedCover || prev.og_image_url,
+      source_link: extracted.sourceUrl,
+      source_name: extracted.sourceName,
+      meta_title: extracted.title.slice(0, 60),
+      meta_description: extracted.excerpt.slice(0, 160),
+      canonical_url: extracted.sourceUrl,
+    }));
+
+    setShowImportDialog(false);
+    setExtracted(null);
+    setImportUrl('');
+    setSelectedCover('');
+    toast.success('Dados importados — revise o texto e a capa antes de publicar!');
+  };
+
+  const resetImportDialog = (open: boolean) => {
+    setShowImportDialog(open);
+    if (!open) {
+      setExtracted(null);
+      setImportUrl('');
+      setSelectedCover('');
+      setExtracting(false);
+    }
+  };
+
   const handleSave = async (status: 'draft' | 'published') => {
     if (!formData.title) {
       toast.error('Título é obrigatório');
@@ -261,7 +339,147 @@ function NovaNoticia() {
             )}
           </div>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-3 flex-wrap">
+          <Dialog open={showImportDialog} onOpenChange={resetImportDialog}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="border-blue-300 text-blue-700 hover:bg-blue-50 gap-2">
+                <Globe className="w-4 h-4" />
+                Importar de URL
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="bg-white border-neutral-200 max-w-2xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2 text-neutral-900">
+                  <FileDown className="w-5 h-5 text-blue-600" />
+                  Extrair notícia de um link
+                </DialogTitle>
+              </DialogHeader>
+
+              <div className="space-y-5 py-2">
+                {!extracted ? (
+                  <>
+                    <div className="space-y-2">
+                      <Label className="text-neutral-700">Cole o link da notícia</Label>
+                      <div className="flex gap-2">
+                        <div className="relative flex-1">
+                          <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                          <Input
+                            placeholder="https://g1.globo.com/... ou qualquer portal"
+                            value={importUrl}
+                            onChange={(e) => setImportUrl(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && !extracting && handleExtract()}
+                            className="pl-10 bg-white border-neutral-200"
+                            disabled={extracting}
+                          />
+                        </div>
+                        <Button
+                          onClick={handleExtract}
+                          disabled={extracting || !importUrl.trim()}
+                          className="bg-blue-600 hover:bg-blue-700 shrink-0"
+                        >
+                          {extracting ? (
+                            <>
+                              <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                              Extraindo...
+                            </>
+                          ) : (
+                            'Extrair'
+                          )}
+                        </Button>
+                      </div>
+                      <p className="text-xs text-neutral-500">
+                        Funciona com a maioria dos portais. O conteúdo é extraído automaticamente e você poderá editar tudo antes de publicar.
+                      </p>
+                    </div>
+                    {extracting && (
+                      <div className="flex flex-col items-center justify-center py-10 gap-3 text-neutral-500">
+                        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                        <p className="text-sm">Lendo a página e extraindo título, texto e imagens...</p>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="space-y-5">
+                    <Alert className="bg-green-50 border-green-200 text-green-800 rounded-xl">
+                      <CheckCircle2 className="h-4 w-4" />
+                      <AlertTitle className="font-bold">Extração concluída</AlertTitle>
+                      <AlertDescription>
+                        Revise os dados abaixo. Depois de aplicar, você ainda pode editar título, texto e imagens no formulário.
+                      </AlertDescription>
+                    </Alert>
+
+                    <div className="space-y-2">
+                      <Label className="text-neutral-700">Título extraído</Label>
+                      <p className="font-semibold text-neutral-900 text-lg leading-snug bg-neutral-50 p-3 rounded-xl border border-neutral-200">
+                        {extracted.title}
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-neutral-700">Resumo</Label>
+                      <p className="text-sm text-neutral-600 bg-neutral-50 p-3 rounded-xl border border-neutral-200 line-clamp-4">
+                        {extracted.excerpt || '—'}
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-neutral-700">
+                        Escolha a imagem de capa {extracted.images.length > 0 && `(${extracted.images.length} encontradas)`}
+                      </Label>
+                      {extracted.images.length === 0 ? (
+                        <p className="text-sm text-neutral-500 italic">Nenhuma imagem grande encontrada. Você pode adicionar manualmente depois.</p>
+                      ) : (
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-48 overflow-y-auto">
+                          {extracted.images.map((img, idx) => (
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={() => setSelectedCover(img)}
+                              className={`relative aspect-video rounded-lg overflow-hidden border-2 transition-all ${
+                                selectedCover === img
+                                  ? 'border-blue-600 ring-2 ring-blue-200'
+                                  : 'border-neutral-200 hover:border-blue-400'
+                              }`}
+                            >
+                              <img src={img} alt={`Imagem ${idx + 1}`} className="w-full h-full object-cover" />
+                              {selectedCover === img && (
+                                <div className="absolute inset-0 bg-blue-600/20 flex items-center justify-center">
+                                  <CheckCircle2 className="w-6 h-6 text-white drop-shadow" />
+                                </div>
+                              )}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="text-xs text-neutral-500 flex items-center gap-1">
+                      <Globe className="w-3 h-3" />
+                      Fonte: <span className="font-medium">{extracted.sourceName}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <DialogFooter className="gap-2 sm:gap-0">
+                {extracted ? (
+                  <>
+                    <Button variant="outline" onClick={() => { setExtracted(null); setSelectedCover(''); }}>
+                      Extrair outro link
+                    </Button>
+                    <Button onClick={handleApplyExtracted} className="bg-blue-600 hover:bg-blue-700">
+                      Aplicar no formulário
+                    </Button>
+                  </>
+                ) : (
+                  <Button variant="outline" onClick={() => resetImportDialog(false)}>
+                    Cancelar
+                  </Button>
+                )}
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
           <Button variant="outline" onClick={() => handleSave('draft')} disabled={loading} className="border-neutral-300">
             Salvar Rascunho
           </Button>
@@ -284,6 +502,9 @@ function NovaNoticia() {
               <AlertTitle className="font-bold">Aviso de Atribuição</AlertTitle>
               <AlertDescription>
                 Esta notícia está sendo criada com base em uma fonte externa: <strong>{formData.source_name}</strong>.
+                {formData.source_link && (
+                  <> (<a href={formData.source_link} target="_blank" rel="noopener noreferrer" className="underline">ver original</a>)</>
+                )}
               </AlertDescription>
             </Alert>
           )}
