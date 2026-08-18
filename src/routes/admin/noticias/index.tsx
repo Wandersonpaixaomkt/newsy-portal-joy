@@ -1,45 +1,90 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
 import { Link } from '@tanstack/react-router';
-import { Plus, Search, Edit2, Trash2, Eye } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
+import { ENV } from '@/lib/env';
+import { getAllLocalPosts, deleteLocalPost } from '@/lib/local-posts';
 
 export const Route = createFileRoute('/admin/noticias/')({
   component: NoticiasList,
 });
 
 function NoticiasList() {
+  const queryClient = useQueryClient();
+
   const { data: noticias, isLoading, error } = useQuery({
     queryKey: ['admin-noticias'],
     queryFn: async () => {
-      // First check if categories and authors exist to avoid join errors
-      const { data, error } = await supabase
-        .from('posts')
-        .select(`
-          id,
-          title,
-          published_at,
-          category:categories(name)
-        `)
-        .order('created_at', { ascending: false })
-        .limit(100);
-      
-      if (error) {
-        console.error('Error fetching noticias:', error);
-        throw error;
+      // Posts locais (seed + criados no admin)
+      const local = getAllLocalPosts().map((p) => ({
+        id: p.id,
+        title: p.title,
+        published_at: p.published_at,
+        created_at: p.created_at,
+        category: p.category,
+        is_local: true,
+      }));
+
+      // Tenta buscar do Supabase também
+      let remote: any[] = [];
+      try {
+        const { data, error } = await supabase
+          .from('posts')
+          .select(`
+            id,
+            title,
+            published_at,
+            created_at,
+            category:categories(name)
+          `)
+          .order('created_at', { ascending: false })
+          .limit(100);
+
+        if (!error && data) {
+          remote = data.map((p: any) => ({ ...p, is_local: false }));
+        }
+      } catch (e) {
+        console.warn('Não foi possível carregar posts do Supabase:', e);
       }
-      return data;
+
+      // Merge: local tem prioridade (mesmo slug/id)
+      const remoteIds = new Set(remote.map((p) => p.id));
+      const uniqueLocal = local.filter((p) => !remoteIds.has(p.id));
+
+      const merged = [...uniqueLocal, ...remote].sort((a, b) => {
+        const dateA = new Date(a.published_at || a.created_at || 0).getTime();
+        const dateB = new Date(b.published_at || b.created_at || 0).getTime();
+        return dateB - dateA;
+      });
+
+      return merged;
     },
     retry: 1,
-    meta: {
-      errorMessage: 'Não foi possível carregar as notícias. Verifique se as tabelas existem no banco de dados.'
-    }
   });
+
+  const handleDelete = async (id: string, isLocal: boolean) => {
+    if (!confirm('Tem certeza que deseja excluir esta notícia?')) return;
+
+    try {
+      if (isLocal || ENV.USE_LOCAL_ADMIN_MOCK) {
+        deleteLocalPost(id);
+        toast.success('Notícia excluída (modo local)!');
+      } else {
+        const { error } = await supabase.from('posts').delete().eq('id', id);
+        if (error) throw error;
+        toast.success('Notícia excluída!');
+      }
+      queryClient.invalidateQueries({ queryKey: ['admin-noticias'] });
+    } catch (err: any) {
+      toast.error('Erro ao excluir: ' + (err.message || 'desconhecido'));
+    }
+  };
 
   if (isLoading) return (
     <div className="space-y-6">
@@ -57,7 +102,7 @@ function NoticiasList() {
   if (error) return (
     <div className="bg-red-900/20 border border-red-900/50 p-12 rounded-lg text-center">
       <h3 className="text-xl font-bold text-red-500 mb-2">Erro de Conexão</h3>
-      <p className="text-neutral-400 mb-6">Não foi possível carregar a lista de notícias. Verifique sua permissão ou conexão com o banco.</p>
+      <p className="text-neutral-400 mb-6">Não foi possível carregar a lista de notícias.</p>
       <Button onClick={() => window.location.reload()} className="bg-red-600 hover:bg-red-700">
         Tentar Novamente
       </Button>
@@ -69,7 +114,12 @@ function NoticiasList() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold">Notícias</h1>
-          <p className="text-neutral-400">Gerencie o conteúdo do portal.</p>
+          <p className="text-neutral-400">
+            Gerencie o conteúdo do portal.
+            {ENV.USE_LOCAL_ADMIN_MOCK && (
+              <span className="ml-2 text-amber-500 text-sm">(modo local ativo)</span>
+            )}
+          </p>
         </div>
         <Button asChild className="bg-red-600 hover:bg-red-700">
           <Link to="/admin/noticias/nova">
@@ -83,7 +133,7 @@ function NoticiasList() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-500" />
           <Input 
-            placeholder="Buscar por título ou autor..." 
+            placeholder="Buscar por título..." 
             className="pl-10 bg-brand-dark border-white/10 rounded-xl focus:border-primary/50"
           />
         </div>
@@ -101,6 +151,13 @@ function NoticiasList() {
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
+            {noticias?.length === 0 && (
+              <tr>
+                <td colSpan={5} className="px-6 py-12 text-center text-neutral-500">
+                  Nenhuma notícia encontrada. Clique em "Nova Notícia" para começar.
+                </td>
+              </tr>
+            )}
             {noticias?.map((noticia: any) => (
               <tr key={noticia.id} className="hover:bg-white/5 transition-colors">
                 <td className="px-6 py-4">
@@ -109,6 +166,9 @@ function NoticiasList() {
                     {noticia.published_at 
                       ? format(new Date(noticia.published_at), "dd 'de' MMMM, yyyy", { locale: ptBR })
                       : 'Rascunho'}
+                    {noticia.is_local && (
+                      <span className="ml-2 text-amber-500">• local</span>
+                    )}
                   </div>
                 </td>
                 <td className="px-6 py-4">
@@ -117,7 +177,7 @@ function NoticiasList() {
                   </span>
                 </td>
                 <td className="px-6 py-4 text-sm text-neutral-300">
-                  {'Redação'}
+                  Redação
                 </td>
                 <td className="px-6 py-4">
                   <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase ${
@@ -136,16 +196,7 @@ function NoticiasList() {
                     variant="ghost" 
                     size="icon" 
                     className="text-red-500 hover:text-red-400 hover:bg-red-500/10"
-                    onClick={async () => {
-                      if (confirm('Tem certeza que deseja excluir esta notícia?')) {
-                        const { error } = await supabase.from('posts').delete().eq('id', noticia.id);
-                        if (error) toast.error('Erro ao excluir: ' + error.message);
-                        else {
-                          toast.success('Notícia excluída!');
-                          window.location.reload();
-                        }
-                      }
-                    }}
+                    onClick={() => handleDelete(noticia.id, !!noticia.is_local)}
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>
