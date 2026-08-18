@@ -8,13 +8,15 @@ import {
   Bold, Italic, Underline as UnderlineIcon, 
   List, ListOrdered, AlignLeft, AlignCenter, 
   AlignRight, Image as ImageIcon, Link as LinkIcon,
-  Heading1, Heading2, Heading3, Quote, Undo, Redo
+  Heading1, Heading2, Heading3, Quote, Undo, Redo,
+  Link2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Toggle } from '@/components/ui/toggle';
 import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { ENV } from '@/lib/env';
 
 interface RichTextEditorProps {
   content: string;
@@ -25,14 +27,41 @@ interface RichTextEditorProps {
 const MenuBar = ({ editor }: { editor: any }) => {
   if (!editor) return null;
 
-  const addImage = async () => {
+  /** Insere imagem por URL (sempre funciona) */
+  const addImageByUrl = () => {
+    const url = window.prompt('Cole o link da imagem (https://...):');
+    if (!url) return;
+    editor.chain().focus().setImage({ src: url.trim() }).run();
+    toast.success('Imagem inserida no texto');
+  };
+
+  /** Upload de arquivo → base64 no modo local, ou Supabase se mock desligado */
+  const addImageByUpload = async () => {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
     input.onchange = async (e: any) => {
-      const file = e.target.files[0];
+      const file = e.target.files?.[0];
       if (!file) return;
 
+      // Modo local: converte para base64 (não depende do Supabase)
+      if (ENV.USE_LOCAL_ADMIN_MOCK) {
+        if (file.size > 1.5 * 1024 * 1024) {
+          toast.error('Imagem muito grande. Use até 1,5 MB ou cole um link.');
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+          const dataUrl = reader.result as string;
+          editor.chain().focus().setImage({ src: dataUrl }).run();
+          toast.success('Imagem inserida no texto (modo local)');
+        };
+        reader.onerror = () => toast.error('Erro ao ler a imagem');
+        reader.readAsDataURL(file);
+        return;
+      }
+
+      // Supabase Storage (quando mock estiver desligado)
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random()}.${fileExt}`;
       const filePath = `post-content/${fileName}`;
@@ -49,6 +78,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
           .getPublicUrl(filePath);
 
         editor.chain().focus().setImage({ src: data.publicUrl }).run();
+        toast.success('Imagem inserida no texto');
       } catch (error: any) {
         toast.error('Erro ao subir imagem: ' + error.message);
       }
@@ -70,7 +100,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
   };
 
   return (
-    <div className="flex flex-wrap gap-1 p-2 border-b border-neutral-700 bg-neutral-900 rounded-t-lg">
+    <div className="flex flex-wrap gap-1 p-2 border-b border-neutral-200 bg-white rounded-t-lg">
       <Toggle size="sm" pressed={editor.isActive('bold')} onClick={() => editor.chain().focus().toggleBold().run()}>
         <Bold className="w-4 h-4" />
       </Toggle>
@@ -81,7 +111,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
         <UnderlineIcon className="w-4 h-4" />
       </Toggle>
       
-      <div className="w-px h-6 bg-neutral-700 mx-1 self-center" />
+      <div className="w-px h-6 bg-neutral-200 mx-1 self-center" />
       
       <Toggle size="sm" pressed={editor.isActive('heading', { level: 1 })} onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}>
         <Heading1 className="w-4 h-4" />
@@ -96,7 +126,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
         <Quote className="w-4 h-4" />
       </Toggle>
       
-      <div className="w-px h-6 bg-neutral-700 mx-1 self-center" />
+      <div className="w-px h-6 bg-neutral-200 mx-1 self-center" />
       
       <Toggle size="sm" pressed={editor.isActive('bulletList')} onClick={() => editor.chain().focus().toggleBulletList().run()}>
         <List className="w-4 h-4" />
@@ -105,7 +135,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
         <ListOrdered className="w-4 h-4" />
       </Toggle>
       
-      <div className="w-px h-6 bg-neutral-700 mx-1 self-center" />
+      <div className="w-px h-6 bg-neutral-200 mx-1 self-center" />
       
       <Toggle size="sm" pressed={editor.isActive({ textAlign: 'left' })} onClick={() => editor.chain().focus().setTextAlign('left').run()}>
         <AlignLeft className="w-4 h-4" />
@@ -117,12 +147,15 @@ const MenuBar = ({ editor }: { editor: any }) => {
         <AlignRight className="w-4 h-4" />
       </Toggle>
       
-      <div className="w-px h-6 bg-neutral-700 mx-1 self-center" />
+      <div className="w-px h-6 bg-neutral-200 mx-1 self-center" />
       
-      <Button variant="ghost" size="sm" onClick={setLink} className={editor.isActive('link') ? 'bg-neutral-700' : ''}>
+      <Button variant="ghost" size="sm" onClick={setLink} className={editor.isActive('link') ? 'bg-neutral-100' : ''} title="Inserir link">
         <LinkIcon className="w-4 h-4" />
       </Button>
-      <Button variant="ghost" size="sm" onClick={addImage}>
+      <Button variant="ghost" size="sm" onClick={addImageByUrl} title="Inserir imagem por link">
+        <Link2 className="w-4 h-4" />
+      </Button>
+      <Button variant="ghost" size="sm" onClick={addImageByUpload} title="Upload de imagem">
         <ImageIcon className="w-4 h-4" />
       </Button>
       
@@ -168,7 +201,7 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-invert max-w-none min-h-[400px] p-4 focus:outline-none focus:ring-0 overflow-y-auto',
+        class: 'prose max-w-none min-h-[400px] p-4 focus:outline-none focus:ring-0 overflow-y-auto text-neutral-800',
       },
     },
   });
@@ -180,7 +213,7 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
   }, [content, editor]);
 
   return (
-    <div className="w-full border border-neutral-700 rounded-lg overflow-hidden bg-neutral-900">
+    <div className="w-full border border-neutral-200 rounded-lg overflow-hidden bg-white">
       <MenuBar editor={editor} />
       <EditorContent editor={editor} />
     </div>
