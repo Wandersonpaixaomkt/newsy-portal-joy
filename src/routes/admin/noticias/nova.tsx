@@ -7,12 +7,15 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { Save, ArrowLeft, Image as ImageIcon, Search, Globe, Share2, AlertTriangle, FileText, Type, Upload, Link as LinkIcon, Trash2, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Image as ImageIcon, Search, Share2, Upload, Link as LinkIcon, Trash2, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { RichTextEditor } from '@/components/admin/RichTextEditor';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import imageCompression from 'browser-image-compression';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ENV } from '@/lib/env';
+import { generateLocalId, saveLocalPost } from '@/lib/local-posts';
+import type { Post } from '@/lib/news';
 
 export const Route = createFileRoute('/admin/noticias/nova')({
   component: NovaNoticia,
@@ -153,6 +156,12 @@ function NovaNoticia() {
     
     setLoading(true);
     try {
+      const now = new Date().toISOString();
+      const categoryName = categories?.find(c => c.id === formData.category_id)?.name || 'Geral';
+      const categorySlug = categories?.find(c => c.id === formData.category_id)?.slug || 'geral';
+      const cityName = cities?.find(c => c.id === formData.city_id)?.name || null;
+      const citySlug = cities?.find(c => c.id === formData.city_id)?.slug || null;
+
       const payload: any = {
         title: formData.title,
         slug: formData.slug,
@@ -169,12 +178,44 @@ function NovaNoticia() {
         canonical_url: formData.canonical_url || null,
         robots_meta: formData.robots_meta || 'index, follow',
         og_image_url: formData.og_image_url || null,
-        published_at: status === 'published' ? new Date().toISOString() : null,
-        updated_at: new Date().toISOString(),
+        published_at: status === 'published' ? now : null,
+        updated_at: now,
+        created_at: now,
       };
 
+      // === MOCK LOCAL (ativo enquanto Supabase RLS não está ok) ===
+      if (ENV.USE_LOCAL_ADMIN_MOCK) {
+        const localPost: Post = {
+          ...payload,
+          id: generateLocalId(),
+          category: formData.category_id
+            ? { name: categoryName, slug: categorySlug }
+            : { name: 'Geral', slug: 'geral' },
+          city: formData.city_id && cityName
+            ? { name: cityName, slug: citySlug! }
+            : null,
+          author: { name: 'Redação', slug: 'redacao' },
+          tags: [],
+          focus_keyword: null,
+          og_image: null,
+          schema_data: null,
+          seo_score: null,
+          twitter_card: null,
+          twitter_card_type: 'summary_large_image',
+        };
+
+        saveLocalPost(localPost);
+        toast.success(
+          status === 'published'
+            ? 'Notícia publicada (modo local)!'
+            : 'Rascunho salvo (modo local)!'
+        );
+        navigate({ to: '/admin/noticias' });
+        return;
+      }
+
+      // Fallback para Supabase (quando mock estiver desligado)
       const { error } = await supabase.from('posts').insert([payload]);
-      
       if (error) throw error;
       toast.success(status === 'published' ? 'Notícia publicada!' : 'Rascunho salvo!');
       navigate({ to: '/admin/noticias' });
@@ -193,7 +234,12 @@ function NovaNoticia() {
           <Button variant="ghost" size="icon" onClick={() => navigate({ to: '/admin/noticias' })}>
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <h1 className="text-3xl font-bold">Nova Notícia</h1>
+          <div>
+            <h1 className="text-3xl font-bold">Nova Notícia</h1>
+            {ENV.USE_LOCAL_ADMIN_MOCK && (
+              <p className="text-xs text-amber-500 mt-1">Modo local ativo — grava no navegador</p>
+            )}
+          </div>
         </div>
         <div className="flex gap-3">
           <Button variant="outline" onClick={() => handleSave('draft')} disabled={loading}>Salvar Rascunho</Button>
@@ -336,6 +382,28 @@ function NovaNoticia() {
                     <option value="">Redação (Padrão)</option>
                     {authors?.map(author => <option key={author.id} value={author.id}>{author.name}</option>)}
                   </select>
+                </div>
+
+                <div className="flex items-center gap-2 py-2">
+                  <input 
+                    type="checkbox" 
+                    id="is_featured" 
+                    checked={formData.is_featured} 
+                    onChange={e => setFormData({...formData, is_featured: e.target.checked})}
+                    className="w-4 h-4 rounded border-white/10 bg-brand-dark text-primary"
+                  />
+                  <Label htmlFor="is_featured" className="cursor-pointer text-neutral-300">Notícia em Destaque</Label>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <input 
+                    type="checkbox" 
+                    id="is_urgent" 
+                    checked={formData.is_urgent} 
+                    onChange={e => setFormData({...formData, is_urgent: e.target.checked})}
+                    className="w-4 h-4 rounded border-white/10 bg-brand-dark text-primary"
+                  />
+                  <Label htmlFor="is_urgent" className="cursor-pointer text-red-500 font-bold">Plantão Urgente</Label>
                 </div>
               </div>
             </div>
