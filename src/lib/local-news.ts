@@ -1,5 +1,9 @@
 import type { Post } from "@/lib/news";
 
+/**
+ * Seed de notícias locais (hardcoded).
+ * Posts criados pelo admin ficam em localStorage (ver local-posts.ts).
+ */
 export const localPosts: Post[] = [
   {
     id: "local-incendio-loja-darmand-parauapebas",
