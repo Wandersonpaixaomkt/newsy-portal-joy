@@ -2,11 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { MainHeader } from "@/components/layout/MainHeader";
 import { NewsGrid } from "@/components/layout/NewsGrid";
 import { Footer } from "@/components/layout/Footer";
-import { motion } from "framer-motion";
 import { Plus, Play } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchNews, fetchFeaturedPost, Post } from "@/lib/news";
 import { supabase } from "@/integrations/supabase/client";
+import { ENV } from "@/lib/env";
+import { getLocalAds, type LocalAd } from "@/lib/local-ads";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -22,6 +23,33 @@ export const Route = createFileRoute("/")({
 
 const IMAGE_PLACEHOLDER = "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=2070&auto=format&fit=crop";
 
+/** Mapeia slot do admin local → nomes usados no layout */
+const SLOT_MAP: Record<string, string[]> = {
+  topo: ["Banner topo", "topo", "banner-topo"],
+  lateral: ["Banner lateral 1:1", "Banner lateral 3:4", "lateral"],
+  rodape: ["Banner rodapé", "rodape"],
+  "entre-noticias": ["Banner central", "entre-noticias", "central"],
+};
+
+function findLocalAd(ads: LocalAd[], ...keys: string[]): LocalAd | undefined {
+  const active = ads.filter((a) => a.status === "active");
+  for (const key of keys) {
+    const found = active.find((a) => {
+      const slotKey = a.slot;
+      const aliases = SLOT_MAP[slotKey] || [slotKey];
+      return aliases.some(
+        (alias) =>
+          alias.toLowerCase() === key.toLowerCase() ||
+          key.toLowerCase().includes(alias.toLowerCase()) ||
+          alias.toLowerCase().includes(key.toLowerCase())
+      );
+    });
+    if (found) return found;
+  }
+  // fallback: match direto pelo valor do slot
+  return active.find((a) => keys.some((k) => a.slot === k || a.slot.includes(k)));
+}
+
 function Index() {
   const { data: articles = [] } = useQuery({
     queryKey: ["articles"],
@@ -33,20 +61,34 @@ function Index() {
     queryFn: fetchFeaturedPost,
   });
 
+  // Ads: prioriza localStorage no modo mock; tenta Supabase como fallback
   const { data: activeAds } = useQuery({
     queryKey: ["active-ads"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('ad_campaigns')
-        .select(`
-          *,
-          creatives:ad_creatives(*, slot:ad_slots(name))
-        `)
-        .eq('status', 'active');
-      if (error) throw error;
-      return data;
+      const local = getLocalAds().filter((a) => a.status === "active");
+
+      if (ENV.USE_LOCAL_ADMIN_MOCK && local.length > 0) {
+        return { source: "local" as const, local, remote: [] as any[] };
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from("ad_campaigns")
+          .select(`
+            *,
+            creatives:ad_creatives(*, slot:ad_slots(name))
+          `)
+          .eq("status", "active");
+        if (error) throw error;
+        return { source: "remote" as const, local, remote: data || [] };
+      } catch {
+        return { source: "local" as const, local, remote: [] as any[] };
+      }
     },
   });
+
+  const localAds = activeAds?.local || [];
+  const remoteAds = activeAds?.remote || [];
 
   const mapToView = (post: Post) => ({
     id: post.id,
@@ -57,87 +99,165 @@ function Index() {
   });
 
   const displayFeatured = featuredArticle || articles[0];
-  const remaining = articles.filter(a => a.id !== displayFeatured?.id);
-  
+  const remaining = articles.filter((a) => a.id !== displayFeatured?.id);
+
   const secondaryGrid = remaining.slice(0, 4).map(mapToView);
-  
-  const regionNews = articles.filter(a => a.city?.slug === "parauapebas" || a.city?.slug === "canaa-dos-carajas").slice(0, 4).map(mapToView);
-  const politicsNews = articles.filter(a => a.category?.slug === "politica").slice(0, 4).map(mapToView);
-  const brazilNews = articles.filter(a => a.category?.slug === "brasil" || a.category?.slug === "nacional").slice(0, 4).map(mapToView);
-  
-  const policeNews = articles.filter(a => a.category?.slug === "policia").slice(0, 4).map(mapToView);
-  const sportsNews = articles.filter(a => a.category?.slug === "esportes").slice(0, 4).map(mapToView);
 
-  const AdBanner = ({ 
-    slotName, 
-    className = "", 
-    width = 1140, 
-    height = 250, 
-    label = "Publicidade" 
-  }: { 
-    slotName: string, 
-    className?: string, 
-    width?: number, 
-    height?: number, 
-    label?: string 
+  const regionNews = articles
+    .filter((a) => a.city?.slug === "parauapebas" || a.city?.slug === "canaa-dos-carajas")
+    .slice(0, 4)
+    .map(mapToView);
+  const politicsNews = articles
+    .filter((a) => a.category?.slug === "politica")
+    .slice(0, 4)
+    .map(mapToView);
+  const brazilNews = articles
+    .filter((a) => a.category?.slug === "brasil" || a.category?.slug === "nacional")
+    .slice(0, 4)
+    .map(mapToView);
+
+  const policeNews = articles
+    .filter((a) => a.category?.slug === "policia")
+    .slice(0, 4)
+    .map(mapToView);
+  const sportsNews = articles
+    .filter((a) => a.category?.slug === "esportes")
+    .slice(0, 4)
+    .map(mapToView);
+
+  const AdBanner = ({
+    slotName,
+    localSlot,
+    className = "",
+    width = 1140,
+    height = 250,
+    label = "Publicidade",
+  }: {
+    slotName: string;
+    localSlot?: LocalAd["slot"];
+    className?: string;
+    width?: number;
+    height?: number;
+    label?: string;
   }) => {
-    const ad = activeAds?.find((a: any) => a.creatives?.some((c: any) => c.slot?.name === slotName));
-    const creative = ad?.creatives?.find((c: any) => c.slot?.name === slotName);
+    // 1) Tenta ad local
+    const localAd = findLocalAd(
+      localAds,
+      localSlot || "",
+      slotName,
+      ...(localSlot ? SLOT_MAP[localSlot] || [] : []),
+    );
 
-    if (!creative) {
+    if (localAd?.image_url) {
       return (
-        <div 
-          className={`w-full mx-auto bg-gray-100 flex items-center justify-center border border-gray-200 rounded-lg overflow-hidden my-12 ${className}`}
-          style={{ maxWidth: `${width}px`, height: `${height}px` }}
+        <a
+          href={localAd.target_url || "#"}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`block w-full mx-auto overflow-hidden my-12 transition-opacity hover:opacity-95 rounded-lg border border-neutral-100 ${className}`}
+          style={{ maxWidth: `${width}px` }}
         >
-          <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.5em]">{label} {slotName}</span>
-        </div>
+          <img
+            src={localAd.image_url}
+            alt={localAd.name || "Publicidade"}
+            className="w-full h-auto block"
+          />
+        </a>
       );
     }
 
+    // 2) Tenta remoto (Supabase)
+    const ad = remoteAds.find((a: any) =>
+      a.creatives?.some((c: any) => c.slot?.name === slotName),
+    );
+    const creative = ad?.creatives?.find((c: any) => c.slot?.name === slotName);
+
+    if (creative?.image_url) {
+      return (
+        <a
+          href={creative.target_url || "#"}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`block w-full mx-auto overflow-hidden my-12 transition-opacity hover:opacity-95 rounded-lg border border-neutral-100 ${className}`}
+          style={{ maxWidth: `${width}px` }}
+        >
+          <img
+            src={creative.image_url || ""}
+            alt={creative.alt_text || "Publicidade"}
+            className="w-full h-auto block"
+          />
+        </a>
+      );
+    }
+
+    // 3) Placeholder
     return (
-      <a 
-        href={creative.target_url || "#"} 
-        target="_blank" 
-        rel="noopener noreferrer"
-        className={`block w-full mx-auto overflow-hidden my-12 transition-opacity hover:opacity-95 rounded-lg border border-neutral-100 ${className}`}
-        style={{ maxWidth: `${width}px` }}
+      <div
+        className={`w-full mx-auto bg-gray-100 flex items-center justify-center border border-gray-200 rounded-lg overflow-hidden my-12 ${className}`}
+        style={{ maxWidth: `${width}px`, height: `${height}px` }}
       >
-        <img 
-          src={creative.image_url || ""} 
-          alt={creative.alt_text || "Publicidade"} 
-          className="w-full h-auto block"
-        />
-      </a>
+        <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.5em]">
+          {label} {slotName}
+        </span>
+      </div>
     );
   };
 
   const SidebarAds = () => {
-    const ad1 = activeAds?.find((a: any) => a.creatives?.some((c: any) => c.slot?.name === "Banner lateral 1:1"));
-    const creative1 = ad1?.creatives?.find((c: any) => c.slot?.name === "Banner lateral 1:1");
-    
-    const ad2 = activeAds?.find((a: any) => a.creatives?.some((c: any) => c.slot?.name === "Banner lateral 3:4"));
-    const creative2 = ad2?.creatives?.find((c: any) => c.slot?.name === "Banner lateral 3:4");
+    const localLateral = findLocalAd(localAds, "lateral", "Banner lateral 1:1");
+
+    const ad1 = remoteAds.find((a: any) =>
+      a.creatives?.some((c: any) => c.slot?.name === "Banner lateral 1:1"),
+    );
+    const creative1 = ad1?.creatives?.find(
+      (c: any) => c.slot?.name === "Banner lateral 1:1",
+    );
+
+    const ad2 = remoteAds.find((a: any) =>
+      a.creatives?.some((c: any) => c.slot?.name === "Banner lateral 3:4"),
+    );
+    const creative2 = ad2?.creatives?.find(
+      (c: any) => c.slot?.name === "Banner lateral 3:4",
+    );
+
+    const img1 = localLateral?.image_url || creative1?.image_url;
+    const link1 = localLateral?.target_url || creative1?.target_url || "#";
+    const img2 = creative2?.image_url;
+    const link2 = creative2?.target_url || "#";
 
     return (
       <div className="hidden lg:flex flex-col gap-8 w-[300px] shrink-0 sticky top-24 h-fit">
-        {creative1 ? (
-          <a href={creative1.target_url || "#"} target="_blank" rel="noopener noreferrer" className="block w-full aspect-square rounded-xl overflow-hidden border border-gray-100 shadow-sm">
-            <img src={creative1.image_url || ""} alt="" className="w-full h-full object-cover" />
+        {img1 ? (
+          <a
+            href={link1}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-full aspect-square rounded-xl overflow-hidden border border-gray-100 shadow-sm"
+          >
+            <img src={img1} alt="" className="w-full h-full object-cover" />
           </a>
         ) : (
           <div className="w-full aspect-square bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center">
-            <span className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">Publicidade 1:1</span>
+            <span className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">
+              Publicidade 1:1
+            </span>
           </div>
         )}
 
-        {creative2 ? (
-          <a href={creative2.target_url || "#"} target="_blank" rel="noopener noreferrer" className="block w-full aspect-[3/4] rounded-xl overflow-hidden border border-gray-100 shadow-sm">
-            <img src={creative2.image_url || ""} alt="" className="w-full h-full object-cover" />
+        {img2 ? (
+          <a
+            href={link2}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-full aspect-[3/4] rounded-xl overflow-hidden border border-gray-100 shadow-sm"
+          >
+            <img src={img2} alt="" className="w-full h-full object-cover" />
           </a>
         ) : (
           <div className="w-full aspect-[3/4] bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center">
-            <span className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">Publicidade 3:4</span>
+            <span className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">
+              Publicidade 3:4
+            </span>
           </div>
         )}
       </div>
@@ -147,70 +267,89 @@ function Index() {
   return (
     <div className="min-h-screen bg-white font-sans text-brand-dark">
       <MainHeader />
-      
+
       <main className="container mx-auto px-6">
-        <AdBanner slotName="Banner topo" width={1500} height={230} className="md:h-[230px]" />
-        
+        <AdBanner
+          slotName="Banner topo"
+          localSlot="topo"
+          width={1500}
+          height={230}
+          className="md:h-[230px]"
+        />
+
         <div className="flex flex-col lg:flex-row gap-12">
           <div className="flex-grow">
+            {/* Área de destaque principal */}
+            <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16 items-start">
+              {displayFeatured && (
+                <>
+                  <Link
+                    to="/noticia/$slug"
+                    params={{ slug: displayFeatured.slug || displayFeatured.id }}
+                    className="group relative overflow-hidden rounded-2xl aspect-[16/10] shadow-xl"
+                  >
+                    <img
+                      src={displayFeatured.image_url || IMAGE_PLACEHOLDER}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      alt={displayFeatured.title}
+                    />
+                    <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <Play size={64} fill="white" className="text-white" />
+                    </div>
+                  </Link>
 
-        {/* 3. Área de destaque principal */}
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16 items-start">
-          {displayFeatured && (
-            <>
-              <Link 
-                to="/noticia/$slug" 
-                params={{ slug: displayFeatured.slug || displayFeatured.id }}
-                className="group relative overflow-hidden rounded-2xl aspect-[16/10] shadow-xl"
-              >
-                <img 
-                  src={displayFeatured.image_url || IMAGE_PLACEHOLDER} 
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  alt={displayFeatured.title}
-                />
-                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <Play size={64} fill="white" className="text-white" />
-                </div>
-              </Link>
-              
-              <div className="flex flex-col justify-center">
-                <span className="bg-primary text-white px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-widest w-fit mb-4">
-                  {displayFeatured.category?.name || "DESTAQUE"}
-                </span>
-                <Link to="/noticia/$slug" params={{ slug: displayFeatured.slug || displayFeatured.id }}>
-                  <h1 className="text-3xl md:text-5xl font-black mb-8 leading-[1.1] hover:text-primary transition-colors tracking-tight">
-                    {displayFeatured.title}
-                  </h1>
-                </Link>
-                
-                <div className="mt-8 border-t border-gray-100 pt-8">
-                  <h3 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-6">Veja também</h3>
-                  <ul className="space-y-4">
-                    {remaining.slice(0, 3).map((item, idx) => (
-                      <li key={idx} className="group">
-                        <Link 
-                          to="/noticia/$slug" 
-                          params={{ slug: item.slug || item.id }}
-                          className="flex items-start gap-3 text-base md:text-lg font-bold leading-tight group-hover:text-primary transition-colors"
-                        >
-                          <Plus size={20} className="text-primary mt-1 shrink-0" />
-                          <span>{item.title}</span>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </>
-          )}
-        </section>
+                  <div className="flex flex-col justify-center">
+                    <span className="bg-primary text-white px-3 py-1 rounded-md text-[10px] font-black uppercase tracking-widest w-fit mb-4">
+                      {displayFeatured.category?.name || "DESTAQUE"}
+                    </span>
+                    <Link
+                      to="/noticia/$slug"
+                      params={{
+                        slug: displayFeatured.slug || displayFeatured.id,
+                      }}
+                    >
+                      <h1 className="text-3xl md:text-5xl font-black mb-8 leading-[1.1] hover:text-primary transition-colors tracking-tight">
+                        {displayFeatured.title}
+                      </h1>
+                    </Link>
 
-        {/* 4. Linha de notícias secundárias */}
-        <NewsGrid items={secondaryGrid} />
+                    <div className="mt-8 border-t border-gray-100 pt-8">
+                      <h3 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-6">
+                        Veja também
+                      </h3>
+                      <ul className="space-y-4">
+                        {remaining.slice(0, 3).map((item, idx) => (
+                          <li key={idx} className="group">
+                            <Link
+                              to="/noticia/$slug"
+                              params={{ slug: item.slug || item.id }}
+                              className="flex items-start gap-3 text-base md:text-lg font-bold leading-tight group-hover:text-primary transition-colors"
+                            >
+                              <Plus
+                                size={20}
+                                className="text-primary mt-1 shrink-0"
+                              />
+                              <span>{item.title}</span>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </>
+              )}
+            </section>
 
-            <AdBanner slotName="Banner central" width={2560} height={533} className="md:h-[533px]" />
+            <NewsGrid items={secondaryGrid} />
 
-            {/* 6. Blocos por editoria (3 colunas) */}
+            <AdBanner
+              slotName="Banner central"
+              localSlot="entre-noticias"
+              width={2560}
+              height={533}
+              className="md:h-[533px]"
+            />
+
             <section className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
               <EditorialBlock title="Região" news={regionNews} />
               <EditorialBlock title="Política" news={politicsNews} />
@@ -222,7 +361,6 @@ function Index() {
         </div>
       </main>
 
-      {/* 8. Seção especial fundo escuro (Polícia) */}
       <div className="bg-brand-dark py-16 mb-16">
         <div className="container mx-auto px-6">
           <NewsGrid title="Plantão Policial" items={policeNews} dark={true} />
@@ -230,7 +368,6 @@ function Index() {
       </div>
 
       <main className="container mx-auto px-6">
-        {/* 9. Seção final (Esportes) */}
         <NewsGrid title="Esportes" items={sportsNews} />
         <div className="w-full h-1 bg-primary mb-16"></div>
       </main>
@@ -240,7 +377,7 @@ function Index() {
   );
 }
 
-function EditorialBlock({ title, news }: { title: string, news: any[] }) {
+function EditorialBlock({ title, news }: { title: string; news: any[] }) {
   if (news.length === 0) return null;
   const main = news[0];
   const list = news.slice(1, 4);
@@ -251,19 +388,35 @@ function EditorialBlock({ title, news }: { title: string, news: any[] }) {
         <span className="w-1.5 h-8 bg-primary"></span>
         <h3 className="text-2xl font-black uppercase tracking-tight">{title}</h3>
       </div>
-      
-      <Link to="/noticia/$slug" params={{ slug: main.slug || main.id }} className="group mb-6">
+
+      <Link
+        to="/noticia/$slug"
+        params={{ slug: main.slug || main.id }}
+        className="group mb-6"
+      >
         <div className="aspect-video rounded-xl overflow-hidden mb-4 shadow-md">
-          <img src={main.img} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={main.title} />
+          <img
+            src={main.img}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            alt={main.title}
+          />
         </div>
-        <span className="text-[10px] font-black text-primary uppercase tracking-widest mb-2 block">{main.cat}</span>
-        <h4 className="text-xl font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2">{main.title}</h4>
+        <span className="text-[10px] font-black text-primary uppercase tracking-widest mb-2 block">
+          {main.cat}
+        </span>
+        <h4 className="text-xl font-bold leading-tight group-hover:text-primary transition-colors line-clamp-2">
+          {main.title}
+        </h4>
       </Link>
-      
+
       <ul className="space-y-4 border-t border-gray-100 pt-6">
         {list.map((item, idx) => (
           <li key={idx} className="group">
-            <Link to="/noticia/$slug" params={{ slug: item.slug || item.id }} className="flex items-start gap-2 text-sm font-bold leading-tight group-hover:text-primary transition-colors">
+            <Link
+              to="/noticia/$slug"
+              params={{ slug: item.slug || item.id }}
+              className="flex items-start gap-2 text-sm font-bold leading-tight group-hover:text-primary transition-colors"
+            >
               <Plus size={16} className="text-primary mt-0.5 shrink-0" />
               <span>{item.title}</span>
             </Link>
