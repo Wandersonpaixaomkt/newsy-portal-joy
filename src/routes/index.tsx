@@ -5,9 +5,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Plus, Play } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchNews, fetchFeaturedPost, Post } from "@/lib/news";
-import { supabase } from "@/integrations/supabase/client";
-import { ENV } from "@/lib/env";
-import { getLocalAds, type LocalAd } from "@/lib/local-ads";
+import { RotatingAd } from "@/components/ads/RotatingAd";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -23,33 +21,6 @@ export const Route = createFileRoute("/")({
 
 const IMAGE_PLACEHOLDER = "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=2070&auto=format&fit=crop";
 
-/** Mapeia slot do admin local → nomes usados no layout */
-const SLOT_MAP: Record<string, string[]> = {
-  topo: ["Banner topo", "topo", "banner-topo"],
-  lateral: ["Banner lateral 1:1", "Banner lateral 3:4", "lateral"],
-  rodape: ["Banner rodapé", "rodape"],
-  "entre-noticias": ["Banner central", "entre-noticias", "central"],
-};
-
-function findLocalAd(ads: LocalAd[], ...keys: string[]): LocalAd | undefined {
-  const active = ads.filter((a) => a.status === "active");
-  for (const key of keys) {
-    const found = active.find((a) => {
-      const slotKey = a.slot;
-      const aliases = SLOT_MAP[slotKey] || [slotKey];
-      return aliases.some(
-        (alias) =>
-          alias.toLowerCase() === key.toLowerCase() ||
-          key.toLowerCase().includes(alias.toLowerCase()) ||
-          alias.toLowerCase().includes(key.toLowerCase())
-      );
-    });
-    if (found) return found;
-  }
-  // fallback: match direto pelo valor do slot
-  return active.find((a) => keys.some((k) => a.slot === k || a.slot.includes(k)));
-}
-
 function Index() {
   const { data: articles = [] } = useQuery({
     queryKey: ["articles"],
@@ -60,35 +31,6 @@ function Index() {
     queryKey: ["featuredArticle"],
     queryFn: fetchFeaturedPost,
   });
-
-  // Ads: prioriza localStorage no modo mock; tenta Supabase como fallback
-  const { data: activeAds } = useQuery({
-    queryKey: ["active-ads"],
-    queryFn: async () => {
-      const local = getLocalAds().filter((a) => a.status === "active");
-
-      if (ENV.USE_LOCAL_ADMIN_MOCK && local.length > 0) {
-        return { source: "local" as const, local, remote: [] as any[] };
-      }
-
-      try {
-        const { data, error } = await supabase
-          .from("ad_campaigns")
-          .select(`
-            *,
-            creatives:ad_creatives(*, slot:ad_slots(name))
-          `)
-          .eq("status", "active");
-        if (error) throw error;
-        return { source: "remote" as const, local, remote: data || [] };
-      } catch {
-        return { source: "local" as const, local, remote: [] as any[] };
-      }
-    },
-  });
-
-  const localAds = activeAds?.local || [];
-  const remoteAds = activeAds?.remote || [];
 
   const mapToView = (post: Post) => ({
     id: post.id,
@@ -125,161 +67,34 @@ function Index() {
     .slice(0, 4)
     .map(mapToView);
 
-  const AdBanner = ({
-    slotName,
-    localSlot,
-    className = "",
-    width = 1140,
-    height = 250,
-    label = "Publicidade",
-  }: {
-    slotName: string;
-    localSlot?: LocalAd["slot"];
-    className?: string;
-    width?: number;
-    height?: number;
-    label?: string;
-  }) => {
-    // 1) Tenta ad local
-    const localAd = findLocalAd(
-      localAds,
-      localSlot || "",
-      slotName,
-      ...(localSlot ? SLOT_MAP[localSlot] || [] : []),
-    );
-
-    if (localAd?.image_url) {
-      return (
-        <a
-          href={localAd.target_url || "#"}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`block w-full mx-auto overflow-hidden my-12 transition-opacity hover:opacity-95 rounded-lg border border-neutral-100 ${className}`}
-          style={{ maxWidth: `${width}px` }}
-        >
-          <img
-            src={localAd.image_url}
-            alt={localAd.name || "Publicidade"}
-            className="w-full h-auto block"
-          />
-        </a>
-      );
-    }
-
-    // 2) Tenta remoto (Supabase)
-    const ad = remoteAds.find((a: any) =>
-      a.creatives?.some((c: any) => c.slot?.name === slotName),
-    );
-    const creative = ad?.creatives?.find((c: any) => c.slot?.name === slotName);
-
-    if (creative?.image_url) {
-      return (
-        <a
-          href={creative.target_url || "#"}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`block w-full mx-auto overflow-hidden my-12 transition-opacity hover:opacity-95 rounded-lg border border-neutral-100 ${className}`}
-          style={{ maxWidth: `${width}px` }}
-        >
-          <img
-            src={creative.image_url || ""}
-            alt={creative.alt_text || "Publicidade"}
-            className="w-full h-auto block"
-          />
-        </a>
-      );
-    }
-
-    // 3) Placeholder
-    return (
-      <div
-        className={`w-full mx-auto bg-gray-100 flex items-center justify-center border border-gray-200 rounded-lg overflow-hidden my-12 ${className}`}
-        style={{ maxWidth: `${width}px`, height: `${height}px` }}
-      >
-        <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.5em]">
-          {label} {slotName}
-        </span>
-      </div>
-    );
-  };
-
-  const SidebarAds = () => {
-    const localLateral = findLocalAd(localAds, "lateral", "Banner lateral 1:1");
-
-    const ad1 = remoteAds.find((a: any) =>
-      a.creatives?.some((c: any) => c.slot?.name === "Banner lateral 1:1"),
-    );
-    const creative1 = ad1?.creatives?.find(
-      (c: any) => c.slot?.name === "Banner lateral 1:1",
-    );
-
-    const ad2 = remoteAds.find((a: any) =>
-      a.creatives?.some((c: any) => c.slot?.name === "Banner lateral 3:4"),
-    );
-    const creative2 = ad2?.creatives?.find(
-      (c: any) => c.slot?.name === "Banner lateral 3:4",
-    );
-
-    const img1 = localLateral?.image_url || creative1?.image_url;
-    const link1 = localLateral?.target_url || creative1?.target_url || "#";
-    const img2 = creative2?.image_url;
-    const link2 = creative2?.target_url || "#";
-
-    return (
-      <div className="hidden lg:flex flex-col gap-8 w-[300px] shrink-0 sticky top-24 h-fit">
-        {img1 ? (
-          <a
-            href={link1}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block w-full aspect-square rounded-xl overflow-hidden border border-gray-100 shadow-sm"
-          >
-            <img src={img1} alt="" className="w-full h-full object-cover" />
-          </a>
-        ) : (
-          <div className="w-full aspect-square bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center">
-            <span className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">
-              Publicidade 1:1
-            </span>
-          </div>
-        )}
-
-        {img2 ? (
-          <a
-            href={link2}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block w-full aspect-[3/4] rounded-xl overflow-hidden border border-gray-100 shadow-sm"
-          >
-            <img src={img2} alt="" className="w-full h-full object-cover" />
-          </a>
-        ) : (
-          <div className="w-full aspect-[3/4] bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center">
-            <span className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">
-              Publicidade 3:4
-            </span>
-          </div>
-        )}
-      </div>
-    );
-  };
+  const AdPlaceholder = ({ label, height }: { label: string; height: number }) => (
+    <div
+      className="w-full mx-auto bg-gray-100 flex items-center justify-center border border-gray-200 rounded-lg overflow-hidden my-12"
+      style={{ height }}
+    >
+      <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.5em]">{label}</span>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-white font-sans text-brand-dark">
       <MainHeader />
 
       <main className="container mx-auto px-6">
-        <AdBanner
-          slotName="Banner topo"
-          localSlot="topo"
-          width={1500}
-          height={230}
-          className="md:h-[230px]"
-        />
+        {/* Banner Topo com rotação */}
+        <div className="my-12">
+          <RotatingAd
+            slot="topo"
+            format="full"
+            page="home"
+            maxWidth={1500}
+            className="mx-auto rounded-lg border border-neutral-100"
+            placeholder={<AdPlaceholder label="Publicidade Banner Topo" height={230} />}
+          />
+        </div>
 
         <div className="flex flex-col lg:flex-row gap-12">
           <div className="flex-grow">
-            {/* Área de destaque principal */}
             <section className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16 items-start">
               {displayFeatured && (
                 <>
@@ -325,10 +140,7 @@ function Index() {
                               params={{ slug: item.slug || item.id }}
                               className="flex items-start gap-3 text-base md:text-lg font-bold leading-tight group-hover:text-primary transition-colors"
                             >
-                              <Plus
-                                size={20}
-                                className="text-primary mt-1 shrink-0"
-                              />
+                              <Plus size={20} className="text-primary mt-1 shrink-0" />
                               <span>{item.title}</span>
                             </Link>
                           </li>
@@ -342,13 +154,17 @@ function Index() {
 
             <NewsGrid items={secondaryGrid} />
 
-            <AdBanner
-              slotName="Banner central"
-              localSlot="entre-noticias"
-              width={2560}
-              height={533}
-              className="md:h-[533px]"
-            />
+            {/* Banner central / entre notícias */}
+            <div className="my-12">
+              <RotatingAd
+                slot="entre-noticias"
+                format="full"
+                page="home"
+                maxWidth={2560}
+                className="mx-auto rounded-lg border border-neutral-100"
+                placeholder={<AdPlaceholder label="Publicidade Banner Central" height={200} />}
+              />
+            </div>
 
             <section className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
               <EditorialBlock title="Região" news={regionNews} />
@@ -357,7 +173,37 @@ function Index() {
             </section>
           </div>
 
-          <SidebarAds />
+          {/* Lateral: 1:1 e 3:4 com rotação independente */}
+          <div className="hidden lg:flex flex-col gap-8 w-[300px] shrink-0 sticky top-24 h-fit">
+            <RotatingAd
+              slot="lateral"
+              format="1:1"
+              page="home"
+              aspectClass="aspect-square"
+              className="w-full rounded-xl border border-gray-100 shadow-sm"
+              placeholder={
+                <div className="w-full aspect-square bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center">
+                  <span className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">
+                    Publicidade 1:1
+                  </span>
+                </div>
+              }
+            />
+            <RotatingAd
+              slot="lateral"
+              format="3:4"
+              page="home"
+              aspectClass="aspect-[3/4]"
+              className="w-full rounded-xl border border-gray-100 shadow-sm"
+              placeholder={
+                <div className="w-full aspect-[3/4] bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-center">
+                  <span className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">
+                    Publicidade 3:4
+                  </span>
+                </div>
+              }
+            />
+          </div>
         </div>
       </main>
 
